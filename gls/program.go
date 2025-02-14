@@ -15,7 +15,7 @@ import (
 
 // Program represents an OpenGL program.
 // It must have Vertex and Fragment shaders.
-// It can also have a Geometry shader.
+// It can also have a Geometry and compute shader.
 type Program struct {
 	gs         *GLS             // Reference to OpenGL state
 	ShowSource bool             // Show source code in error messages
@@ -36,6 +36,7 @@ var shaderNames = map[uint32]string{
 	VERTEX_SHADER:   "Vertex Shader",
 	FRAGMENT_SHADER: "Fragment Shader",
 	GEOMETRY_SHADER: "Geometry Shader",
+	COMPUTE_SHADER:  "Compute Shader",
 }
 
 // NewProgram creates and returns a new empty shader program object.

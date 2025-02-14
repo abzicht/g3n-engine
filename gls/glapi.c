@@ -191,351 +191,540 @@ static void panic(GLenum err, const char* fname) {
 //
 // Definitions of function pointers variables
 //
-static PFNGLCULLFACEPROC                              pglCullFace;
-static PFNGLFRONTFACEPROC                             pglFrontFace;
-static PFNGLHINTPROC                                  pglHint;
-static PFNGLLINEWIDTHPROC                             pglLineWidth;
-static PFNGLPOINTSIZEPROC                             pglPointSize;
-static PFNGLPOLYGONMODEPROC                           pglPolygonMode;
-static PFNGLSCISSORPROC                               pglScissor;
-static PFNGLTEXPARAMETERFPROC                         pglTexParameterf;
-static PFNGLTEXPARAMETERFVPROC                        pglTexParameterfv;
-static PFNGLTEXPARAMETERIPROC                         pglTexParameteri;
-static PFNGLTEXPARAMETERIVPROC                        pglTexParameteriv;
-static PFNGLTEXIMAGE1DPROC                            pglTexImage1D;
-static PFNGLTEXIMAGE2DPROC                            pglTexImage2D;
-static PFNGLDRAWBUFFERPROC                            pglDrawBuffer;
-static PFNGLCLEARPROC                                 pglClear;
-static PFNGLCLEARCOLORPROC                            pglClearColor;
-static PFNGLCLEARSTENCILPROC                          pglClearStencil;
-static PFNGLCLEARDEPTHPROC                            pglClearDepth;
-static PFNGLSTENCILMASKPROC                           pglStencilMask;
-static PFNGLCOLORMASKPROC                             pglColorMask;
-static PFNGLDEPTHMASKPROC                             pglDepthMask;
-static PFNGLDISABLEPROC                               pglDisable;
-static PFNGLENABLEPROC                                pglEnable;
-static PFNGLFINISHPROC                                pglFinish;
-static PFNGLFLUSHPROC                                 pglFlush;
-static PFNGLBLENDFUNCPROC                             pglBlendFunc;
-static PFNGLLOGICOPPROC                               pglLogicOp;
-static PFNGLSTENCILFUNCPROC                           pglStencilFunc;
-static PFNGLSTENCILOPPROC                             pglStencilOp;
-static PFNGLDEPTHFUNCPROC                             pglDepthFunc;
-static PFNGLPIXELSTOREFPROC                           pglPixelStoref;
-static PFNGLPIXELSTOREIPROC                           pglPixelStorei;
-static PFNGLREADBUFFERPROC                            pglReadBuffer;
-static PFNGLREADPIXELSPROC                            pglReadPixels;
-static PFNGLGETBOOLEANVPROC                           pglGetBooleanv;
-static PFNGLGETDOUBLEVPROC                            pglGetDoublev;
-static PFNGLGETERRORPROC                              pglGetError;
-static PFNGLGETFLOATVPROC                             pglGetFloatv;
-static PFNGLGETINTEGERVPROC                           pglGetIntegerv;
-static PFNGLGETSTRINGPROC                             pglGetString;
-static PFNGLGETTEXIMAGEPROC                           pglGetTexImage;
-static PFNGLGETTEXPARAMETERFVPROC                     pglGetTexParameterfv;
-static PFNGLGETTEXPARAMETERIVPROC                     pglGetTexParameteriv;
-static PFNGLGETTEXLEVELPARAMETERFVPROC                pglGetTexLevelParameterfv;
-static PFNGLGETTEXLEVELPARAMETERIVPROC                pglGetTexLevelParameteriv;
-static PFNGLISENABLEDPROC                             pglIsEnabled;
-static PFNGLDEPTHRANGEPROC                            pglDepthRange;
-static PFNGLVIEWPORTPROC                              pglViewport;
-static PFNGLDRAWARRAYSPROC                            pglDrawArrays;
-static PFNGLDRAWELEMENTSPROC                          pglDrawElements;
-static PFNGLGETPOINTERVPROC                           pglGetPointerv;
-static PFNGLPOLYGONOFFSETPROC                         pglPolygonOffset;
-static PFNGLCOPYTEXIMAGE1DPROC                        pglCopyTexImage1D;
-static PFNGLCOPYTEXIMAGE2DPROC                        pglCopyTexImage2D;
-static PFNGLCOPYTEXSUBIMAGE1DPROC                     pglCopyTexSubImage1D;
-static PFNGLCOPYTEXSUBIMAGE2DPROC                     pglCopyTexSubImage2D;
-static PFNGLTEXSUBIMAGE1DPROC                         pglTexSubImage1D;
-static PFNGLTEXSUBIMAGE2DPROC                         pglTexSubImage2D;
-static PFNGLBINDTEXTUREPROC                           pglBindTexture;
-static PFNGLDELETETEXTURESPROC                        pglDeleteTextures;
-static PFNGLGENTEXTURESPROC                           pglGenTextures;
-static PFNGLISTEXTUREPROC                             pglIsTexture;
-static PFNGLDRAWRANGEELEMENTSPROC                     pglDrawRangeElements;
-static PFNGLTEXIMAGE3DPROC                            pglTexImage3D;
-static PFNGLTEXSUBIMAGE3DPROC                         pglTexSubImage3D;
-static PFNGLCOPYTEXSUBIMAGE3DPROC                     pglCopyTexSubImage3D;
-static PFNGLACTIVETEXTUREPROC                         pglActiveTexture;
-static PFNGLSAMPLECOVERAGEPROC                        pglSampleCoverage;
-static PFNGLCOMPRESSEDTEXIMAGE3DPROC                  pglCompressedTexImage3D;
-static PFNGLCOMPRESSEDTEXIMAGE2DPROC                  pglCompressedTexImage2D;
-static PFNGLCOMPRESSEDTEXIMAGE1DPROC                  pglCompressedTexImage1D;
-static PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC               pglCompressedTexSubImage3D;
-static PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC               pglCompressedTexSubImage2D;
-static PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC               pglCompressedTexSubImage1D;
-static PFNGLGETCOMPRESSEDTEXIMAGEPROC                 pglGetCompressedTexImage;
-static PFNGLBLENDFUNCSEPARATEPROC                     pglBlendFuncSeparate;
-static PFNGLMULTIDRAWARRAYSPROC                       pglMultiDrawArrays;
-static PFNGLMULTIDRAWELEMENTSPROC                     pglMultiDrawElements;
-static PFNGLPOINTPARAMETERFPROC                       pglPointParameterf;
-static PFNGLPOINTPARAMETERFVPROC                      pglPointParameterfv;
-static PFNGLPOINTPARAMETERIPROC                       pglPointParameteri;
-static PFNGLPOINTPARAMETERIVPROC                      pglPointParameteriv;
-static PFNGLBLENDCOLORPROC                            pglBlendColor;
-static PFNGLBLENDEQUATIONPROC                         pglBlendEquation;
-static PFNGLGENQUERIESPROC                            pglGenQueries;
-static PFNGLDELETEQUERIESPROC                         pglDeleteQueries;
-static PFNGLISQUERYPROC                               pglIsQuery;
-static PFNGLBEGINQUERYPROC                            pglBeginQuery;
-static PFNGLENDQUERYPROC                              pglEndQuery;
-static PFNGLGETQUERYIVPROC                            pglGetQueryiv;
-static PFNGLGETQUERYOBJECTIVPROC                      pglGetQueryObjectiv;
-static PFNGLGETQUERYOBJECTUIVPROC                     pglGetQueryObjectuiv;
-static PFNGLBINDBUFFERPROC                            pglBindBuffer;
-static PFNGLDELETEBUFFERSPROC                         pglDeleteBuffers;
-static PFNGLGENBUFFERSPROC                            pglGenBuffers;
-static PFNGLISBUFFERPROC                              pglIsBuffer;
-static PFNGLBUFFERDATAPROC                            pglBufferData;
-static PFNGLBUFFERSUBDATAPROC                         pglBufferSubData;
-static PFNGLGETBUFFERSUBDATAPROC                      pglGetBufferSubData;
-static PFNGLMAPBUFFERPROC                             pglMapBuffer;
-static PFNGLUNMAPBUFFERPROC                           pglUnmapBuffer;
-static PFNGLGETBUFFERPARAMETERIVPROC                  pglGetBufferParameteriv;
-static PFNGLGETBUFFERPOINTERVPROC                     pglGetBufferPointerv;
-static PFNGLBLENDEQUATIONSEPARATEPROC                 pglBlendEquationSeparate;
-static PFNGLDRAWBUFFERSPROC                           pglDrawBuffers;
-static PFNGLSTENCILOPSEPARATEPROC                     pglStencilOpSeparate;
-static PFNGLSTENCILFUNCSEPARATEPROC                   pglStencilFuncSeparate;
-static PFNGLSTENCILMASKSEPARATEPROC                   pglStencilMaskSeparate;
-static PFNGLATTACHSHADERPROC                          pglAttachShader;
-static PFNGLBINDATTRIBLOCATIONPROC                    pglBindAttribLocation;
-static PFNGLCOMPILESHADERPROC                         pglCompileShader;
-static PFNGLCREATEPROGRAMPROC                         pglCreateProgram;
-static PFNGLCREATESHADERPROC                          pglCreateShader;
-static PFNGLDELETEPROGRAMPROC                         pglDeleteProgram;
-static PFNGLDELETESHADERPROC                          pglDeleteShader;
-static PFNGLDETACHSHADERPROC                          pglDetachShader;
-static PFNGLDISABLEVERTEXATTRIBARRAYPROC              pglDisableVertexAttribArray;
-static PFNGLENABLEVERTEXATTRIBARRAYPROC               pglEnableVertexAttribArray;
-static PFNGLGETACTIVEATTRIBPROC                       pglGetActiveAttrib;
-static PFNGLGETACTIVEUNIFORMPROC                      pglGetActiveUniform;
-static PFNGLGETATTACHEDSHADERSPROC                    pglGetAttachedShaders;
-static PFNGLGETATTRIBLOCATIONPROC                     pglGetAttribLocation;
-static PFNGLGETPROGRAMIVPROC                          pglGetProgramiv;
-static PFNGLGETPROGRAMINFOLOGPROC                     pglGetProgramInfoLog;
-static PFNGLGETSHADERIVPROC                           pglGetShaderiv;
-static PFNGLGETSHADERINFOLOGPROC                      pglGetShaderInfoLog;
-static PFNGLGETSHADERSOURCEPROC                       pglGetShaderSource;
-static PFNGLGETUNIFORMLOCATIONPROC                    pglGetUniformLocation;
-static PFNGLGETUNIFORMFVPROC                          pglGetUniformfv;
-static PFNGLGETUNIFORMIVPROC                          pglGetUniformiv;
-static PFNGLGETVERTEXATTRIBDVPROC                     pglGetVertexAttribdv;
-static PFNGLGETVERTEXATTRIBFVPROC                     pglGetVertexAttribfv;
-static PFNGLGETVERTEXATTRIBIVPROC                     pglGetVertexAttribiv;
-static PFNGLGETVERTEXATTRIBPOINTERVPROC               pglGetVertexAttribPointerv;
-static PFNGLISPROGRAMPROC                             pglIsProgram;
-static PFNGLISSHADERPROC                              pglIsShader;
-static PFNGLLINKPROGRAMPROC                           pglLinkProgram;
-static PFNGLSHADERSOURCEPROC                          pglShaderSource;
-static PFNGLUSEPROGRAMPROC                            pglUseProgram;
-static PFNGLUNIFORM1FPROC                             pglUniform1f;
-static PFNGLUNIFORM2FPROC                             pglUniform2f;
-static PFNGLUNIFORM3FPROC                             pglUniform3f;
-static PFNGLUNIFORM4FPROC                             pglUniform4f;
-static PFNGLUNIFORM1IPROC                             pglUniform1i;
-static PFNGLUNIFORM2IPROC                             pglUniform2i;
-static PFNGLUNIFORM3IPROC                             pglUniform3i;
-static PFNGLUNIFORM4IPROC                             pglUniform4i;
-static PFNGLUNIFORM1FVPROC                            pglUniform1fv;
-static PFNGLUNIFORM2FVPROC                            pglUniform2fv;
-static PFNGLUNIFORM3FVPROC                            pglUniform3fv;
-static PFNGLUNIFORM4FVPROC                            pglUniform4fv;
-static PFNGLUNIFORM1IVPROC                            pglUniform1iv;
-static PFNGLUNIFORM2IVPROC                            pglUniform2iv;
-static PFNGLUNIFORM3IVPROC                            pglUniform3iv;
-static PFNGLUNIFORM4IVPROC                            pglUniform4iv;
-static PFNGLUNIFORMMATRIX2FVPROC                      pglUniformMatrix2fv;
-static PFNGLUNIFORMMATRIX3FVPROC                      pglUniformMatrix3fv;
-static PFNGLUNIFORMMATRIX4FVPROC                      pglUniformMatrix4fv;
-static PFNGLVALIDATEPROGRAMPROC                       pglValidateProgram;
-static PFNGLVERTEXATTRIB1DPROC                        pglVertexAttrib1d;
-static PFNGLVERTEXATTRIB1DVPROC                       pglVertexAttrib1dv;
-static PFNGLVERTEXATTRIB1FPROC                        pglVertexAttrib1f;
-static PFNGLVERTEXATTRIB1FVPROC                       pglVertexAttrib1fv;
-static PFNGLVERTEXATTRIB1SPROC                        pglVertexAttrib1s;
-static PFNGLVERTEXATTRIB1SVPROC                       pglVertexAttrib1sv;
-static PFNGLVERTEXATTRIB2DPROC                        pglVertexAttrib2d;
-static PFNGLVERTEXATTRIB2DVPROC                       pglVertexAttrib2dv;
-static PFNGLVERTEXATTRIB2FPROC                        pglVertexAttrib2f;
-static PFNGLVERTEXATTRIB2FVPROC                       pglVertexAttrib2fv;
-static PFNGLVERTEXATTRIB2SPROC                        pglVertexAttrib2s;
-static PFNGLVERTEXATTRIB2SVPROC                       pglVertexAttrib2sv;
-static PFNGLVERTEXATTRIB3DPROC                        pglVertexAttrib3d;
-static PFNGLVERTEXATTRIB3DVPROC                       pglVertexAttrib3dv;
-static PFNGLVERTEXATTRIB3FPROC                        pglVertexAttrib3f;
-static PFNGLVERTEXATTRIB3FVPROC                       pglVertexAttrib3fv;
-static PFNGLVERTEXATTRIB3SPROC                        pglVertexAttrib3s;
-static PFNGLVERTEXATTRIB3SVPROC                       pglVertexAttrib3sv;
-static PFNGLVERTEXATTRIB4NBVPROC                      pglVertexAttrib4Nbv;
-static PFNGLVERTEXATTRIB4NIVPROC                      pglVertexAttrib4Niv;
-static PFNGLVERTEXATTRIB4NSVPROC                      pglVertexAttrib4Nsv;
-static PFNGLVERTEXATTRIB4NUBPROC                      pglVertexAttrib4Nub;
-static PFNGLVERTEXATTRIB4NUBVPROC                     pglVertexAttrib4Nubv;
-static PFNGLVERTEXATTRIB4NUIVPROC                     pglVertexAttrib4Nuiv;
-static PFNGLVERTEXATTRIB4NUSVPROC                     pglVertexAttrib4Nusv;
-static PFNGLVERTEXATTRIB4BVPROC                       pglVertexAttrib4bv;
-static PFNGLVERTEXATTRIB4DPROC                        pglVertexAttrib4d;
-static PFNGLVERTEXATTRIB4DVPROC                       pglVertexAttrib4dv;
-static PFNGLVERTEXATTRIB4FPROC                        pglVertexAttrib4f;
-static PFNGLVERTEXATTRIB4FVPROC                       pglVertexAttrib4fv;
-static PFNGLVERTEXATTRIB4IVPROC                       pglVertexAttrib4iv;
-static PFNGLVERTEXATTRIB4SPROC                        pglVertexAttrib4s;
-static PFNGLVERTEXATTRIB4SVPROC                       pglVertexAttrib4sv;
-static PFNGLVERTEXATTRIB4UBVPROC                      pglVertexAttrib4ubv;
-static PFNGLVERTEXATTRIB4UIVPROC                      pglVertexAttrib4uiv;
-static PFNGLVERTEXATTRIB4USVPROC                      pglVertexAttrib4usv;
-static PFNGLVERTEXATTRIBPOINTERPROC                   pglVertexAttribPointer;
-static PFNGLUNIFORMMATRIX2X3FVPROC                    pglUniformMatrix2x3fv;
-static PFNGLUNIFORMMATRIX3X2FVPROC                    pglUniformMatrix3x2fv;
-static PFNGLUNIFORMMATRIX2X4FVPROC                    pglUniformMatrix2x4fv;
-static PFNGLUNIFORMMATRIX4X2FVPROC                    pglUniformMatrix4x2fv;
-static PFNGLUNIFORMMATRIX3X4FVPROC                    pglUniformMatrix3x4fv;
-static PFNGLUNIFORMMATRIX4X3FVPROC                    pglUniformMatrix4x3fv;
-static PFNGLCOLORMASKIPROC                            pglColorMaski;
-static PFNGLGETBOOLEANI_VPROC                         pglGetBooleani_v;
-static PFNGLGETINTEGERI_VPROC                         pglGetIntegeri_v;
-static PFNGLENABLEIPROC                               pglEnablei;
-static PFNGLDISABLEIPROC                              pglDisablei;
-static PFNGLISENABLEDIPROC                            pglIsEnabledi;
-static PFNGLBEGINTRANSFORMFEEDBACKPROC                pglBeginTransformFeedback;
-static PFNGLENDTRANSFORMFEEDBACKPROC                  pglEndTransformFeedback;
-static PFNGLBINDBUFFERRANGEPROC                       pglBindBufferRange;
-static PFNGLBINDBUFFERBASEPROC                        pglBindBufferBase;
-static PFNGLTRANSFORMFEEDBACKVARYINGSPROC             pglTransformFeedbackVaryings;
-static PFNGLGETTRANSFORMFEEDBACKVARYINGPROC           pglGetTransformFeedbackVarying;
-static PFNGLCLAMPCOLORPROC                            pglClampColor;
-static PFNGLBEGINCONDITIONALRENDERPROC                pglBeginConditionalRender;
-static PFNGLENDCONDITIONALRENDERPROC                  pglEndConditionalRender;
-static PFNGLVERTEXATTRIBIPOINTERPROC                  pglVertexAttribIPointer;
-static PFNGLGETVERTEXATTRIBIIVPROC                    pglGetVertexAttribIiv;
-static PFNGLGETVERTEXATTRIBIUIVPROC                   pglGetVertexAttribIuiv;
-static PFNGLVERTEXATTRIBI1IPROC                       pglVertexAttribI1i;
-static PFNGLVERTEXATTRIBI2IPROC                       pglVertexAttribI2i;
-static PFNGLVERTEXATTRIBI3IPROC                       pglVertexAttribI3i;
-static PFNGLVERTEXATTRIBI4IPROC                       pglVertexAttribI4i;
-static PFNGLVERTEXATTRIBI1UIPROC                      pglVertexAttribI1ui;
-static PFNGLVERTEXATTRIBI2UIPROC                      pglVertexAttribI2ui;
-static PFNGLVERTEXATTRIBI3UIPROC                      pglVertexAttribI3ui;
-static PFNGLVERTEXATTRIBI4UIPROC                      pglVertexAttribI4ui;
-static PFNGLVERTEXATTRIBI1IVPROC                      pglVertexAttribI1iv;
-static PFNGLVERTEXATTRIBI2IVPROC                      pglVertexAttribI2iv;
-static PFNGLVERTEXATTRIBI3IVPROC                      pglVertexAttribI3iv;
-static PFNGLVERTEXATTRIBI4IVPROC                      pglVertexAttribI4iv;
-static PFNGLVERTEXATTRIBI1UIVPROC                     pglVertexAttribI1uiv;
-static PFNGLVERTEXATTRIBI2UIVPROC                     pglVertexAttribI2uiv;
-static PFNGLVERTEXATTRIBI3UIVPROC                     pglVertexAttribI3uiv;
-static PFNGLVERTEXATTRIBI4UIVPROC                     pglVertexAttribI4uiv;
-static PFNGLVERTEXATTRIBI4BVPROC                      pglVertexAttribI4bv;
-static PFNGLVERTEXATTRIBI4SVPROC                      pglVertexAttribI4sv;
-static PFNGLVERTEXATTRIBI4UBVPROC                     pglVertexAttribI4ubv;
-static PFNGLVERTEXATTRIBI4USVPROC                     pglVertexAttribI4usv;
-static PFNGLGETUNIFORMUIVPROC                         pglGetUniformuiv;
-static PFNGLBINDFRAGDATALOCATIONPROC                  pglBindFragDataLocation;
-static PFNGLGETFRAGDATALOCATIONPROC                   pglGetFragDataLocation;
-static PFNGLUNIFORM1UIPROC                            pglUniform1ui;
-static PFNGLUNIFORM2UIPROC                            pglUniform2ui;
-static PFNGLUNIFORM3UIPROC                            pglUniform3ui;
-static PFNGLUNIFORM4UIPROC                            pglUniform4ui;
-static PFNGLUNIFORM1UIVPROC                           pglUniform1uiv;
-static PFNGLUNIFORM2UIVPROC                           pglUniform2uiv;
-static PFNGLUNIFORM3UIVPROC                           pglUniform3uiv;
-static PFNGLUNIFORM4UIVPROC                           pglUniform4uiv;
-static PFNGLTEXPARAMETERIIVPROC                       pglTexParameterIiv;
-static PFNGLTEXPARAMETERIUIVPROC                      pglTexParameterIuiv;
-static PFNGLGETTEXPARAMETERIIVPROC                    pglGetTexParameterIiv;
-static PFNGLGETTEXPARAMETERIUIVPROC                   pglGetTexParameterIuiv;
-static PFNGLCLEARBUFFERIVPROC                         pglClearBufferiv;
-static PFNGLCLEARBUFFERUIVPROC                        pglClearBufferuiv;
-static PFNGLCLEARBUFFERFVPROC                         pglClearBufferfv;
-static PFNGLCLEARBUFFERFIPROC                         pglClearBufferfi;
-static PFNGLGETSTRINGIPROC                            pglGetStringi;
-static PFNGLISRENDERBUFFERPROC                        pglIsRenderbuffer;
-static PFNGLBINDRENDERBUFFERPROC                      pglBindRenderbuffer;
-static PFNGLDELETERENDERBUFFERSPROC                   pglDeleteRenderbuffers;
-static PFNGLGENRENDERBUFFERSPROC                      pglGenRenderbuffers;
-static PFNGLRENDERBUFFERSTORAGEPROC                   pglRenderbufferStorage;
-static PFNGLGETRENDERBUFFERPARAMETERIVPROC            pglGetRenderbufferParameteriv;
-static PFNGLISFRAMEBUFFERPROC                         pglIsFramebuffer;
-static PFNGLBINDFRAMEBUFFERPROC                       pglBindFramebuffer;
-static PFNGLDELETEFRAMEBUFFERSPROC                    pglDeleteFramebuffers;
-static PFNGLGENFRAMEBUFFERSPROC                       pglGenFramebuffers;
-static PFNGLCHECKFRAMEBUFFERSTATUSPROC                pglCheckFramebufferStatus;
-static PFNGLFRAMEBUFFERTEXTURE1DPROC                  pglFramebufferTexture1D;
-static PFNGLFRAMEBUFFERTEXTURE2DPROC                  pglFramebufferTexture2D;
-static PFNGLFRAMEBUFFERTEXTURE3DPROC                  pglFramebufferTexture3D;
-static PFNGLFRAMEBUFFERRENDERBUFFERPROC               pglFramebufferRenderbuffer;
-static PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC   pglGetFramebufferAttachmentParameteriv;
-static PFNGLGENERATEMIPMAPPROC                        pglGenerateMipmap;
-static PFNGLBLITFRAMEBUFFERPROC                       pglBlitFramebuffer;
-static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC        pglRenderbufferStorageMultisample;
-static PFNGLFRAMEBUFFERTEXTURELAYERPROC               pglFramebufferTextureLayer;
-static PFNGLMAPBUFFERRANGEPROC                        pglMapBufferRange;
-static PFNGLFLUSHMAPPEDBUFFERRANGEPROC                pglFlushMappedBufferRange;
-static PFNGLBINDVERTEXARRAYPROC                       pglBindVertexArray;
-static PFNGLDELETEVERTEXARRAYSPROC                    pglDeleteVertexArrays;
-static PFNGLGENVERTEXARRAYSPROC                       pglGenVertexArrays;
-static PFNGLISVERTEXARRAYPROC                         pglIsVertexArray;
-static PFNGLDRAWARRAYSINSTANCEDPROC                   pglDrawArraysInstanced;
-static PFNGLDRAWELEMENTSINSTANCEDPROC                 pglDrawElementsInstanced;
-static PFNGLTEXBUFFERPROC                             pglTexBuffer;
-static PFNGLPRIMITIVERESTARTINDEXPROC                 pglPrimitiveRestartIndex;
-static PFNGLCOPYBUFFERSUBDATAPROC                     pglCopyBufferSubData;
-static PFNGLGETUNIFORMINDICESPROC                     pglGetUniformIndices;
-static PFNGLGETACTIVEUNIFORMSIVPROC                   pglGetActiveUniformsiv;
-static PFNGLGETACTIVEUNIFORMNAMEPROC                  pglGetActiveUniformName;
-static PFNGLGETUNIFORMBLOCKINDEXPROC                  pglGetUniformBlockIndex;
-static PFNGLGETACTIVEUNIFORMBLOCKIVPROC               pglGetActiveUniformBlockiv;
-static PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC             pglGetActiveUniformBlockName;
-static PFNGLUNIFORMBLOCKBINDINGPROC                   pglUniformBlockBinding;
-static PFNGLDRAWELEMENTSBASEVERTEXPROC                pglDrawElementsBaseVertex;
-static PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC           pglDrawRangeElementsBaseVertex;
-static PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC       pglDrawElementsInstancedBaseVertex;
-static PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC           pglMultiDrawElementsBaseVertex;
-static PFNGLPROVOKINGVERTEXPROC                       pglProvokingVertex;
-static PFNGLFENCESYNCPROC                             pglFenceSync;
-static PFNGLISSYNCPROC                                pglIsSync;
-static PFNGLDELETESYNCPROC                            pglDeleteSync;
-static PFNGLCLIENTWAITSYNCPROC                        pglClientWaitSync;
-static PFNGLWAITSYNCPROC                              pglWaitSync;
-static PFNGLGETINTEGER64VPROC                         pglGetInteger64v;
-static PFNGLGETSYNCIVPROC                             pglGetSynciv;
-static PFNGLGETINTEGER64I_VPROC                       pglGetInteger64i_v;
-static PFNGLGETBUFFERPARAMETERI64VPROC                pglGetBufferParameteri64v;
-static PFNGLFRAMEBUFFERTEXTUREPROC                    pglFramebufferTexture;
-static PFNGLTEXIMAGE2DMULTISAMPLEPROC                 pglTexImage2DMultisample;
-static PFNGLTEXIMAGE3DMULTISAMPLEPROC                 pglTexImage3DMultisample;
-static PFNGLGETMULTISAMPLEFVPROC                      pglGetMultisamplefv;
-static PFNGLSAMPLEMASKIPROC                           pglSampleMaski;
-static PFNGLBINDFRAGDATALOCATIONINDEXEDPROC           pglBindFragDataLocationIndexed;
-static PFNGLGETFRAGDATAINDEXPROC                      pglGetFragDataIndex;
-static PFNGLGENSAMPLERSPROC                           pglGenSamplers;
-static PFNGLDELETESAMPLERSPROC                        pglDeleteSamplers;
-static PFNGLISSAMPLERPROC                             pglIsSampler;
-static PFNGLBINDSAMPLERPROC                           pglBindSampler;
-static PFNGLSAMPLERPARAMETERIPROC                     pglSamplerParameteri;
-static PFNGLSAMPLERPARAMETERIVPROC                    pglSamplerParameteriv;
-static PFNGLSAMPLERPARAMETERFPROC                     pglSamplerParameterf;
-static PFNGLSAMPLERPARAMETERFVPROC                    pglSamplerParameterfv;
-static PFNGLSAMPLERPARAMETERIIVPROC                   pglSamplerParameterIiv;
-static PFNGLSAMPLERPARAMETERIUIVPROC                  pglSamplerParameterIuiv;
-static PFNGLGETSAMPLERPARAMETERIVPROC                 pglGetSamplerParameteriv;
-static PFNGLGETSAMPLERPARAMETERIIVPROC                pglGetSamplerParameterIiv;
-static PFNGLGETSAMPLERPARAMETERFVPROC                 pglGetSamplerParameterfv;
-static PFNGLGETSAMPLERPARAMETERIUIVPROC               pglGetSamplerParameterIuiv;
-static PFNGLQUERYCOUNTERPROC                          pglQueryCounter;
-static PFNGLGETQUERYOBJECTI64VPROC                    pglGetQueryObjecti64v;
-static PFNGLGETQUERYOBJECTUI64VPROC                   pglGetQueryObjectui64v;
-static PFNGLVERTEXATTRIBDIVISORPROC                   pglVertexAttribDivisor;
-static PFNGLVERTEXATTRIBP1UIPROC                      pglVertexAttribP1ui;
-static PFNGLVERTEXATTRIBP1UIVPROC                     pglVertexAttribP1uiv;
-static PFNGLVERTEXATTRIBP2UIPROC                      pglVertexAttribP2ui;
-static PFNGLVERTEXATTRIBP2UIVPROC                     pglVertexAttribP2uiv;
-static PFNGLVERTEXATTRIBP3UIPROC                      pglVertexAttribP3ui;
-static PFNGLVERTEXATTRIBP3UIVPROC                     pglVertexAttribP3uiv;
-static PFNGLVERTEXATTRIBP4UIPROC                      pglVertexAttribP4ui;
-static PFNGLVERTEXATTRIBP4UIVPROC                     pglVertexAttribP4uiv;
+static PFNGLCULLFACEPROC                                      pglCullFace;
+static PFNGLFRONTFACEPROC                                     pglFrontFace;
+static PFNGLHINTPROC                                          pglHint;
+static PFNGLLINEWIDTHPROC                                     pglLineWidth;
+static PFNGLPOINTSIZEPROC                                     pglPointSize;
+static PFNGLPOLYGONMODEPROC                                   pglPolygonMode;
+static PFNGLSCISSORPROC                                       pglScissor;
+static PFNGLTEXPARAMETERFPROC                                 pglTexParameterf;
+static PFNGLTEXPARAMETERFVPROC                                pglTexParameterfv;
+static PFNGLTEXPARAMETERIPROC                                 pglTexParameteri;
+static PFNGLTEXPARAMETERIVPROC                                pglTexParameteriv;
+static PFNGLTEXIMAGE1DPROC                                    pglTexImage1D;
+static PFNGLTEXIMAGE2DPROC                                    pglTexImage2D;
+static PFNGLDRAWBUFFERPROC                                    pglDrawBuffer;
+static PFNGLCLEARPROC                                         pglClear;
+static PFNGLCLEARCOLORPROC                                    pglClearColor;
+static PFNGLCLEARSTENCILPROC                                  pglClearStencil;
+static PFNGLCLEARDEPTHPROC                                    pglClearDepth;
+static PFNGLSTENCILMASKPROC                                   pglStencilMask;
+static PFNGLCOLORMASKPROC                                     pglColorMask;
+static PFNGLDEPTHMASKPROC                                     pglDepthMask;
+static PFNGLDISABLEPROC                                       pglDisable;
+static PFNGLENABLEPROC                                        pglEnable;
+static PFNGLFINISHPROC                                        pglFinish;
+static PFNGLFLUSHPROC                                         pglFlush;
+static PFNGLBLENDFUNCPROC                                     pglBlendFunc;
+static PFNGLLOGICOPPROC                                       pglLogicOp;
+static PFNGLSTENCILFUNCPROC                                   pglStencilFunc;
+static PFNGLSTENCILOPPROC                                     pglStencilOp;
+static PFNGLDEPTHFUNCPROC                                     pglDepthFunc;
+static PFNGLPIXELSTOREFPROC                                   pglPixelStoref;
+static PFNGLPIXELSTOREIPROC                                   pglPixelStorei;
+static PFNGLREADBUFFERPROC                                    pglReadBuffer;
+static PFNGLREADPIXELSPROC                                    pglReadPixels;
+static PFNGLGETBOOLEANVPROC                                   pglGetBooleanv;
+static PFNGLGETDOUBLEVPROC                                    pglGetDoublev;
+static PFNGLGETERRORPROC                                      pglGetError;
+static PFNGLGETFLOATVPROC                                     pglGetFloatv;
+static PFNGLGETINTEGERVPROC                                   pglGetIntegerv;
+static PFNGLGETSTRINGPROC                                     pglGetString;
+static PFNGLGETTEXIMAGEPROC                                   pglGetTexImage;
+static PFNGLGETTEXPARAMETERFVPROC                             pglGetTexParameterfv;
+static PFNGLGETTEXPARAMETERIVPROC                             pglGetTexParameteriv;
+static PFNGLGETTEXLEVELPARAMETERFVPROC                        pglGetTexLevelParameterfv;
+static PFNGLGETTEXLEVELPARAMETERIVPROC                        pglGetTexLevelParameteriv;
+static PFNGLISENABLEDPROC                                     pglIsEnabled;
+static PFNGLDEPTHRANGEPROC                                    pglDepthRange;
+static PFNGLVIEWPORTPROC                                      pglViewport;
+static PFNGLDRAWARRAYSPROC                                    pglDrawArrays;
+static PFNGLDRAWELEMENTSPROC                                  pglDrawElements;
+static PFNGLGETPOINTERVPROC                                   pglGetPointerv;
+static PFNGLPOLYGONOFFSETPROC                                 pglPolygonOffset;
+static PFNGLCOPYTEXIMAGE1DPROC                                pglCopyTexImage1D;
+static PFNGLCOPYTEXIMAGE2DPROC                                pglCopyTexImage2D;
+static PFNGLCOPYTEXSUBIMAGE1DPROC                             pglCopyTexSubImage1D;
+static PFNGLCOPYTEXSUBIMAGE2DPROC                             pglCopyTexSubImage2D;
+static PFNGLTEXSUBIMAGE1DPROC                                 pglTexSubImage1D;
+static PFNGLTEXSUBIMAGE2DPROC                                 pglTexSubImage2D;
+static PFNGLBINDTEXTUREPROC                                   pglBindTexture;
+static PFNGLDELETETEXTURESPROC                                pglDeleteTextures;
+static PFNGLGENTEXTURESPROC                                   pglGenTextures;
+static PFNGLISTEXTUREPROC                                     pglIsTexture;
+static PFNGLDRAWRANGEELEMENTSPROC                             pglDrawRangeElements;
+static PFNGLTEXIMAGE3DPROC                                    pglTexImage3D;
+static PFNGLTEXSUBIMAGE3DPROC                                 pglTexSubImage3D;
+static PFNGLCOPYTEXSUBIMAGE3DPROC                             pglCopyTexSubImage3D;
+static PFNGLACTIVETEXTUREPROC                                 pglActiveTexture;
+static PFNGLSAMPLECOVERAGEPROC                                pglSampleCoverage;
+static PFNGLCOMPRESSEDTEXIMAGE3DPROC                          pglCompressedTexImage3D;
+static PFNGLCOMPRESSEDTEXIMAGE2DPROC                          pglCompressedTexImage2D;
+static PFNGLCOMPRESSEDTEXIMAGE1DPROC                          pglCompressedTexImage1D;
+static PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC                       pglCompressedTexSubImage3D;
+static PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC                       pglCompressedTexSubImage2D;
+static PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC                       pglCompressedTexSubImage1D;
+static PFNGLGETCOMPRESSEDTEXIMAGEPROC                         pglGetCompressedTexImage;
+static PFNGLBLENDFUNCSEPARATEPROC                             pglBlendFuncSeparate;
+static PFNGLMULTIDRAWARRAYSPROC                               pglMultiDrawArrays;
+static PFNGLMULTIDRAWELEMENTSPROC                             pglMultiDrawElements;
+static PFNGLPOINTPARAMETERFPROC                               pglPointParameterf;
+static PFNGLPOINTPARAMETERFVPROC                              pglPointParameterfv;
+static PFNGLPOINTPARAMETERIPROC                               pglPointParameteri;
+static PFNGLPOINTPARAMETERIVPROC                              pglPointParameteriv;
+static PFNGLBLENDCOLORPROC                                    pglBlendColor;
+static PFNGLBLENDEQUATIONPROC                                 pglBlendEquation;
+static PFNGLGENQUERIESPROC                                    pglGenQueries;
+static PFNGLDELETEQUERIESPROC                                 pglDeleteQueries;
+static PFNGLISQUERYPROC                                       pglIsQuery;
+static PFNGLBEGINQUERYPROC                                    pglBeginQuery;
+static PFNGLENDQUERYPROC                                      pglEndQuery;
+static PFNGLGETQUERYIVPROC                                    pglGetQueryiv;
+static PFNGLGETQUERYOBJECTIVPROC                              pglGetQueryObjectiv;
+static PFNGLGETQUERYOBJECTUIVPROC                             pglGetQueryObjectuiv;
+static PFNGLBINDBUFFERPROC                                    pglBindBuffer;
+static PFNGLDELETEBUFFERSPROC                                 pglDeleteBuffers;
+static PFNGLGENBUFFERSPROC                                    pglGenBuffers;
+static PFNGLISBUFFERPROC                                      pglIsBuffer;
+static PFNGLBUFFERDATAPROC                                    pglBufferData;
+static PFNGLBUFFERSUBDATAPROC                                 pglBufferSubData;
+static PFNGLGETBUFFERSUBDATAPROC                              pglGetBufferSubData;
+static PFNGLMAPBUFFERPROC                                     pglMapBuffer;
+static PFNGLUNMAPBUFFERPROC                                   pglUnmapBuffer;
+static PFNGLGETBUFFERPARAMETERIVPROC                          pglGetBufferParameteriv;
+static PFNGLGETBUFFERPOINTERVPROC                             pglGetBufferPointerv;
+static PFNGLBLENDEQUATIONSEPARATEPROC                         pglBlendEquationSeparate;
+static PFNGLDRAWBUFFERSPROC                                   pglDrawBuffers;
+static PFNGLSTENCILOPSEPARATEPROC                             pglStencilOpSeparate;
+static PFNGLSTENCILFUNCSEPARATEPROC                           pglStencilFuncSeparate;
+static PFNGLSTENCILMASKSEPARATEPROC                           pglStencilMaskSeparate;
+static PFNGLATTACHSHADERPROC                                  pglAttachShader;
+static PFNGLBINDATTRIBLOCATIONPROC                            pglBindAttribLocation;
+static PFNGLCOMPILESHADERPROC                                 pglCompileShader;
+static PFNGLCREATEPROGRAMPROC                                 pglCreateProgram;
+static PFNGLCREATESHADERPROC                                  pglCreateShader;
+static PFNGLDELETEPROGRAMPROC                                 pglDeleteProgram;
+static PFNGLDELETESHADERPROC                                  pglDeleteShader;
+static PFNGLDETACHSHADERPROC                                  pglDetachShader;
+static PFNGLDISABLEVERTEXATTRIBARRAYPROC                      pglDisableVertexAttribArray;
+static PFNGLENABLEVERTEXATTRIBARRAYPROC                       pglEnableVertexAttribArray;
+static PFNGLGETACTIVEATTRIBPROC                               pglGetActiveAttrib;
+static PFNGLGETACTIVEUNIFORMPROC                              pglGetActiveUniform;
+static PFNGLGETATTACHEDSHADERSPROC                            pglGetAttachedShaders;
+static PFNGLGETATTRIBLOCATIONPROC                             pglGetAttribLocation;
+static PFNGLGETPROGRAMIVPROC                                  pglGetProgramiv;
+static PFNGLGETPROGRAMINFOLOGPROC                             pglGetProgramInfoLog;
+static PFNGLGETSHADERIVPROC                                   pglGetShaderiv;
+static PFNGLGETSHADERINFOLOGPROC                              pglGetShaderInfoLog;
+static PFNGLGETSHADERSOURCEPROC                               pglGetShaderSource;
+static PFNGLGETUNIFORMLOCATIONPROC                            pglGetUniformLocation;
+static PFNGLGETUNIFORMFVPROC                                  pglGetUniformfv;
+static PFNGLGETUNIFORMIVPROC                                  pglGetUniformiv;
+static PFNGLGETVERTEXATTRIBDVPROC                             pglGetVertexAttribdv;
+static PFNGLGETVERTEXATTRIBFVPROC                             pglGetVertexAttribfv;
+static PFNGLGETVERTEXATTRIBIVPROC                             pglGetVertexAttribiv;
+static PFNGLGETVERTEXATTRIBPOINTERVPROC                       pglGetVertexAttribPointerv;
+static PFNGLISPROGRAMPROC                                     pglIsProgram;
+static PFNGLISSHADERPROC                                      pglIsShader;
+static PFNGLLINKPROGRAMPROC                                   pglLinkProgram;
+static PFNGLSHADERSOURCEPROC                                  pglShaderSource;
+static PFNGLUSEPROGRAMPROC                                    pglUseProgram;
+static PFNGLUNIFORM1FPROC                                     pglUniform1f;
+static PFNGLUNIFORM2FPROC                                     pglUniform2f;
+static PFNGLUNIFORM3FPROC                                     pglUniform3f;
+static PFNGLUNIFORM4FPROC                                     pglUniform4f;
+static PFNGLUNIFORM1IPROC                                     pglUniform1i;
+static PFNGLUNIFORM2IPROC                                     pglUniform2i;
+static PFNGLUNIFORM3IPROC                                     pglUniform3i;
+static PFNGLUNIFORM4IPROC                                     pglUniform4i;
+static PFNGLUNIFORM1FVPROC                                    pglUniform1fv;
+static PFNGLUNIFORM2FVPROC                                    pglUniform2fv;
+static PFNGLUNIFORM3FVPROC                                    pglUniform3fv;
+static PFNGLUNIFORM4FVPROC                                    pglUniform4fv;
+static PFNGLUNIFORM1IVPROC                                    pglUniform1iv;
+static PFNGLUNIFORM2IVPROC                                    pglUniform2iv;
+static PFNGLUNIFORM3IVPROC                                    pglUniform3iv;
+static PFNGLUNIFORM4IVPROC                                    pglUniform4iv;
+static PFNGLUNIFORMMATRIX2FVPROC                              pglUniformMatrix2fv;
+static PFNGLUNIFORMMATRIX3FVPROC                              pglUniformMatrix3fv;
+static PFNGLUNIFORMMATRIX4FVPROC                              pglUniformMatrix4fv;
+static PFNGLVALIDATEPROGRAMPROC                               pglValidateProgram;
+static PFNGLVERTEXATTRIB1DPROC                                pglVertexAttrib1d;
+static PFNGLVERTEXATTRIB1DVPROC                               pglVertexAttrib1dv;
+static PFNGLVERTEXATTRIB1FPROC                                pglVertexAttrib1f;
+static PFNGLVERTEXATTRIB1FVPROC                               pglVertexAttrib1fv;
+static PFNGLVERTEXATTRIB1SPROC                                pglVertexAttrib1s;
+static PFNGLVERTEXATTRIB1SVPROC                               pglVertexAttrib1sv;
+static PFNGLVERTEXATTRIB2DPROC                                pglVertexAttrib2d;
+static PFNGLVERTEXATTRIB2DVPROC                               pglVertexAttrib2dv;
+static PFNGLVERTEXATTRIB2FPROC                                pglVertexAttrib2f;
+static PFNGLVERTEXATTRIB2FVPROC                               pglVertexAttrib2fv;
+static PFNGLVERTEXATTRIB2SPROC                                pglVertexAttrib2s;
+static PFNGLVERTEXATTRIB2SVPROC                               pglVertexAttrib2sv;
+static PFNGLVERTEXATTRIB3DPROC                                pglVertexAttrib3d;
+static PFNGLVERTEXATTRIB3DVPROC                               pglVertexAttrib3dv;
+static PFNGLVERTEXATTRIB3FPROC                                pglVertexAttrib3f;
+static PFNGLVERTEXATTRIB3FVPROC                               pglVertexAttrib3fv;
+static PFNGLVERTEXATTRIB3SPROC                                pglVertexAttrib3s;
+static PFNGLVERTEXATTRIB3SVPROC                               pglVertexAttrib3sv;
+static PFNGLVERTEXATTRIB4NBVPROC                              pglVertexAttrib4Nbv;
+static PFNGLVERTEXATTRIB4NIVPROC                              pglVertexAttrib4Niv;
+static PFNGLVERTEXATTRIB4NSVPROC                              pglVertexAttrib4Nsv;
+static PFNGLVERTEXATTRIB4NUBPROC                              pglVertexAttrib4Nub;
+static PFNGLVERTEXATTRIB4NUBVPROC                             pglVertexAttrib4Nubv;
+static PFNGLVERTEXATTRIB4NUIVPROC                             pglVertexAttrib4Nuiv;
+static PFNGLVERTEXATTRIB4NUSVPROC                             pglVertexAttrib4Nusv;
+static PFNGLVERTEXATTRIB4BVPROC                               pglVertexAttrib4bv;
+static PFNGLVERTEXATTRIB4DPROC                                pglVertexAttrib4d;
+static PFNGLVERTEXATTRIB4DVPROC                               pglVertexAttrib4dv;
+static PFNGLVERTEXATTRIB4FPROC                                pglVertexAttrib4f;
+static PFNGLVERTEXATTRIB4FVPROC                               pglVertexAttrib4fv;
+static PFNGLVERTEXATTRIB4IVPROC                               pglVertexAttrib4iv;
+static PFNGLVERTEXATTRIB4SPROC                                pglVertexAttrib4s;
+static PFNGLVERTEXATTRIB4SVPROC                               pglVertexAttrib4sv;
+static PFNGLVERTEXATTRIB4UBVPROC                              pglVertexAttrib4ubv;
+static PFNGLVERTEXATTRIB4UIVPROC                              pglVertexAttrib4uiv;
+static PFNGLVERTEXATTRIB4USVPROC                              pglVertexAttrib4usv;
+static PFNGLVERTEXATTRIBPOINTERPROC                           pglVertexAttribPointer;
+static PFNGLUNIFORMMATRIX2X3FVPROC                            pglUniformMatrix2x3fv;
+static PFNGLUNIFORMMATRIX3X2FVPROC                            pglUniformMatrix3x2fv;
+static PFNGLUNIFORMMATRIX2X4FVPROC                            pglUniformMatrix2x4fv;
+static PFNGLUNIFORMMATRIX4X2FVPROC                            pglUniformMatrix4x2fv;
+static PFNGLUNIFORMMATRIX3X4FVPROC                            pglUniformMatrix3x4fv;
+static PFNGLUNIFORMMATRIX4X3FVPROC                            pglUniformMatrix4x3fv;
+static PFNGLCOLORMASKIPROC                                    pglColorMaski;
+static PFNGLGETBOOLEANI_VPROC                                 pglGetBooleani_v;
+static PFNGLGETINTEGERI_VPROC                                 pglGetIntegeri_v;
+static PFNGLENABLEIPROC                                       pglEnablei;
+static PFNGLDISABLEIPROC                                      pglDisablei;
+static PFNGLISENABLEDIPROC                                    pglIsEnabledi;
+static PFNGLBEGINTRANSFORMFEEDBACKPROC                        pglBeginTransformFeedback;
+static PFNGLENDTRANSFORMFEEDBACKPROC                          pglEndTransformFeedback;
+static PFNGLBINDBUFFERRANGEPROC                               pglBindBufferRange;
+static PFNGLBINDBUFFERBASEPROC                                pglBindBufferBase;
+static PFNGLTRANSFORMFEEDBACKVARYINGSPROC                     pglTransformFeedbackVaryings;
+static PFNGLGETTRANSFORMFEEDBACKVARYINGPROC                   pglGetTransformFeedbackVarying;
+static PFNGLCLAMPCOLORPROC                                    pglClampColor;
+static PFNGLBEGINCONDITIONALRENDERPROC                        pglBeginConditionalRender;
+static PFNGLENDCONDITIONALRENDERPROC                          pglEndConditionalRender;
+static PFNGLVERTEXATTRIBIPOINTERPROC                          pglVertexAttribIPointer;
+static PFNGLGETVERTEXATTRIBIIVPROC                            pglGetVertexAttribIiv;
+static PFNGLGETVERTEXATTRIBIUIVPROC                           pglGetVertexAttribIuiv;
+static PFNGLVERTEXATTRIBI1IPROC                               pglVertexAttribI1i;
+static PFNGLVERTEXATTRIBI2IPROC                               pglVertexAttribI2i;
+static PFNGLVERTEXATTRIBI3IPROC                               pglVertexAttribI3i;
+static PFNGLVERTEXATTRIBI4IPROC                               pglVertexAttribI4i;
+static PFNGLVERTEXATTRIBI1UIPROC                              pglVertexAttribI1ui;
+static PFNGLVERTEXATTRIBI2UIPROC                              pglVertexAttribI2ui;
+static PFNGLVERTEXATTRIBI3UIPROC                              pglVertexAttribI3ui;
+static PFNGLVERTEXATTRIBI4UIPROC                              pglVertexAttribI4ui;
+static PFNGLVERTEXATTRIBI1IVPROC                              pglVertexAttribI1iv;
+static PFNGLVERTEXATTRIBI2IVPROC                              pglVertexAttribI2iv;
+static PFNGLVERTEXATTRIBI3IVPROC                              pglVertexAttribI3iv;
+static PFNGLVERTEXATTRIBI4IVPROC                              pglVertexAttribI4iv;
+static PFNGLVERTEXATTRIBI1UIVPROC                             pglVertexAttribI1uiv;
+static PFNGLVERTEXATTRIBI2UIVPROC                             pglVertexAttribI2uiv;
+static PFNGLVERTEXATTRIBI3UIVPROC                             pglVertexAttribI3uiv;
+static PFNGLVERTEXATTRIBI4UIVPROC                             pglVertexAttribI4uiv;
+static PFNGLVERTEXATTRIBI4BVPROC                              pglVertexAttribI4bv;
+static PFNGLVERTEXATTRIBI4SVPROC                              pglVertexAttribI4sv;
+static PFNGLVERTEXATTRIBI4UBVPROC                             pglVertexAttribI4ubv;
+static PFNGLVERTEXATTRIBI4USVPROC                             pglVertexAttribI4usv;
+static PFNGLGETUNIFORMUIVPROC                                 pglGetUniformuiv;
+static PFNGLBINDFRAGDATALOCATIONPROC                          pglBindFragDataLocation;
+static PFNGLGETFRAGDATALOCATIONPROC                           pglGetFragDataLocation;
+static PFNGLUNIFORM1UIPROC                                    pglUniform1ui;
+static PFNGLUNIFORM2UIPROC                                    pglUniform2ui;
+static PFNGLUNIFORM3UIPROC                                    pglUniform3ui;
+static PFNGLUNIFORM4UIPROC                                    pglUniform4ui;
+static PFNGLUNIFORM1UIVPROC                                   pglUniform1uiv;
+static PFNGLUNIFORM2UIVPROC                                   pglUniform2uiv;
+static PFNGLUNIFORM3UIVPROC                                   pglUniform3uiv;
+static PFNGLUNIFORM4UIVPROC                                   pglUniform4uiv;
+static PFNGLTEXPARAMETERIIVPROC                               pglTexParameterIiv;
+static PFNGLTEXPARAMETERIUIVPROC                              pglTexParameterIuiv;
+static PFNGLGETTEXPARAMETERIIVPROC                            pglGetTexParameterIiv;
+static PFNGLGETTEXPARAMETERIUIVPROC                           pglGetTexParameterIuiv;
+static PFNGLCLEARBUFFERIVPROC                                 pglClearBufferiv;
+static PFNGLCLEARBUFFERUIVPROC                                pglClearBufferuiv;
+static PFNGLCLEARBUFFERFVPROC                                 pglClearBufferfv;
+static PFNGLCLEARBUFFERFIPROC                                 pglClearBufferfi;
+static PFNGLGETSTRINGIPROC                                    pglGetStringi;
+static PFNGLISRENDERBUFFERPROC                                pglIsRenderbuffer;
+static PFNGLBINDRENDERBUFFERPROC                              pglBindRenderbuffer;
+static PFNGLDELETERENDERBUFFERSPROC                           pglDeleteRenderbuffers;
+static PFNGLGENRENDERBUFFERSPROC                              pglGenRenderbuffers;
+static PFNGLRENDERBUFFERSTORAGEPROC                           pglRenderbufferStorage;
+static PFNGLGETRENDERBUFFERPARAMETERIVPROC                    pglGetRenderbufferParameteriv;
+static PFNGLISFRAMEBUFFERPROC                                 pglIsFramebuffer;
+static PFNGLBINDFRAMEBUFFERPROC                               pglBindFramebuffer;
+static PFNGLDELETEFRAMEBUFFERSPROC                            pglDeleteFramebuffers;
+static PFNGLGENFRAMEBUFFERSPROC                               pglGenFramebuffers;
+static PFNGLCHECKFRAMEBUFFERSTATUSPROC                        pglCheckFramebufferStatus;
+static PFNGLFRAMEBUFFERTEXTURE1DPROC                          pglFramebufferTexture1D;
+static PFNGLFRAMEBUFFERTEXTURE2DPROC                          pglFramebufferTexture2D;
+static PFNGLFRAMEBUFFERTEXTURE3DPROC                          pglFramebufferTexture3D;
+static PFNGLFRAMEBUFFERRENDERBUFFERPROC                       pglFramebufferRenderbuffer;
+static PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC           pglGetFramebufferAttachmentParameteriv;
+static PFNGLGENERATEMIPMAPPROC                                pglGenerateMipmap;
+static PFNGLBLITFRAMEBUFFERPROC                               pglBlitFramebuffer;
+static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC                pglRenderbufferStorageMultisample;
+static PFNGLFRAMEBUFFERTEXTURELAYERPROC                       pglFramebufferTextureLayer;
+static PFNGLMAPBUFFERRANGEPROC                                pglMapBufferRange;
+static PFNGLFLUSHMAPPEDBUFFERRANGEPROC                        pglFlushMappedBufferRange;
+static PFNGLBINDVERTEXARRAYPROC                               pglBindVertexArray;
+static PFNGLDELETEVERTEXARRAYSPROC                            pglDeleteVertexArrays;
+static PFNGLGENVERTEXARRAYSPROC                               pglGenVertexArrays;
+static PFNGLISVERTEXARRAYPROC                                 pglIsVertexArray;
+static PFNGLDRAWARRAYSINSTANCEDPROC                           pglDrawArraysInstanced;
+static PFNGLDRAWELEMENTSINSTANCEDPROC                         pglDrawElementsInstanced;
+static PFNGLTEXBUFFERPROC                                     pglTexBuffer;
+static PFNGLPRIMITIVERESTARTINDEXPROC                         pglPrimitiveRestartIndex;
+static PFNGLCOPYBUFFERSUBDATAPROC                             pglCopyBufferSubData;
+static PFNGLGETUNIFORMINDICESPROC                             pglGetUniformIndices;
+static PFNGLGETACTIVEUNIFORMSIVPROC                           pglGetActiveUniformsiv;
+static PFNGLGETACTIVEUNIFORMNAMEPROC                          pglGetActiveUniformName;
+static PFNGLGETUNIFORMBLOCKINDEXPROC                          pglGetUniformBlockIndex;
+static PFNGLGETACTIVEUNIFORMBLOCKIVPROC                       pglGetActiveUniformBlockiv;
+static PFNGLGETACTIVEUNIFORMBLOCKNAMEPROC                     pglGetActiveUniformBlockName;
+static PFNGLUNIFORMBLOCKBINDINGPROC                           pglUniformBlockBinding;
+static PFNGLDRAWELEMENTSBASEVERTEXPROC                        pglDrawElementsBaseVertex;
+static PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC                   pglDrawRangeElementsBaseVertex;
+static PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC               pglDrawElementsInstancedBaseVertex;
+static PFNGLMULTIDRAWELEMENTSBASEVERTEXPROC                   pglMultiDrawElementsBaseVertex;
+static PFNGLPROVOKINGVERTEXPROC                               pglProvokingVertex;
+static PFNGLFENCESYNCPROC                                     pglFenceSync;
+static PFNGLISSYNCPROC                                        pglIsSync;
+static PFNGLDELETESYNCPROC                                    pglDeleteSync;
+static PFNGLCLIENTWAITSYNCPROC                                pglClientWaitSync;
+static PFNGLWAITSYNCPROC                                      pglWaitSync;
+static PFNGLGETINTEGER64VPROC                                 pglGetInteger64v;
+static PFNGLGETSYNCIVPROC                                     pglGetSynciv;
+static PFNGLGETINTEGER64I_VPROC                               pglGetInteger64i_v;
+static PFNGLGETBUFFERPARAMETERI64VPROC                        pglGetBufferParameteri64v;
+static PFNGLFRAMEBUFFERTEXTUREPROC                            pglFramebufferTexture;
+static PFNGLTEXIMAGE2DMULTISAMPLEPROC                         pglTexImage2DMultisample;
+static PFNGLTEXIMAGE3DMULTISAMPLEPROC                         pglTexImage3DMultisample;
+static PFNGLGETMULTISAMPLEFVPROC                              pglGetMultisamplefv;
+static PFNGLSAMPLEMASKIPROC                                   pglSampleMaski;
+static PFNGLBINDFRAGDATALOCATIONINDEXEDPROC                   pglBindFragDataLocationIndexed;
+static PFNGLGETFRAGDATAINDEXPROC                              pglGetFragDataIndex;
+static PFNGLGENSAMPLERSPROC                                   pglGenSamplers;
+static PFNGLDELETESAMPLERSPROC                                pglDeleteSamplers;
+static PFNGLISSAMPLERPROC                                     pglIsSampler;
+static PFNGLBINDSAMPLERPROC                                   pglBindSampler;
+static PFNGLSAMPLERPARAMETERIPROC                             pglSamplerParameteri;
+static PFNGLSAMPLERPARAMETERIVPROC                            pglSamplerParameteriv;
+static PFNGLSAMPLERPARAMETERFPROC                             pglSamplerParameterf;
+static PFNGLSAMPLERPARAMETERFVPROC                            pglSamplerParameterfv;
+static PFNGLSAMPLERPARAMETERIIVPROC                           pglSamplerParameterIiv;
+static PFNGLSAMPLERPARAMETERIUIVPROC                          pglSamplerParameterIuiv;
+static PFNGLGETSAMPLERPARAMETERIVPROC                         pglGetSamplerParameteriv;
+static PFNGLGETSAMPLERPARAMETERIIVPROC                        pglGetSamplerParameterIiv;
+static PFNGLGETSAMPLERPARAMETERFVPROC                         pglGetSamplerParameterfv;
+static PFNGLGETSAMPLERPARAMETERIUIVPROC                       pglGetSamplerParameterIuiv;
+static PFNGLQUERYCOUNTERPROC                                  pglQueryCounter;
+static PFNGLGETQUERYOBJECTI64VPROC                            pglGetQueryObjecti64v;
+static PFNGLGETQUERYOBJECTUI64VPROC                           pglGetQueryObjectui64v;
+static PFNGLVERTEXATTRIBDIVISORPROC                           pglVertexAttribDivisor;
+static PFNGLVERTEXATTRIBP1UIPROC                              pglVertexAttribP1ui;
+static PFNGLVERTEXATTRIBP1UIVPROC                             pglVertexAttribP1uiv;
+static PFNGLVERTEXATTRIBP2UIPROC                              pglVertexAttribP2ui;
+static PFNGLVERTEXATTRIBP2UIVPROC                             pglVertexAttribP2uiv;
+static PFNGLVERTEXATTRIBP3UIPROC                              pglVertexAttribP3ui;
+static PFNGLVERTEXATTRIBP3UIVPROC                             pglVertexAttribP3uiv;
+static PFNGLVERTEXATTRIBP4UIPROC                              pglVertexAttribP4ui;
+static PFNGLVERTEXATTRIBP4UIVPROC                             pglVertexAttribP4uiv;
+static PFNGLMINSAMPLESHADINGPROC                              pglMinSampleShading;
+static PFNGLBLENDEQUATIONIPROC                                pglBlendEquationi;
+static PFNGLBLENDEQUATIONSEPARATEIPROC                        pglBlendEquationSeparatei;
+static PFNGLBLENDFUNCIPROC                                    pglBlendFunci;
+static PFNGLBLENDFUNCSEPARATEIPROC                            pglBlendFuncSeparatei;
+static PFNGLDRAWARRAYSINDIRECTPROC                            pglDrawArraysIndirect;
+static PFNGLDRAWELEMENTSINDIRECTPROC                          pglDrawElementsIndirect;
+static PFNGLUNIFORM1DPROC                                     pglUniform1d;
+static PFNGLUNIFORM2DPROC                                     pglUniform2d;
+static PFNGLUNIFORM3DPROC                                     pglUniform3d;
+static PFNGLUNIFORM4DPROC                                     pglUniform4d;
+static PFNGLUNIFORM1DVPROC                                    pglUniform1dv;
+static PFNGLUNIFORM2DVPROC                                    pglUniform2dv;
+static PFNGLUNIFORM3DVPROC                                    pglUniform3dv;
+static PFNGLUNIFORM4DVPROC                                    pglUniform4dv;
+static PFNGLUNIFORMMATRIX2DVPROC                              pglUniformMatrix2dv;
+static PFNGLUNIFORMMATRIX3DVPROC                              pglUniformMatrix3dv;
+static PFNGLUNIFORMMATRIX4DVPROC                              pglUniformMatrix4dv;
+static PFNGLUNIFORMMATRIX2X3DVPROC                            pglUniformMatrix2x3dv;
+static PFNGLUNIFORMMATRIX2X4DVPROC                            pglUniformMatrix2x4dv;
+static PFNGLUNIFORMMATRIX3X2DVPROC                            pglUniformMatrix3x2dv;
+static PFNGLUNIFORMMATRIX3X4DVPROC                            pglUniformMatrix3x4dv;
+static PFNGLUNIFORMMATRIX4X2DVPROC                            pglUniformMatrix4x2dv;
+static PFNGLUNIFORMMATRIX4X3DVPROC                            pglUniformMatrix4x3dv;
+static PFNGLGETUNIFORMDVPROC                                  pglGetUniformdv;
+static PFNGLGETSUBROUTINEUNIFORMLOCATIONPROC                  pglGetSubroutineUniformLocation;
+static PFNGLGETSUBROUTINEINDEXPROC                            pglGetSubroutineIndex;
+static PFNGLGETACTIVESUBROUTINEUNIFORMIVPROC                  pglGetActiveSubroutineUniformiv;
+static PFNGLGETACTIVESUBROUTINEUNIFORMNAMEPROC                pglGetActiveSubroutineUniformName;
+static PFNGLGETACTIVESUBROUTINENAMEPROC                       pglGetActiveSubroutineName;
+static PFNGLUNIFORMSUBROUTINESUIVPROC                         pglUniformSubroutinesuiv;
+static PFNGLGETUNIFORMSUBROUTINEUIVPROC                       pglGetUniformSubroutineuiv;
+static PFNGLGETPROGRAMSTAGEIVPROC                             pglGetProgramStageiv;
+static PFNGLPATCHPARAMETERIPROC                               pglPatchParameteri;
+static PFNGLPATCHPARAMETERFVPROC                              pglPatchParameterfv;
+static PFNGLBINDTRANSFORMFEEDBACKPROC                         pglBindTransformFeedback;
+static PFNGLDELETETRANSFORMFEEDBACKSPROC                      pglDeleteTransformFeedbacks;
+static PFNGLGENTRANSFORMFEEDBACKSPROC                         pglGenTransformFeedbacks;
+static PFNGLISTRANSFORMFEEDBACKPROC                           pglIsTransformFeedback;
+static PFNGLPAUSETRANSFORMFEEDBACKPROC                        pglPauseTransformFeedback;
+static PFNGLRESUMETRANSFORMFEEDBACKPROC                       pglResumeTransformFeedback;
+static PFNGLDRAWTRANSFORMFEEDBACKPROC                         pglDrawTransformFeedback;
+static PFNGLDRAWTRANSFORMFEEDBACKSTREAMPROC                   pglDrawTransformFeedbackStream;
+static PFNGLBEGINQUERYINDEXEDPROC                             pglBeginQueryIndexed;
+static PFNGLENDQUERYINDEXEDPROC                               pglEndQueryIndexed;
+static PFNGLGETQUERYINDEXEDIVPROC                             pglGetQueryIndexediv;
+static PFNGLRELEASESHADERCOMPILERPROC                         pglReleaseShaderCompiler;
+static PFNGLSHADERBINARYPROC                                  pglShaderBinary;
+static PFNGLGETSHADERPRECISIONFORMATPROC                      pglGetShaderPrecisionFormat;
+static PFNGLDEPTHRANGEFPROC                                   pglDepthRangef;
+static PFNGLCLEARDEPTHFPROC                                   pglClearDepthf;
+static PFNGLGETPROGRAMBINARYPROC                              pglGetProgramBinary;
+static PFNGLPROGRAMBINARYPROC                                 pglProgramBinary;
+static PFNGLPROGRAMPARAMETERIPROC                             pglProgramParameteri;
+static PFNGLUSEPROGRAMSTAGESPROC                              pglUseProgramStages;
+static PFNGLACTIVESHADERPROGRAMPROC                           pglActiveShaderProgram;
+static PFNGLCREATESHADERPROGRAMVPROC                          pglCreateShaderProgramv;
+static PFNGLBINDPROGRAMPIPELINEPROC                           pglBindProgramPipeline;
+static PFNGLDELETEPROGRAMPIPELINESPROC                        pglDeleteProgramPipelines;
+static PFNGLGENPROGRAMPIPELINESPROC                           pglGenProgramPipelines;
+static PFNGLISPROGRAMPIPELINEPROC                             pglIsProgramPipeline;
+static PFNGLGETPROGRAMPIPELINEIVPROC                          pglGetProgramPipelineiv;
+static PFNGLPROGRAMUNIFORM1IPROC                              pglProgramUniform1i;
+static PFNGLPROGRAMUNIFORM1IVPROC                             pglProgramUniform1iv;
+static PFNGLPROGRAMUNIFORM1FPROC                              pglProgramUniform1f;
+static PFNGLPROGRAMUNIFORM1FVPROC                             pglProgramUniform1fv;
+static PFNGLPROGRAMUNIFORM1DPROC                              pglProgramUniform1d;
+static PFNGLPROGRAMUNIFORM1DVPROC                             pglProgramUniform1dv;
+static PFNGLPROGRAMUNIFORM1UIPROC                             pglProgramUniform1ui;
+static PFNGLPROGRAMUNIFORM1UIVPROC                            pglProgramUniform1uiv;
+static PFNGLPROGRAMUNIFORM2IPROC                              pglProgramUniform2i;
+static PFNGLPROGRAMUNIFORM2IVPROC                             pglProgramUniform2iv;
+static PFNGLPROGRAMUNIFORM2FPROC                              pglProgramUniform2f;
+static PFNGLPROGRAMUNIFORM2FVPROC                             pglProgramUniform2fv;
+static PFNGLPROGRAMUNIFORM2DPROC                              pglProgramUniform2d;
+static PFNGLPROGRAMUNIFORM2DVPROC                             pglProgramUniform2dv;
+static PFNGLPROGRAMUNIFORM2UIPROC                             pglProgramUniform2ui;
+static PFNGLPROGRAMUNIFORM2UIVPROC                            pglProgramUniform2uiv;
+static PFNGLPROGRAMUNIFORM3IPROC                              pglProgramUniform3i;
+static PFNGLPROGRAMUNIFORM3IVPROC                             pglProgramUniform3iv;
+static PFNGLPROGRAMUNIFORM3FPROC                              pglProgramUniform3f;
+static PFNGLPROGRAMUNIFORM3FVPROC                             pglProgramUniform3fv;
+static PFNGLPROGRAMUNIFORM3DPROC                              pglProgramUniform3d;
+static PFNGLPROGRAMUNIFORM3DVPROC                             pglProgramUniform3dv;
+static PFNGLPROGRAMUNIFORM3UIPROC                             pglProgramUniform3ui;
+static PFNGLPROGRAMUNIFORM3UIVPROC                            pglProgramUniform3uiv;
+static PFNGLPROGRAMUNIFORM4IPROC                              pglProgramUniform4i;
+static PFNGLPROGRAMUNIFORM4IVPROC                             pglProgramUniform4iv;
+static PFNGLPROGRAMUNIFORM4FPROC                              pglProgramUniform4f;
+static PFNGLPROGRAMUNIFORM4FVPROC                             pglProgramUniform4fv;
+static PFNGLPROGRAMUNIFORM4DPROC                              pglProgramUniform4d;
+static PFNGLPROGRAMUNIFORM4DVPROC                             pglProgramUniform4dv;
+static PFNGLPROGRAMUNIFORM4UIPROC                             pglProgramUniform4ui;
+static PFNGLPROGRAMUNIFORM4UIVPROC                            pglProgramUniform4uiv;
+static PFNGLPROGRAMUNIFORMMATRIX2FVPROC                       pglProgramUniformMatrix2fv;
+static PFNGLPROGRAMUNIFORMMATRIX3FVPROC                       pglProgramUniformMatrix3fv;
+static PFNGLPROGRAMUNIFORMMATRIX4FVPROC                       pglProgramUniformMatrix4fv;
+static PFNGLPROGRAMUNIFORMMATRIX2DVPROC                       pglProgramUniformMatrix2dv;
+static PFNGLPROGRAMUNIFORMMATRIX3DVPROC                       pglProgramUniformMatrix3dv;
+static PFNGLPROGRAMUNIFORMMATRIX4DVPROC                       pglProgramUniformMatrix4dv;
+static PFNGLPROGRAMUNIFORMMATRIX2X3FVPROC                     pglProgramUniformMatrix2x3fv;
+static PFNGLPROGRAMUNIFORMMATRIX3X2FVPROC                     pglProgramUniformMatrix3x2fv;
+static PFNGLPROGRAMUNIFORMMATRIX2X4FVPROC                     pglProgramUniformMatrix2x4fv;
+static PFNGLPROGRAMUNIFORMMATRIX4X2FVPROC                     pglProgramUniformMatrix4x2fv;
+static PFNGLPROGRAMUNIFORMMATRIX3X4FVPROC                     pglProgramUniformMatrix3x4fv;
+static PFNGLPROGRAMUNIFORMMATRIX4X3FVPROC                     pglProgramUniformMatrix4x3fv;
+static PFNGLPROGRAMUNIFORMMATRIX2X3DVPROC                     pglProgramUniformMatrix2x3dv;
+static PFNGLPROGRAMUNIFORMMATRIX3X2DVPROC                     pglProgramUniformMatrix3x2dv;
+static PFNGLPROGRAMUNIFORMMATRIX2X4DVPROC                     pglProgramUniformMatrix2x4dv;
+static PFNGLPROGRAMUNIFORMMATRIX4X2DVPROC                     pglProgramUniformMatrix4x2dv;
+static PFNGLPROGRAMUNIFORMMATRIX3X4DVPROC                     pglProgramUniformMatrix3x4dv;
+static PFNGLPROGRAMUNIFORMMATRIX4X3DVPROC                     pglProgramUniformMatrix4x3dv;
+static PFNGLVALIDATEPROGRAMPIPELINEPROC                       pglValidateProgramPipeline;
+static PFNGLGETPROGRAMPIPELINEINFOLOGPROC                     pglGetProgramPipelineInfoLog;
+static PFNGLVERTEXATTRIBL1DPROC                               pglVertexAttribL1d;
+static PFNGLVERTEXATTRIBL2DPROC                               pglVertexAttribL2d;
+static PFNGLVERTEXATTRIBL3DPROC                               pglVertexAttribL3d;
+static PFNGLVERTEXATTRIBL4DPROC                               pglVertexAttribL4d;
+static PFNGLVERTEXATTRIBL1DVPROC                              pglVertexAttribL1dv;
+static PFNGLVERTEXATTRIBL2DVPROC                              pglVertexAttribL2dv;
+static PFNGLVERTEXATTRIBL3DVPROC                              pglVertexAttribL3dv;
+static PFNGLVERTEXATTRIBL4DVPROC                              pglVertexAttribL4dv;
+static PFNGLVERTEXATTRIBLPOINTERPROC                          pglVertexAttribLPointer;
+static PFNGLGETVERTEXATTRIBLDVPROC                            pglGetVertexAttribLdv;
+static PFNGLVIEWPORTARRAYVPROC                                pglViewportArrayv;
+static PFNGLVIEWPORTINDEXEDFPROC                              pglViewportIndexedf;
+static PFNGLVIEWPORTINDEXEDFVPROC                             pglViewportIndexedfv;
+static PFNGLSCISSORARRAYVPROC                                 pglScissorArrayv;
+static PFNGLSCISSORINDEXEDPROC                                pglScissorIndexed;
+static PFNGLSCISSORINDEXEDVPROC                               pglScissorIndexedv;
+static PFNGLDEPTHRANGEARRAYVPROC                              pglDepthRangeArrayv;
+static PFNGLDEPTHRANGEINDEXEDPROC                             pglDepthRangeIndexed;
+static PFNGLGETFLOATI_VPROC                                   pglGetFloati_v;
+static PFNGLGETDOUBLEI_VPROC                                  pglGetDoublei_v;
+static PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEPROC               pglDrawArraysInstancedBaseInstance;
+static PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC             pglDrawElementsInstancedBaseInstance;
+static PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC   pglDrawElementsInstancedBaseVertexBaseInstance;
+static PFNGLGETINTERNALFORMATIVPROC                           pglGetInternalformativ;
+static PFNGLGETACTIVEATOMICCOUNTERBUFFERIVPROC                pglGetActiveAtomicCounterBufferiv;
+static PFNGLBINDIMAGETEXTUREPROC                              pglBindImageTexture;
+static PFNGLMEMORYBARRIERPROC                                 pglMemoryBarrier;
+static PFNGLTEXSTORAGE1DPROC                                  pglTexStorage1D;
+static PFNGLTEXSTORAGE2DPROC                                  pglTexStorage2D;
+static PFNGLTEXSTORAGE3DPROC                                  pglTexStorage3D;
+static PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC                pglDrawTransformFeedbackInstanced;
+static PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC          pglDrawTransformFeedbackStreamInstanced;
+static PFNGLCLEARBUFFERDATAPROC                               pglClearBufferData;
+static PFNGLCLEARBUFFERSUBDATAPROC                            pglClearBufferSubData;
+static PFNGLDISPATCHCOMPUTEPROC                               pglDispatchCompute;
+static PFNGLDISPATCHCOMPUTEINDIRECTPROC                       pglDispatchComputeIndirect;
+static PFNGLCOPYIMAGESUBDATAPROC                              pglCopyImageSubData;
+static PFNGLFRAMEBUFFERPARAMETERIPROC                         pglFramebufferParameteri;
+static PFNGLGETFRAMEBUFFERPARAMETERIVPROC                     pglGetFramebufferParameteriv;
+static PFNGLGETINTERNALFORMATI64VPROC                         pglGetInternalformati64v;
+static PFNGLINVALIDATETEXSUBIMAGEPROC                         pglInvalidateTexSubImage;
+static PFNGLINVALIDATETEXIMAGEPROC                            pglInvalidateTexImage;
+static PFNGLINVALIDATEBUFFERSUBDATAPROC                       pglInvalidateBufferSubData;
+static PFNGLINVALIDATEBUFFERDATAPROC                          pglInvalidateBufferData;
+static PFNGLINVALIDATEFRAMEBUFFERPROC                         pglInvalidateFramebuffer;
+static PFNGLINVALIDATESUBFRAMEBUFFERPROC                      pglInvalidateSubFramebuffer;
+static PFNGLMULTIDRAWARRAYSINDIRECTPROC                       pglMultiDrawArraysIndirect;
+static PFNGLMULTIDRAWELEMENTSINDIRECTPROC                     pglMultiDrawElementsIndirect;
+static PFNGLGETPROGRAMINTERFACEIVPROC                         pglGetProgramInterfaceiv;
+static PFNGLGETPROGRAMRESOURCEINDEXPROC                       pglGetProgramResourceIndex;
+static PFNGLGETPROGRAMRESOURCENAMEPROC                        pglGetProgramResourceName;
+static PFNGLGETPROGRAMRESOURCEIVPROC                          pglGetProgramResourceiv;
+static PFNGLGETPROGRAMRESOURCELOCATIONPROC                    pglGetProgramResourceLocation;
+static PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC               pglGetProgramResourceLocationIndex;
+static PFNGLSHADERSTORAGEBLOCKBINDINGPROC                     pglShaderStorageBlockBinding;
+static PFNGLTEXBUFFERRANGEPROC                                pglTexBufferRange;
+static PFNGLTEXSTORAGE2DMULTISAMPLEPROC                       pglTexStorage2DMultisample;
+static PFNGLTEXSTORAGE3DMULTISAMPLEPROC                       pglTexStorage3DMultisample;
+static PFNGLTEXTUREVIEWPROC                                   pglTextureView;
+static PFNGLBINDVERTEXBUFFERPROC                              pglBindVertexBuffer;
+static PFNGLVERTEXATTRIBFORMATPROC                            pglVertexAttribFormat;
+static PFNGLVERTEXATTRIBIFORMATPROC                           pglVertexAttribIFormat;
+static PFNGLVERTEXATTRIBLFORMATPROC                           pglVertexAttribLFormat;
+static PFNGLVERTEXATTRIBBINDINGPROC                           pglVertexAttribBinding;
+static PFNGLVERTEXBINDINGDIVISORPROC                          pglVertexBindingDivisor;
+static PFNGLDEBUGMESSAGECONTROLPROC                           pglDebugMessageControl;
+static PFNGLDEBUGMESSAGEINSERTPROC                            pglDebugMessageInsert;
+static PFNGLDEBUGMESSAGECALLBACKPROC                          pglDebugMessageCallback;
+static PFNGLGETDEBUGMESSAGELOGPROC                            pglGetDebugMessageLog;
+static PFNGLPUSHDEBUGGROUPPROC                                pglPushDebugGroup;
+static PFNGLPOPDEBUGGROUPPROC                                 pglPopDebugGroup;
+static PFNGLOBJECTLABELPROC                                   pglObjectLabel;
+static PFNGLGETOBJECTLABELPROC                                pglGetObjectLabel;
+static PFNGLOBJECTPTRLABELPROC                                pglObjectPtrLabel;
+static PFNGLGETOBJECTPTRLABELPROC                             pglGetObjectPtrLabel;
 
 //
 // load_procs loads all gl functions addresses into the pointers
@@ -887,6 +1076,195 @@ static void load_procs() {
 	pglVertexAttribP3uiv = (PFNGLVERTEXATTRIBP3UIVPROC)get_proc("glVertexAttribP3uiv"); 
 	pglVertexAttribP4ui = (PFNGLVERTEXATTRIBP4UIPROC)get_proc("glVertexAttribP4ui"); 
 	pglVertexAttribP4uiv = (PFNGLVERTEXATTRIBP4UIVPROC)get_proc("glVertexAttribP4uiv"); 
+	pglMinSampleShading = (PFNGLMINSAMPLESHADINGPROC)get_proc("glMinSampleShading"); 
+	pglBlendEquationi = (PFNGLBLENDEQUATIONIPROC)get_proc("glBlendEquationi"); 
+	pglBlendEquationSeparatei = (PFNGLBLENDEQUATIONSEPARATEIPROC)get_proc("glBlendEquationSeparatei"); 
+	pglBlendFunci = (PFNGLBLENDFUNCIPROC)get_proc("glBlendFunci"); 
+	pglBlendFuncSeparatei = (PFNGLBLENDFUNCSEPARATEIPROC)get_proc("glBlendFuncSeparatei"); 
+	pglDrawArraysIndirect = (PFNGLDRAWARRAYSINDIRECTPROC)get_proc("glDrawArraysIndirect"); 
+	pglDrawElementsIndirect = (PFNGLDRAWELEMENTSINDIRECTPROC)get_proc("glDrawElementsIndirect"); 
+	pglUniform1d = (PFNGLUNIFORM1DPROC)get_proc("glUniform1d"); 
+	pglUniform2d = (PFNGLUNIFORM2DPROC)get_proc("glUniform2d"); 
+	pglUniform3d = (PFNGLUNIFORM3DPROC)get_proc("glUniform3d"); 
+	pglUniform4d = (PFNGLUNIFORM4DPROC)get_proc("glUniform4d"); 
+	pglUniform1dv = (PFNGLUNIFORM1DVPROC)get_proc("glUniform1dv"); 
+	pglUniform2dv = (PFNGLUNIFORM2DVPROC)get_proc("glUniform2dv"); 
+	pglUniform3dv = (PFNGLUNIFORM3DVPROC)get_proc("glUniform3dv"); 
+	pglUniform4dv = (PFNGLUNIFORM4DVPROC)get_proc("glUniform4dv"); 
+	pglUniformMatrix2dv = (PFNGLUNIFORMMATRIX2DVPROC)get_proc("glUniformMatrix2dv"); 
+	pglUniformMatrix3dv = (PFNGLUNIFORMMATRIX3DVPROC)get_proc("glUniformMatrix3dv"); 
+	pglUniformMatrix4dv = (PFNGLUNIFORMMATRIX4DVPROC)get_proc("glUniformMatrix4dv"); 
+	pglUniformMatrix2x3dv = (PFNGLUNIFORMMATRIX2X3DVPROC)get_proc("glUniformMatrix2x3dv"); 
+	pglUniformMatrix2x4dv = (PFNGLUNIFORMMATRIX2X4DVPROC)get_proc("glUniformMatrix2x4dv"); 
+	pglUniformMatrix3x2dv = (PFNGLUNIFORMMATRIX3X2DVPROC)get_proc("glUniformMatrix3x2dv"); 
+	pglUniformMatrix3x4dv = (PFNGLUNIFORMMATRIX3X4DVPROC)get_proc("glUniformMatrix3x4dv"); 
+	pglUniformMatrix4x2dv = (PFNGLUNIFORMMATRIX4X2DVPROC)get_proc("glUniformMatrix4x2dv"); 
+	pglUniformMatrix4x3dv = (PFNGLUNIFORMMATRIX4X3DVPROC)get_proc("glUniformMatrix4x3dv"); 
+	pglGetUniformdv = (PFNGLGETUNIFORMDVPROC)get_proc("glGetUniformdv"); 
+	pglGetSubroutineUniformLocation = (PFNGLGETSUBROUTINEUNIFORMLOCATIONPROC)get_proc("glGetSubroutineUniformLocation"); 
+	pglGetSubroutineIndex = (PFNGLGETSUBROUTINEINDEXPROC)get_proc("glGetSubroutineIndex"); 
+	pglGetActiveSubroutineUniformiv = (PFNGLGETACTIVESUBROUTINEUNIFORMIVPROC)get_proc("glGetActiveSubroutineUniformiv"); 
+	pglGetActiveSubroutineUniformName = (PFNGLGETACTIVESUBROUTINEUNIFORMNAMEPROC)get_proc("glGetActiveSubroutineUniformName"); 
+	pglGetActiveSubroutineName = (PFNGLGETACTIVESUBROUTINENAMEPROC)get_proc("glGetActiveSubroutineName"); 
+	pglUniformSubroutinesuiv = (PFNGLUNIFORMSUBROUTINESUIVPROC)get_proc("glUniformSubroutinesuiv"); 
+	pglGetUniformSubroutineuiv = (PFNGLGETUNIFORMSUBROUTINEUIVPROC)get_proc("glGetUniformSubroutineuiv"); 
+	pglGetProgramStageiv = (PFNGLGETPROGRAMSTAGEIVPROC)get_proc("glGetProgramStageiv"); 
+	pglPatchParameteri = (PFNGLPATCHPARAMETERIPROC)get_proc("glPatchParameteri"); 
+	pglPatchParameterfv = (PFNGLPATCHPARAMETERFVPROC)get_proc("glPatchParameterfv"); 
+	pglBindTransformFeedback = (PFNGLBINDTRANSFORMFEEDBACKPROC)get_proc("glBindTransformFeedback"); 
+	pglDeleteTransformFeedbacks = (PFNGLDELETETRANSFORMFEEDBACKSPROC)get_proc("glDeleteTransformFeedbacks"); 
+	pglGenTransformFeedbacks = (PFNGLGENTRANSFORMFEEDBACKSPROC)get_proc("glGenTransformFeedbacks"); 
+	pglIsTransformFeedback = (PFNGLISTRANSFORMFEEDBACKPROC)get_proc("glIsTransformFeedback"); 
+	pglPauseTransformFeedback = (PFNGLPAUSETRANSFORMFEEDBACKPROC)get_proc("glPauseTransformFeedback"); 
+	pglResumeTransformFeedback = (PFNGLRESUMETRANSFORMFEEDBACKPROC)get_proc("glResumeTransformFeedback"); 
+	pglDrawTransformFeedback = (PFNGLDRAWTRANSFORMFEEDBACKPROC)get_proc("glDrawTransformFeedback"); 
+	pglDrawTransformFeedbackStream = (PFNGLDRAWTRANSFORMFEEDBACKSTREAMPROC)get_proc("glDrawTransformFeedbackStream"); 
+	pglBeginQueryIndexed = (PFNGLBEGINQUERYINDEXEDPROC)get_proc("glBeginQueryIndexed"); 
+	pglEndQueryIndexed = (PFNGLENDQUERYINDEXEDPROC)get_proc("glEndQueryIndexed"); 
+	pglGetQueryIndexediv = (PFNGLGETQUERYINDEXEDIVPROC)get_proc("glGetQueryIndexediv"); 
+	pglReleaseShaderCompiler = (PFNGLRELEASESHADERCOMPILERPROC)get_proc("glReleaseShaderCompiler"); 
+	pglShaderBinary = (PFNGLSHADERBINARYPROC)get_proc("glShaderBinary"); 
+	pglGetShaderPrecisionFormat = (PFNGLGETSHADERPRECISIONFORMATPROC)get_proc("glGetShaderPrecisionFormat"); 
+	pglDepthRangef = (PFNGLDEPTHRANGEFPROC)get_proc("glDepthRangef"); 
+	pglClearDepthf = (PFNGLCLEARDEPTHFPROC)get_proc("glClearDepthf"); 
+	pglGetProgramBinary = (PFNGLGETPROGRAMBINARYPROC)get_proc("glGetProgramBinary"); 
+	pglProgramBinary = (PFNGLPROGRAMBINARYPROC)get_proc("glProgramBinary"); 
+	pglProgramParameteri = (PFNGLPROGRAMPARAMETERIPROC)get_proc("glProgramParameteri"); 
+	pglUseProgramStages = (PFNGLUSEPROGRAMSTAGESPROC)get_proc("glUseProgramStages"); 
+	pglActiveShaderProgram = (PFNGLACTIVESHADERPROGRAMPROC)get_proc("glActiveShaderProgram"); 
+	pglCreateShaderProgramv = (PFNGLCREATESHADERPROGRAMVPROC)get_proc("glCreateShaderProgramv"); 
+	pglBindProgramPipeline = (PFNGLBINDPROGRAMPIPELINEPROC)get_proc("glBindProgramPipeline"); 
+	pglDeleteProgramPipelines = (PFNGLDELETEPROGRAMPIPELINESPROC)get_proc("glDeleteProgramPipelines"); 
+	pglGenProgramPipelines = (PFNGLGENPROGRAMPIPELINESPROC)get_proc("glGenProgramPipelines"); 
+	pglIsProgramPipeline = (PFNGLISPROGRAMPIPELINEPROC)get_proc("glIsProgramPipeline"); 
+	pglGetProgramPipelineiv = (PFNGLGETPROGRAMPIPELINEIVPROC)get_proc("glGetProgramPipelineiv"); 
+	pglProgramUniform1i = (PFNGLPROGRAMUNIFORM1IPROC)get_proc("glProgramUniform1i"); 
+	pglProgramUniform1iv = (PFNGLPROGRAMUNIFORM1IVPROC)get_proc("glProgramUniform1iv"); 
+	pglProgramUniform1f = (PFNGLPROGRAMUNIFORM1FPROC)get_proc("glProgramUniform1f"); 
+	pglProgramUniform1fv = (PFNGLPROGRAMUNIFORM1FVPROC)get_proc("glProgramUniform1fv"); 
+	pglProgramUniform1d = (PFNGLPROGRAMUNIFORM1DPROC)get_proc("glProgramUniform1d"); 
+	pglProgramUniform1dv = (PFNGLPROGRAMUNIFORM1DVPROC)get_proc("glProgramUniform1dv"); 
+	pglProgramUniform1ui = (PFNGLPROGRAMUNIFORM1UIPROC)get_proc("glProgramUniform1ui"); 
+	pglProgramUniform1uiv = (PFNGLPROGRAMUNIFORM1UIVPROC)get_proc("glProgramUniform1uiv"); 
+	pglProgramUniform2i = (PFNGLPROGRAMUNIFORM2IPROC)get_proc("glProgramUniform2i"); 
+	pglProgramUniform2iv = (PFNGLPROGRAMUNIFORM2IVPROC)get_proc("glProgramUniform2iv"); 
+	pglProgramUniform2f = (PFNGLPROGRAMUNIFORM2FPROC)get_proc("glProgramUniform2f"); 
+	pglProgramUniform2fv = (PFNGLPROGRAMUNIFORM2FVPROC)get_proc("glProgramUniform2fv"); 
+	pglProgramUniform2d = (PFNGLPROGRAMUNIFORM2DPROC)get_proc("glProgramUniform2d"); 
+	pglProgramUniform2dv = (PFNGLPROGRAMUNIFORM2DVPROC)get_proc("glProgramUniform2dv"); 
+	pglProgramUniform2ui = (PFNGLPROGRAMUNIFORM2UIPROC)get_proc("glProgramUniform2ui"); 
+	pglProgramUniform2uiv = (PFNGLPROGRAMUNIFORM2UIVPROC)get_proc("glProgramUniform2uiv"); 
+	pglProgramUniform3i = (PFNGLPROGRAMUNIFORM3IPROC)get_proc("glProgramUniform3i"); 
+	pglProgramUniform3iv = (PFNGLPROGRAMUNIFORM3IVPROC)get_proc("glProgramUniform3iv"); 
+	pglProgramUniform3f = (PFNGLPROGRAMUNIFORM3FPROC)get_proc("glProgramUniform3f"); 
+	pglProgramUniform3fv = (PFNGLPROGRAMUNIFORM3FVPROC)get_proc("glProgramUniform3fv"); 
+	pglProgramUniform3d = (PFNGLPROGRAMUNIFORM3DPROC)get_proc("glProgramUniform3d"); 
+	pglProgramUniform3dv = (PFNGLPROGRAMUNIFORM3DVPROC)get_proc("glProgramUniform3dv"); 
+	pglProgramUniform3ui = (PFNGLPROGRAMUNIFORM3UIPROC)get_proc("glProgramUniform3ui"); 
+	pglProgramUniform3uiv = (PFNGLPROGRAMUNIFORM3UIVPROC)get_proc("glProgramUniform3uiv"); 
+	pglProgramUniform4i = (PFNGLPROGRAMUNIFORM4IPROC)get_proc("glProgramUniform4i"); 
+	pglProgramUniform4iv = (PFNGLPROGRAMUNIFORM4IVPROC)get_proc("glProgramUniform4iv"); 
+	pglProgramUniform4f = (PFNGLPROGRAMUNIFORM4FPROC)get_proc("glProgramUniform4f"); 
+	pglProgramUniform4fv = (PFNGLPROGRAMUNIFORM4FVPROC)get_proc("glProgramUniform4fv"); 
+	pglProgramUniform4d = (PFNGLPROGRAMUNIFORM4DPROC)get_proc("glProgramUniform4d"); 
+	pglProgramUniform4dv = (PFNGLPROGRAMUNIFORM4DVPROC)get_proc("glProgramUniform4dv"); 
+	pglProgramUniform4ui = (PFNGLPROGRAMUNIFORM4UIPROC)get_proc("glProgramUniform4ui"); 
+	pglProgramUniform4uiv = (PFNGLPROGRAMUNIFORM4UIVPROC)get_proc("glProgramUniform4uiv"); 
+	pglProgramUniformMatrix2fv = (PFNGLPROGRAMUNIFORMMATRIX2FVPROC)get_proc("glProgramUniformMatrix2fv"); 
+	pglProgramUniformMatrix3fv = (PFNGLPROGRAMUNIFORMMATRIX3FVPROC)get_proc("glProgramUniformMatrix3fv"); 
+	pglProgramUniformMatrix4fv = (PFNGLPROGRAMUNIFORMMATRIX4FVPROC)get_proc("glProgramUniformMatrix4fv"); 
+	pglProgramUniformMatrix2dv = (PFNGLPROGRAMUNIFORMMATRIX2DVPROC)get_proc("glProgramUniformMatrix2dv"); 
+	pglProgramUniformMatrix3dv = (PFNGLPROGRAMUNIFORMMATRIX3DVPROC)get_proc("glProgramUniformMatrix3dv"); 
+	pglProgramUniformMatrix4dv = (PFNGLPROGRAMUNIFORMMATRIX4DVPROC)get_proc("glProgramUniformMatrix4dv"); 
+	pglProgramUniformMatrix2x3fv = (PFNGLPROGRAMUNIFORMMATRIX2X3FVPROC)get_proc("glProgramUniformMatrix2x3fv"); 
+	pglProgramUniformMatrix3x2fv = (PFNGLPROGRAMUNIFORMMATRIX3X2FVPROC)get_proc("glProgramUniformMatrix3x2fv"); 
+	pglProgramUniformMatrix2x4fv = (PFNGLPROGRAMUNIFORMMATRIX2X4FVPROC)get_proc("glProgramUniformMatrix2x4fv"); 
+	pglProgramUniformMatrix4x2fv = (PFNGLPROGRAMUNIFORMMATRIX4X2FVPROC)get_proc("glProgramUniformMatrix4x2fv"); 
+	pglProgramUniformMatrix3x4fv = (PFNGLPROGRAMUNIFORMMATRIX3X4FVPROC)get_proc("glProgramUniformMatrix3x4fv"); 
+	pglProgramUniformMatrix4x3fv = (PFNGLPROGRAMUNIFORMMATRIX4X3FVPROC)get_proc("glProgramUniformMatrix4x3fv"); 
+	pglProgramUniformMatrix2x3dv = (PFNGLPROGRAMUNIFORMMATRIX2X3DVPROC)get_proc("glProgramUniformMatrix2x3dv"); 
+	pglProgramUniformMatrix3x2dv = (PFNGLPROGRAMUNIFORMMATRIX3X2DVPROC)get_proc("glProgramUniformMatrix3x2dv"); 
+	pglProgramUniformMatrix2x4dv = (PFNGLPROGRAMUNIFORMMATRIX2X4DVPROC)get_proc("glProgramUniformMatrix2x4dv"); 
+	pglProgramUniformMatrix4x2dv = (PFNGLPROGRAMUNIFORMMATRIX4X2DVPROC)get_proc("glProgramUniformMatrix4x2dv"); 
+	pglProgramUniformMatrix3x4dv = (PFNGLPROGRAMUNIFORMMATRIX3X4DVPROC)get_proc("glProgramUniformMatrix3x4dv"); 
+	pglProgramUniformMatrix4x3dv = (PFNGLPROGRAMUNIFORMMATRIX4X3DVPROC)get_proc("glProgramUniformMatrix4x3dv"); 
+	pglValidateProgramPipeline = (PFNGLVALIDATEPROGRAMPIPELINEPROC)get_proc("glValidateProgramPipeline"); 
+	pglGetProgramPipelineInfoLog = (PFNGLGETPROGRAMPIPELINEINFOLOGPROC)get_proc("glGetProgramPipelineInfoLog"); 
+	pglVertexAttribL1d = (PFNGLVERTEXATTRIBL1DPROC)get_proc("glVertexAttribL1d"); 
+	pglVertexAttribL2d = (PFNGLVERTEXATTRIBL2DPROC)get_proc("glVertexAttribL2d"); 
+	pglVertexAttribL3d = (PFNGLVERTEXATTRIBL3DPROC)get_proc("glVertexAttribL3d"); 
+	pglVertexAttribL4d = (PFNGLVERTEXATTRIBL4DPROC)get_proc("glVertexAttribL4d"); 
+	pglVertexAttribL1dv = (PFNGLVERTEXATTRIBL1DVPROC)get_proc("glVertexAttribL1dv"); 
+	pglVertexAttribL2dv = (PFNGLVERTEXATTRIBL2DVPROC)get_proc("glVertexAttribL2dv"); 
+	pglVertexAttribL3dv = (PFNGLVERTEXATTRIBL3DVPROC)get_proc("glVertexAttribL3dv"); 
+	pglVertexAttribL4dv = (PFNGLVERTEXATTRIBL4DVPROC)get_proc("glVertexAttribL4dv"); 
+	pglVertexAttribLPointer = (PFNGLVERTEXATTRIBLPOINTERPROC)get_proc("glVertexAttribLPointer"); 
+	pglGetVertexAttribLdv = (PFNGLGETVERTEXATTRIBLDVPROC)get_proc("glGetVertexAttribLdv"); 
+	pglViewportArrayv = (PFNGLVIEWPORTARRAYVPROC)get_proc("glViewportArrayv"); 
+	pglViewportIndexedf = (PFNGLVIEWPORTINDEXEDFPROC)get_proc("glViewportIndexedf"); 
+	pglViewportIndexedfv = (PFNGLVIEWPORTINDEXEDFVPROC)get_proc("glViewportIndexedfv"); 
+	pglScissorArrayv = (PFNGLSCISSORARRAYVPROC)get_proc("glScissorArrayv"); 
+	pglScissorIndexed = (PFNGLSCISSORINDEXEDPROC)get_proc("glScissorIndexed"); 
+	pglScissorIndexedv = (PFNGLSCISSORINDEXEDVPROC)get_proc("glScissorIndexedv"); 
+	pglDepthRangeArrayv = (PFNGLDEPTHRANGEARRAYVPROC)get_proc("glDepthRangeArrayv"); 
+	pglDepthRangeIndexed = (PFNGLDEPTHRANGEINDEXEDPROC)get_proc("glDepthRangeIndexed"); 
+	pglGetFloati_v = (PFNGLGETFLOATI_VPROC)get_proc("glGetFloati_v"); 
+	pglGetDoublei_v = (PFNGLGETDOUBLEI_VPROC)get_proc("glGetDoublei_v"); 
+	pglDrawArraysInstancedBaseInstance = (PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEPROC)get_proc("glDrawArraysInstancedBaseInstance"); 
+	pglDrawElementsInstancedBaseInstance = (PFNGLDRAWELEMENTSINSTANCEDBASEINSTANCEPROC)get_proc("glDrawElementsInstancedBaseInstance"); 
+	pglDrawElementsInstancedBaseVertexBaseInstance = (PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC)get_proc("glDrawElementsInstancedBaseVertexBaseInstance"); 
+	pglGetInternalformativ = (PFNGLGETINTERNALFORMATIVPROC)get_proc("glGetInternalformativ"); 
+	pglGetActiveAtomicCounterBufferiv = (PFNGLGETACTIVEATOMICCOUNTERBUFFERIVPROC)get_proc("glGetActiveAtomicCounterBufferiv"); 
+	pglBindImageTexture = (PFNGLBINDIMAGETEXTUREPROC)get_proc("glBindImageTexture"); 
+	pglMemoryBarrier = (PFNGLMEMORYBARRIERPROC)get_proc("glMemoryBarrier"); 
+	pglTexStorage1D = (PFNGLTEXSTORAGE1DPROC)get_proc("glTexStorage1D"); 
+	pglTexStorage2D = (PFNGLTEXSTORAGE2DPROC)get_proc("glTexStorage2D"); 
+	pglTexStorage3D = (PFNGLTEXSTORAGE3DPROC)get_proc("glTexStorage3D"); 
+	pglDrawTransformFeedbackInstanced = (PFNGLDRAWTRANSFORMFEEDBACKINSTANCEDPROC)get_proc("glDrawTransformFeedbackInstanced"); 
+	pglDrawTransformFeedbackStreamInstanced = (PFNGLDRAWTRANSFORMFEEDBACKSTREAMINSTANCEDPROC)get_proc("glDrawTransformFeedbackStreamInstanced"); 
+	pglClearBufferData = (PFNGLCLEARBUFFERDATAPROC)get_proc("glClearBufferData"); 
+	pglClearBufferSubData = (PFNGLCLEARBUFFERSUBDATAPROC)get_proc("glClearBufferSubData"); 
+	pglDispatchCompute = (PFNGLDISPATCHCOMPUTEPROC)get_proc("glDispatchCompute"); 
+	pglDispatchComputeIndirect = (PFNGLDISPATCHCOMPUTEINDIRECTPROC)get_proc("glDispatchComputeIndirect"); 
+	pglCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)get_proc("glCopyImageSubData"); 
+	pglFramebufferParameteri = (PFNGLFRAMEBUFFERPARAMETERIPROC)get_proc("glFramebufferParameteri"); 
+	pglGetFramebufferParameteriv = (PFNGLGETFRAMEBUFFERPARAMETERIVPROC)get_proc("glGetFramebufferParameteriv"); 
+	pglGetInternalformati64v = (PFNGLGETINTERNALFORMATI64VPROC)get_proc("glGetInternalformati64v"); 
+	pglInvalidateTexSubImage = (PFNGLINVALIDATETEXSUBIMAGEPROC)get_proc("glInvalidateTexSubImage"); 
+	pglInvalidateTexImage = (PFNGLINVALIDATETEXIMAGEPROC)get_proc("glInvalidateTexImage"); 
+	pglInvalidateBufferSubData = (PFNGLINVALIDATEBUFFERSUBDATAPROC)get_proc("glInvalidateBufferSubData"); 
+	pglInvalidateBufferData = (PFNGLINVALIDATEBUFFERDATAPROC)get_proc("glInvalidateBufferData"); 
+	pglInvalidateFramebuffer = (PFNGLINVALIDATEFRAMEBUFFERPROC)get_proc("glInvalidateFramebuffer"); 
+	pglInvalidateSubFramebuffer = (PFNGLINVALIDATESUBFRAMEBUFFERPROC)get_proc("glInvalidateSubFramebuffer"); 
+	pglMultiDrawArraysIndirect = (PFNGLMULTIDRAWARRAYSINDIRECTPROC)get_proc("glMultiDrawArraysIndirect"); 
+	pglMultiDrawElementsIndirect = (PFNGLMULTIDRAWELEMENTSINDIRECTPROC)get_proc("glMultiDrawElementsIndirect"); 
+	pglGetProgramInterfaceiv = (PFNGLGETPROGRAMINTERFACEIVPROC)get_proc("glGetProgramInterfaceiv"); 
+	pglGetProgramResourceIndex = (PFNGLGETPROGRAMRESOURCEINDEXPROC)get_proc("glGetProgramResourceIndex"); 
+	pglGetProgramResourceName = (PFNGLGETPROGRAMRESOURCENAMEPROC)get_proc("glGetProgramResourceName"); 
+	pglGetProgramResourceiv = (PFNGLGETPROGRAMRESOURCEIVPROC)get_proc("glGetProgramResourceiv"); 
+	pglGetProgramResourceLocation = (PFNGLGETPROGRAMRESOURCELOCATIONPROC)get_proc("glGetProgramResourceLocation"); 
+	pglGetProgramResourceLocationIndex = (PFNGLGETPROGRAMRESOURCELOCATIONINDEXPROC)get_proc("glGetProgramResourceLocationIndex"); 
+	pglShaderStorageBlockBinding = (PFNGLSHADERSTORAGEBLOCKBINDINGPROC)get_proc("glShaderStorageBlockBinding"); 
+	pglTexBufferRange = (PFNGLTEXBUFFERRANGEPROC)get_proc("glTexBufferRange"); 
+	pglTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)get_proc("glTexStorage2DMultisample"); 
+	pglTexStorage3DMultisample = (PFNGLTEXSTORAGE3DMULTISAMPLEPROC)get_proc("glTexStorage3DMultisample"); 
+	pglTextureView = (PFNGLTEXTUREVIEWPROC)get_proc("glTextureView"); 
+	pglBindVertexBuffer = (PFNGLBINDVERTEXBUFFERPROC)get_proc("glBindVertexBuffer"); 
+	pglVertexAttribFormat = (PFNGLVERTEXATTRIBFORMATPROC)get_proc("glVertexAttribFormat"); 
+	pglVertexAttribIFormat = (PFNGLVERTEXATTRIBIFORMATPROC)get_proc("glVertexAttribIFormat"); 
+	pglVertexAttribLFormat = (PFNGLVERTEXATTRIBLFORMATPROC)get_proc("glVertexAttribLFormat"); 
+	pglVertexAttribBinding = (PFNGLVERTEXATTRIBBINDINGPROC)get_proc("glVertexAttribBinding"); 
+	pglVertexBindingDivisor = (PFNGLVERTEXBINDINGDIVISORPROC)get_proc("glVertexBindingDivisor"); 
+	pglDebugMessageControl = (PFNGLDEBUGMESSAGECONTROLPROC)get_proc("glDebugMessageControl"); 
+	pglDebugMessageInsert = (PFNGLDEBUGMESSAGEINSERTPROC)get_proc("glDebugMessageInsert"); 
+	pglDebugMessageCallback = (PFNGLDEBUGMESSAGECALLBACKPROC)get_proc("glDebugMessageCallback"); 
+	pglGetDebugMessageLog = (PFNGLGETDEBUGMESSAGELOGPROC)get_proc("glGetDebugMessageLog"); 
+	pglPushDebugGroup = (PFNGLPUSHDEBUGGROUPPROC)get_proc("glPushDebugGroup"); 
+	pglPopDebugGroup = (PFNGLPOPDEBUGGROUPPROC)get_proc("glPopDebugGroup"); 
+	pglObjectLabel = (PFNGLOBJECTLABELPROC)get_proc("glObjectLabel"); 
+	pglGetObjectLabel = (PFNGLGETOBJECTLABELPROC)get_proc("glGetObjectLabel"); 
+	pglObjectPtrLabel = (PFNGLOBJECTPTRLABELPROC)get_proc("glObjectPtrLabel"); 
+	pglGetObjectPtrLabel = (PFNGLGETOBJECTPTRLABELPROC)get_proc("glGetObjectPtrLabel"); 
 	
 }
 
@@ -3057,7 +3435,7 @@ void glVertexAttrib4usv(GLuint index, const GLushort *v) {
 
 void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLsizeiptr pointer) {
 
-	pglVertexAttribPointer(index, size, type, normalized, stride, (void*)(pointer));
+	pglVertexAttribPointer(index, size, type, normalized, stride, (void *) pointer);
 	if (checkError) {
 		GLenum err = pglGetError();
 		if (err != GL_NO_ERROR) {
@@ -4715,6 +5093,2094 @@ void glVertexAttribP4uiv(GLuint index, GLenum type, GLboolean normalized, const 
 		GLenum err = pglGetError();
 		if (err != GL_NO_ERROR) {
 			panic(err, "glVertexAttribP4uiv");
+		}
+	}
+}
+
+void glMinSampleShading(GLfloat value) {
+
+	pglMinSampleShading(value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glMinSampleShading");
+		}
+	}
+}
+
+void glBlendEquationi(GLuint buf, GLenum mode) {
+
+	pglBlendEquationi(buf, mode);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBlendEquationi");
+		}
+	}
+}
+
+void glBlendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum modeAlpha) {
+
+	pglBlendEquationSeparatei(buf, modeRGB, modeAlpha);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBlendEquationSeparatei");
+		}
+	}
+}
+
+void glBlendFunci(GLuint buf, GLenum src, GLenum dst) {
+
+	pglBlendFunci(buf, src, dst);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBlendFunci");
+		}
+	}
+}
+
+void glBlendFuncSeparatei(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha) {
+
+	pglBlendFuncSeparatei(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBlendFuncSeparatei");
+		}
+	}
+}
+
+void glDrawArraysIndirect(GLenum mode, const void *indirect) {
+
+	pglDrawArraysIndirect(mode, indirect);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawArraysIndirect");
+		}
+	}
+}
+
+void glDrawElementsIndirect(GLenum mode, GLenum type, const void *indirect) {
+
+	pglDrawElementsIndirect(mode, type, indirect);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawElementsIndirect");
+		}
+	}
+}
+
+void glUniform1d(GLint location, GLdouble x) {
+
+	pglUniform1d(location, x);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform1d");
+		}
+	}
+}
+
+void glUniform2d(GLint location, GLdouble x, GLdouble y) {
+
+	pglUniform2d(location, x, y);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform2d");
+		}
+	}
+}
+
+void glUniform3d(GLint location, GLdouble x, GLdouble y, GLdouble z) {
+
+	pglUniform3d(location, x, y, z);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform3d");
+		}
+	}
+}
+
+void glUniform4d(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w) {
+
+	pglUniform4d(location, x, y, z, w);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform4d");
+		}
+	}
+}
+
+void glUniform1dv(GLint location, GLsizei count, const GLdouble *value) {
+
+	pglUniform1dv(location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform1dv");
+		}
+	}
+}
+
+void glUniform2dv(GLint location, GLsizei count, const GLdouble *value) {
+
+	pglUniform2dv(location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform2dv");
+		}
+	}
+}
+
+void glUniform3dv(GLint location, GLsizei count, const GLdouble *value) {
+
+	pglUniform3dv(location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform3dv");
+		}
+	}
+}
+
+void glUniform4dv(GLint location, GLsizei count, const GLdouble *value) {
+
+	pglUniform4dv(location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniform4dv");
+		}
+	}
+}
+
+void glUniformMatrix2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix2dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix2dv");
+		}
+	}
+}
+
+void glUniformMatrix3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix3dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix3dv");
+		}
+	}
+}
+
+void glUniformMatrix4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix4dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix4dv");
+		}
+	}
+}
+
+void glUniformMatrix2x3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix2x3dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix2x3dv");
+		}
+	}
+}
+
+void glUniformMatrix2x4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix2x4dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix2x4dv");
+		}
+	}
+}
+
+void glUniformMatrix3x2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix3x2dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix3x2dv");
+		}
+	}
+}
+
+void glUniformMatrix3x4dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix3x4dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix3x4dv");
+		}
+	}
+}
+
+void glUniformMatrix4x2dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix4x2dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix4x2dv");
+		}
+	}
+}
+
+void glUniformMatrix4x3dv(GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglUniformMatrix4x3dv(location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformMatrix4x3dv");
+		}
+	}
+}
+
+void glGetUniformdv(GLuint program, GLint location, GLdouble *params) {
+
+	pglGetUniformdv(program, location, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetUniformdv");
+		}
+	}
+}
+
+GLint glGetSubroutineUniformLocation(GLuint program, GLenum shadertype, const GLchar *name) {
+
+	GLint res = pglGetSubroutineUniformLocation(program, shadertype, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetSubroutineUniformLocation");
+		}
+	}
+	return res;
+}
+
+GLuint glGetSubroutineIndex(GLuint program, GLenum shadertype, const GLchar *name) {
+
+	GLuint res = pglGetSubroutineIndex(program, shadertype, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetSubroutineIndex");
+		}
+	}
+	return res;
+}
+
+void glGetActiveSubroutineUniformiv(GLuint program, GLenum shadertype, GLuint index, GLenum pname, GLint *values) {
+
+	pglGetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetActiveSubroutineUniformiv");
+		}
+	}
+}
+
+void glGetActiveSubroutineUniformName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei *length, GLchar *name) {
+
+	pglGetActiveSubroutineUniformName(program, shadertype, index, bufsize, length, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetActiveSubroutineUniformName");
+		}
+	}
+}
+
+void glGetActiveSubroutineName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei *length, GLchar *name) {
+
+	pglGetActiveSubroutineName(program, shadertype, index, bufsize, length, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetActiveSubroutineName");
+		}
+	}
+}
+
+void glUniformSubroutinesuiv(GLenum shadertype, GLsizei count, const GLuint *indices) {
+
+	pglUniformSubroutinesuiv(shadertype, count, indices);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUniformSubroutinesuiv");
+		}
+	}
+}
+
+void glGetUniformSubroutineuiv(GLenum shadertype, GLint location, GLuint *params) {
+
+	pglGetUniformSubroutineuiv(shadertype, location, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetUniformSubroutineuiv");
+		}
+	}
+}
+
+void glGetProgramStageiv(GLuint program, GLenum shadertype, GLenum pname, GLint *values) {
+
+	pglGetProgramStageiv(program, shadertype, pname, values);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramStageiv");
+		}
+	}
+}
+
+void glPatchParameteri(GLenum pname, GLint value) {
+
+	pglPatchParameteri(pname, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glPatchParameteri");
+		}
+	}
+}
+
+void glPatchParameterfv(GLenum pname, const GLfloat *values) {
+
+	pglPatchParameterfv(pname, values);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glPatchParameterfv");
+		}
+	}
+}
+
+void glBindTransformFeedback(GLenum target, GLuint id) {
+
+	pglBindTransformFeedback(target, id);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBindTransformFeedback");
+		}
+	}
+}
+
+void glDeleteTransformFeedbacks(GLsizei n, const GLuint *ids) {
+
+	pglDeleteTransformFeedbacks(n, ids);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDeleteTransformFeedbacks");
+		}
+	}
+}
+
+void glGenTransformFeedbacks(GLsizei n, GLuint *ids) {
+
+	pglGenTransformFeedbacks(n, ids);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGenTransformFeedbacks");
+		}
+	}
+}
+
+GLboolean glIsTransformFeedback(GLuint id) {
+
+	GLboolean res = pglIsTransformFeedback(id);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glIsTransformFeedback");
+		}
+	}
+	return res;
+}
+
+void glPauseTransformFeedback(void) {
+
+	pglPauseTransformFeedback();
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glPauseTransformFeedback");
+		}
+	}
+}
+
+void glResumeTransformFeedback(void) {
+
+	pglResumeTransformFeedback();
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glResumeTransformFeedback");
+		}
+	}
+}
+
+void glDrawTransformFeedback(GLenum mode, GLuint id) {
+
+	pglDrawTransformFeedback(mode, id);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawTransformFeedback");
+		}
+	}
+}
+
+void glDrawTransformFeedbackStream(GLenum mode, GLuint id, GLuint stream) {
+
+	pglDrawTransformFeedbackStream(mode, id, stream);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawTransformFeedbackStream");
+		}
+	}
+}
+
+void glBeginQueryIndexed(GLenum target, GLuint index, GLuint id) {
+
+	pglBeginQueryIndexed(target, index, id);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBeginQueryIndexed");
+		}
+	}
+}
+
+void glEndQueryIndexed(GLenum target, GLuint index) {
+
+	pglEndQueryIndexed(target, index);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glEndQueryIndexed");
+		}
+	}
+}
+
+void glGetQueryIndexediv(GLenum target, GLuint index, GLenum pname, GLint *params) {
+
+	pglGetQueryIndexediv(target, index, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetQueryIndexediv");
+		}
+	}
+}
+
+void glReleaseShaderCompiler(void) {
+
+	pglReleaseShaderCompiler();
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glReleaseShaderCompiler");
+		}
+	}
+}
+
+void glShaderBinary(GLsizei count, const GLuint *shaders, GLenum binaryformat, const void *binary, GLsizei length) {
+
+	pglShaderBinary(count, shaders, binaryformat, binary, length);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glShaderBinary");
+		}
+	}
+}
+
+void glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint *range, GLint *precision) {
+
+	pglGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetShaderPrecisionFormat");
+		}
+	}
+}
+
+void glDepthRangef(GLfloat n, GLfloat f) {
+
+	pglDepthRangef(n, f);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDepthRangef");
+		}
+	}
+}
+
+void glClearDepthf(GLfloat d) {
+
+	pglClearDepthf(d);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glClearDepthf");
+		}
+	}
+}
+
+void glGetProgramBinary(GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary) {
+
+	pglGetProgramBinary(program, bufSize, length, binaryFormat, binary);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramBinary");
+		}
+	}
+}
+
+void glProgramBinary(GLuint program, GLenum binaryFormat, const void *binary, GLsizei length) {
+
+	pglProgramBinary(program, binaryFormat, binary, length);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramBinary");
+		}
+	}
+}
+
+void glProgramParameteri(GLuint program, GLenum pname, GLint value) {
+
+	pglProgramParameteri(program, pname, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramParameteri");
+		}
+	}
+}
+
+void glUseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program) {
+
+	pglUseProgramStages(pipeline, stages, program);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glUseProgramStages");
+		}
+	}
+}
+
+void glActiveShaderProgram(GLuint pipeline, GLuint program) {
+
+	pglActiveShaderProgram(pipeline, program);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glActiveShaderProgram");
+		}
+	}
+}
+
+GLuint glCreateShaderProgramv(GLenum type, GLsizei count, const GLchar *const*strings) {
+
+	GLuint res = pglCreateShaderProgramv(type, count, strings);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glCreateShaderProgramv");
+		}
+	}
+	return res;
+}
+
+void glBindProgramPipeline(GLuint pipeline) {
+
+	pglBindProgramPipeline(pipeline);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBindProgramPipeline");
+		}
+	}
+}
+
+void glDeleteProgramPipelines(GLsizei n, const GLuint *pipelines) {
+
+	pglDeleteProgramPipelines(n, pipelines);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDeleteProgramPipelines");
+		}
+	}
+}
+
+void glGenProgramPipelines(GLsizei n, GLuint *pipelines) {
+
+	pglGenProgramPipelines(n, pipelines);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGenProgramPipelines");
+		}
+	}
+}
+
+GLboolean glIsProgramPipeline(GLuint pipeline) {
+
+	GLboolean res = pglIsProgramPipeline(pipeline);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glIsProgramPipeline");
+		}
+	}
+	return res;
+}
+
+void glGetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint *params) {
+
+	pglGetProgramPipelineiv(pipeline, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramPipelineiv");
+		}
+	}
+}
+
+void glProgramUniform1i(GLuint program, GLint location, GLint v0) {
+
+	pglProgramUniform1i(program, location, v0);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1i");
+		}
+	}
+}
+
+void glProgramUniform1iv(GLuint program, GLint location, GLsizei count, const GLint *value) {
+
+	pglProgramUniform1iv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1iv");
+		}
+	}
+}
+
+void glProgramUniform1f(GLuint program, GLint location, GLfloat v0) {
+
+	pglProgramUniform1f(program, location, v0);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1f");
+		}
+	}
+}
+
+void glProgramUniform1fv(GLuint program, GLint location, GLsizei count, const GLfloat *value) {
+
+	pglProgramUniform1fv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1fv");
+		}
+	}
+}
+
+void glProgramUniform1d(GLuint program, GLint location, GLdouble v0) {
+
+	pglProgramUniform1d(program, location, v0);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1d");
+		}
+	}
+}
+
+void glProgramUniform1dv(GLuint program, GLint location, GLsizei count, const GLdouble *value) {
+
+	pglProgramUniform1dv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1dv");
+		}
+	}
+}
+
+void glProgramUniform1ui(GLuint program, GLint location, GLuint v0) {
+
+	pglProgramUniform1ui(program, location, v0);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1ui");
+		}
+	}
+}
+
+void glProgramUniform1uiv(GLuint program, GLint location, GLsizei count, const GLuint *value) {
+
+	pglProgramUniform1uiv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform1uiv");
+		}
+	}
+}
+
+void glProgramUniform2i(GLuint program, GLint location, GLint v0, GLint v1) {
+
+	pglProgramUniform2i(program, location, v0, v1);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2i");
+		}
+	}
+}
+
+void glProgramUniform2iv(GLuint program, GLint location, GLsizei count, const GLint *value) {
+
+	pglProgramUniform2iv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2iv");
+		}
+	}
+}
+
+void glProgramUniform2f(GLuint program, GLint location, GLfloat v0, GLfloat v1) {
+
+	pglProgramUniform2f(program, location, v0, v1);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2f");
+		}
+	}
+}
+
+void glProgramUniform2fv(GLuint program, GLint location, GLsizei count, const GLfloat *value) {
+
+	pglProgramUniform2fv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2fv");
+		}
+	}
+}
+
+void glProgramUniform2d(GLuint program, GLint location, GLdouble v0, GLdouble v1) {
+
+	pglProgramUniform2d(program, location, v0, v1);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2d");
+		}
+	}
+}
+
+void glProgramUniform2dv(GLuint program, GLint location, GLsizei count, const GLdouble *value) {
+
+	pglProgramUniform2dv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2dv");
+		}
+	}
+}
+
+void glProgramUniform2ui(GLuint program, GLint location, GLuint v0, GLuint v1) {
+
+	pglProgramUniform2ui(program, location, v0, v1);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2ui");
+		}
+	}
+}
+
+void glProgramUniform2uiv(GLuint program, GLint location, GLsizei count, const GLuint *value) {
+
+	pglProgramUniform2uiv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform2uiv");
+		}
+	}
+}
+
+void glProgramUniform3i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2) {
+
+	pglProgramUniform3i(program, location, v0, v1, v2);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3i");
+		}
+	}
+}
+
+void glProgramUniform3iv(GLuint program, GLint location, GLsizei count, const GLint *value) {
+
+	pglProgramUniform3iv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3iv");
+		}
+	}
+}
+
+void glProgramUniform3f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2) {
+
+	pglProgramUniform3f(program, location, v0, v1, v2);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3f");
+		}
+	}
+}
+
+void glProgramUniform3fv(GLuint program, GLint location, GLsizei count, const GLfloat *value) {
+
+	pglProgramUniform3fv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3fv");
+		}
+	}
+}
+
+void glProgramUniform3d(GLuint program, GLint location, GLdouble v0, GLdouble v1, GLdouble v2) {
+
+	pglProgramUniform3d(program, location, v0, v1, v2);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3d");
+		}
+	}
+}
+
+void glProgramUniform3dv(GLuint program, GLint location, GLsizei count, const GLdouble *value) {
+
+	pglProgramUniform3dv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3dv");
+		}
+	}
+}
+
+void glProgramUniform3ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2) {
+
+	pglProgramUniform3ui(program, location, v0, v1, v2);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3ui");
+		}
+	}
+}
+
+void glProgramUniform3uiv(GLuint program, GLint location, GLsizei count, const GLuint *value) {
+
+	pglProgramUniform3uiv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform3uiv");
+		}
+	}
+}
+
+void glProgramUniform4i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3) {
+
+	pglProgramUniform4i(program, location, v0, v1, v2, v3);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4i");
+		}
+	}
+}
+
+void glProgramUniform4iv(GLuint program, GLint location, GLsizei count, const GLint *value) {
+
+	pglProgramUniform4iv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4iv");
+		}
+	}
+}
+
+void glProgramUniform4f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) {
+
+	pglProgramUniform4f(program, location, v0, v1, v2, v3);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4f");
+		}
+	}
+}
+
+void glProgramUniform4fv(GLuint program, GLint location, GLsizei count, const GLfloat *value) {
+
+	pglProgramUniform4fv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4fv");
+		}
+	}
+}
+
+void glProgramUniform4d(GLuint program, GLint location, GLdouble v0, GLdouble v1, GLdouble v2, GLdouble v3) {
+
+	pglProgramUniform4d(program, location, v0, v1, v2, v3);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4d");
+		}
+	}
+}
+
+void glProgramUniform4dv(GLuint program, GLint location, GLsizei count, const GLdouble *value) {
+
+	pglProgramUniform4dv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4dv");
+		}
+	}
+}
+
+void glProgramUniform4ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3) {
+
+	pglProgramUniform4ui(program, location, v0, v1, v2, v3);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4ui");
+		}
+	}
+}
+
+void glProgramUniform4uiv(GLuint program, GLint location, GLsizei count, const GLuint *value) {
+
+	pglProgramUniform4uiv(program, location, count, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniform4uiv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix2fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix3fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix4fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix2dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix3dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix4dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2x3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix2x3fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2x3fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3x2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix3x2fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3x2fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2x4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix2x4fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2x4fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4x2fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix4x2fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4x2fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3x4fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix3x4fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3x4fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4x3fv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) {
+
+	pglProgramUniformMatrix4x3fv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4x3fv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2x3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix2x3dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2x3dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3x2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix3x2dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3x2dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix2x4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix2x4dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix2x4dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4x2dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix4x2dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4x2dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix3x4dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix3x4dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix3x4dv");
+		}
+	}
+}
+
+void glProgramUniformMatrix4x3dv(GLuint program, GLint location, GLsizei count, GLboolean transpose, const GLdouble *value) {
+
+	pglProgramUniformMatrix4x3dv(program, location, count, transpose, value);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glProgramUniformMatrix4x3dv");
+		}
+	}
+}
+
+void glValidateProgramPipeline(GLuint pipeline) {
+
+	pglValidateProgramPipeline(pipeline);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glValidateProgramPipeline");
+		}
+	}
+}
+
+void glGetProgramPipelineInfoLog(GLuint pipeline, GLsizei bufSize, GLsizei *length, GLchar *infoLog) {
+
+	pglGetProgramPipelineInfoLog(pipeline, bufSize, length, infoLog);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramPipelineInfoLog");
+		}
+	}
+}
+
+void glVertexAttribL1d(GLuint index, GLdouble x) {
+
+	pglVertexAttribL1d(index, x);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL1d");
+		}
+	}
+}
+
+void glVertexAttribL2d(GLuint index, GLdouble x, GLdouble y) {
+
+	pglVertexAttribL2d(index, x, y);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL2d");
+		}
+	}
+}
+
+void glVertexAttribL3d(GLuint index, GLdouble x, GLdouble y, GLdouble z) {
+
+	pglVertexAttribL3d(index, x, y, z);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL3d");
+		}
+	}
+}
+
+void glVertexAttribL4d(GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w) {
+
+	pglVertexAttribL4d(index, x, y, z, w);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL4d");
+		}
+	}
+}
+
+void glVertexAttribL1dv(GLuint index, const GLdouble *v) {
+
+	pglVertexAttribL1dv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL1dv");
+		}
+	}
+}
+
+void glVertexAttribL2dv(GLuint index, const GLdouble *v) {
+
+	pglVertexAttribL2dv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL2dv");
+		}
+	}
+}
+
+void glVertexAttribL3dv(GLuint index, const GLdouble *v) {
+
+	pglVertexAttribL3dv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL3dv");
+		}
+	}
+}
+
+void glVertexAttribL4dv(GLuint index, const GLdouble *v) {
+
+	pglVertexAttribL4dv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribL4dv");
+		}
+	}
+}
+
+void glVertexAttribLPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const void *pointer) {
+
+	pglVertexAttribLPointer(index, size, type, stride, pointer);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribLPointer");
+		}
+	}
+}
+
+void glGetVertexAttribLdv(GLuint index, GLenum pname, GLdouble *params) {
+
+	pglGetVertexAttribLdv(index, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetVertexAttribLdv");
+		}
+	}
+}
+
+void glViewportArrayv(GLuint first, GLsizei count, const GLfloat *v) {
+
+	pglViewportArrayv(first, count, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glViewportArrayv");
+		}
+	}
+}
+
+void glViewportIndexedf(GLuint index, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
+
+	pglViewportIndexedf(index, x, y, w, h);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glViewportIndexedf");
+		}
+	}
+}
+
+void glViewportIndexedfv(GLuint index, const GLfloat *v) {
+
+	pglViewportIndexedfv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glViewportIndexedfv");
+		}
+	}
+}
+
+void glScissorArrayv(GLuint first, GLsizei count, const GLint *v) {
+
+	pglScissorArrayv(first, count, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glScissorArrayv");
+		}
+	}
+}
+
+void glScissorIndexed(GLuint index, GLint left, GLint bottom, GLsizei width, GLsizei height) {
+
+	pglScissorIndexed(index, left, bottom, width, height);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glScissorIndexed");
+		}
+	}
+}
+
+void glScissorIndexedv(GLuint index, const GLint *v) {
+
+	pglScissorIndexedv(index, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glScissorIndexedv");
+		}
+	}
+}
+
+void glDepthRangeArrayv(GLuint first, GLsizei count, const GLdouble *v) {
+
+	pglDepthRangeArrayv(first, count, v);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDepthRangeArrayv");
+		}
+	}
+}
+
+void glDepthRangeIndexed(GLuint index, GLdouble n, GLdouble f) {
+
+	pglDepthRangeIndexed(index, n, f);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDepthRangeIndexed");
+		}
+	}
+}
+
+void glGetFloati_v(GLenum target, GLuint index, GLfloat *data) {
+
+	pglGetFloati_v(target, index, data);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetFloati_v");
+		}
+	}
+}
+
+void glGetDoublei_v(GLenum target, GLuint index, GLdouble *data) {
+
+	pglGetDoublei_v(target, index, data);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetDoublei_v");
+		}
+	}
+}
+
+void glDrawArraysInstancedBaseInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount, GLuint baseinstance) {
+
+	pglDrawArraysInstancedBaseInstance(mode, first, count, instancecount, baseinstance);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawArraysInstancedBaseInstance");
+		}
+	}
+}
+
+void glDrawElementsInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance) {
+
+	pglDrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawElementsInstancedBaseInstance");
+		}
+	}
+}
+
+void glDrawElementsInstancedBaseVertexBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLint basevertex, GLuint baseinstance) {
+
+	pglDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, indices, instancecount, basevertex, baseinstance);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawElementsInstancedBaseVertexBaseInstance");
+		}
+	}
+}
+
+void glGetInternalformativ(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params) {
+
+	pglGetInternalformativ(target, internalformat, pname, bufSize, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetInternalformativ");
+		}
+	}
+}
+
+void glGetActiveAtomicCounterBufferiv(GLuint program, GLuint bufferIndex, GLenum pname, GLint *params) {
+
+	pglGetActiveAtomicCounterBufferiv(program, bufferIndex, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetActiveAtomicCounterBufferiv");
+		}
+	}
+}
+
+void glBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format) {
+
+	pglBindImageTexture(unit, texture, level, layered, layer, access, format);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBindImageTexture");
+		}
+	}
+}
+
+void glMemoryBarrier(GLbitfield barriers) {
+
+	pglMemoryBarrier(barriers);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glMemoryBarrier");
+		}
+	}
+}
+
+void glTexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width) {
+
+	pglTexStorage1D(target, levels, internalformat, width);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexStorage1D");
+		}
+	}
+}
+
+void glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) {
+
+	pglTexStorage2D(target, levels, internalformat, width, height);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexStorage2D");
+		}
+	}
+}
+
+void glTexStorage3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth) {
+
+	pglTexStorage3D(target, levels, internalformat, width, height, depth);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexStorage3D");
+		}
+	}
+}
+
+void glDrawTransformFeedbackInstanced(GLenum mode, GLuint id, GLsizei instancecount) {
+
+	pglDrawTransformFeedbackInstanced(mode, id, instancecount);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawTransformFeedbackInstanced");
+		}
+	}
+}
+
+void glDrawTransformFeedbackStreamInstanced(GLenum mode, GLuint id, GLuint stream, GLsizei instancecount) {
+
+	pglDrawTransformFeedbackStreamInstanced(mode, id, stream, instancecount);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDrawTransformFeedbackStreamInstanced");
+		}
+	}
+}
+
+void glClearBufferData(GLenum target, GLenum internalformat, GLenum format, GLenum type, const void *data) {
+
+	pglClearBufferData(target, internalformat, format, type, data);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glClearBufferData");
+		}
+	}
+}
+
+void glClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data) {
+
+	pglClearBufferSubData(target, internalformat, offset, size, format, type, data);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glClearBufferSubData");
+		}
+	}
+}
+
+void glDispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z) {
+
+	pglDispatchCompute(num_groups_x, num_groups_y, num_groups_z);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDispatchCompute");
+		}
+	}
+}
+
+void glDispatchComputeIndirect(GLintptr indirect) {
+
+	pglDispatchComputeIndirect(indirect);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDispatchComputeIndirect");
+		}
+	}
+}
+
+void glCopyImageSubData(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth) {
+
+	pglCopyImageSubData(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glCopyImageSubData");
+		}
+	}
+}
+
+void glFramebufferParameteri(GLenum target, GLenum pname, GLint param) {
+
+	pglFramebufferParameteri(target, pname, param);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glFramebufferParameteri");
+		}
+	}
+}
+
+void glGetFramebufferParameteriv(GLenum target, GLenum pname, GLint *params) {
+
+	pglGetFramebufferParameteriv(target, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetFramebufferParameteriv");
+		}
+	}
+}
+
+void glGetInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 *params) {
+
+	pglGetInternalformati64v(target, internalformat, pname, bufSize, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetInternalformati64v");
+		}
+	}
+}
+
+void glInvalidateTexSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth) {
+
+	pglInvalidateTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateTexSubImage");
+		}
+	}
+}
+
+void glInvalidateTexImage(GLuint texture, GLint level) {
+
+	pglInvalidateTexImage(texture, level);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateTexImage");
+		}
+	}
+}
+
+void glInvalidateBufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr length) {
+
+	pglInvalidateBufferSubData(buffer, offset, length);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateBufferSubData");
+		}
+	}
+}
+
+void glInvalidateBufferData(GLuint buffer) {
+
+	pglInvalidateBufferData(buffer);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateBufferData");
+		}
+	}
+}
+
+void glInvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments) {
+
+	pglInvalidateFramebuffer(target, numAttachments, attachments);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateFramebuffer");
+		}
+	}
+}
+
+void glInvalidateSubFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height) {
+
+	pglInvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glInvalidateSubFramebuffer");
+		}
+	}
+}
+
+void glMultiDrawArraysIndirect(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride) {
+
+	pglMultiDrawArraysIndirect(mode, indirect, drawcount, stride);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glMultiDrawArraysIndirect");
+		}
+	}
+}
+
+void glMultiDrawElementsIndirect(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride) {
+
+	pglMultiDrawElementsIndirect(mode, type, indirect, drawcount, stride);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glMultiDrawElementsIndirect");
+		}
+	}
+}
+
+void glGetProgramInterfaceiv(GLuint program, GLenum programInterface, GLenum pname, GLint *params) {
+
+	pglGetProgramInterfaceiv(program, programInterface, pname, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramInterfaceiv");
+		}
+	}
+}
+
+GLuint glGetProgramResourceIndex(GLuint program, GLenum programInterface, const GLchar *name) {
+
+	GLuint res = pglGetProgramResourceIndex(program, programInterface, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramResourceIndex");
+		}
+	}
+	return res;
+}
+
+void glGetProgramResourceName(GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name) {
+
+	pglGetProgramResourceName(program, programInterface, index, bufSize, length, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramResourceName");
+		}
+	}
+}
+
+void glGetProgramResourceiv(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params) {
+
+	pglGetProgramResourceiv(program, programInterface, index, propCount, props, bufSize, length, params);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramResourceiv");
+		}
+	}
+}
+
+GLint glGetProgramResourceLocation(GLuint program, GLenum programInterface, const GLchar *name) {
+
+	GLint res = pglGetProgramResourceLocation(program, programInterface, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramResourceLocation");
+		}
+	}
+	return res;
+}
+
+GLint glGetProgramResourceLocationIndex(GLuint program, GLenum programInterface, const GLchar *name) {
+
+	GLint res = pglGetProgramResourceLocationIndex(program, programInterface, name);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetProgramResourceLocationIndex");
+		}
+	}
+	return res;
+}
+
+void glShaderStorageBlockBinding(GLuint program, GLuint storageBlockIndex, GLuint storageBlockBinding) {
+
+	pglShaderStorageBlockBinding(program, storageBlockIndex, storageBlockBinding);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glShaderStorageBlockBinding");
+		}
+	}
+}
+
+void glTexBufferRange(GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size) {
+
+	pglTexBufferRange(target, internalformat, buffer, offset, size);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexBufferRange");
+		}
+	}
+}
+
+void glTexStorage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean fixedsamplelocations) {
+
+	pglTexStorage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexStorage2DMultisample");
+		}
+	}
+}
+
+void glTexStorage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations) {
+
+	pglTexStorage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTexStorage3DMultisample");
+		}
+	}
+}
+
+void glTextureView(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat, GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers) {
+
+	pglTextureView(texture, target, origtexture, internalformat, minlevel, numlevels, minlayer, numlayers);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glTextureView");
+		}
+	}
+}
+
+void glBindVertexBuffer(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride) {
+
+	pglBindVertexBuffer(bindingindex, buffer, offset, stride);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glBindVertexBuffer");
+		}
+	}
+}
+
+void glVertexAttribFormat(GLuint attribindex, GLint size, GLenum type, GLboolean normalized, GLuint relativeoffset) {
+
+	pglVertexAttribFormat(attribindex, size, type, normalized, relativeoffset);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribFormat");
+		}
+	}
+}
+
+void glVertexAttribIFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) {
+
+	pglVertexAttribIFormat(attribindex, size, type, relativeoffset);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribIFormat");
+		}
+	}
+}
+
+void glVertexAttribLFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset) {
+
+	pglVertexAttribLFormat(attribindex, size, type, relativeoffset);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribLFormat");
+		}
+	}
+}
+
+void glVertexAttribBinding(GLuint attribindex, GLuint bindingindex) {
+
+	pglVertexAttribBinding(attribindex, bindingindex);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexAttribBinding");
+		}
+	}
+}
+
+void glVertexBindingDivisor(GLuint bindingindex, GLuint divisor) {
+
+	pglVertexBindingDivisor(bindingindex, divisor);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glVertexBindingDivisor");
+		}
+	}
+}
+
+void glDebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled) {
+
+	pglDebugMessageControl(source, type, severity, count, ids, enabled);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDebugMessageControl");
+		}
+	}
+}
+
+void glDebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf) {
+
+	pglDebugMessageInsert(source, type, id, severity, length, buf);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDebugMessageInsert");
+		}
+	}
+}
+
+void glDebugMessageCallback(GLDEBUGPROC callback, const void *userParam) {
+
+	pglDebugMessageCallback(callback, userParam);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glDebugMessageCallback");
+		}
+	}
+}
+
+GLuint glGetDebugMessageLog(GLuint count, GLsizei bufSize, GLenum *sources, GLenum *types, GLuint *ids, GLenum *severities, GLsizei *lengths, GLchar *messageLog) {
+
+	GLuint res = pglGetDebugMessageLog(count, bufSize, sources, types, ids, severities, lengths, messageLog);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetDebugMessageLog");
+		}
+	}
+	return res;
+}
+
+void glPushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message) {
+
+	pglPushDebugGroup(source, id, length, message);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glPushDebugGroup");
+		}
+	}
+}
+
+void glPopDebugGroup(void) {
+
+	pglPopDebugGroup();
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glPopDebugGroup");
+		}
+	}
+}
+
+void glObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label) {
+
+	pglObjectLabel(identifier, name, length, label);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glObjectLabel");
+		}
+	}
+}
+
+void glGetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label) {
+
+	pglGetObjectLabel(identifier, name, bufSize, length, label);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetObjectLabel");
+		}
+	}
+}
+
+void glObjectPtrLabel(const void *ptr, GLsizei length, const GLchar *label) {
+
+	pglObjectPtrLabel(ptr, length, label);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glObjectPtrLabel");
+		}
+	}
+}
+
+void glGetObjectPtrLabel(const void *ptr, GLsizei bufSize, GLsizei *length, GLchar *label) {
+
+	pglGetObjectPtrLabel(ptr, bufSize, length, label);
+	if (checkError) {
+		GLenum err = pglGetError();
+		if (err != GL_NO_ERROR) {
+			panic(err, "glGetObjectPtrLabel");
 		}
 	}
 }

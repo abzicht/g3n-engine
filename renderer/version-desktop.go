@@ -7,4 +7,4 @@
 
 package renderer
 
-const GLSL_VERSION = "330 core"
+const GLSL_VERSION = "430 core"

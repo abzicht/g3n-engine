@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+// Usage: go run github.com/g3n/engine/gls/glapi2go/ -glversion GL_VERSION_4_3 ./glcorearb.h
+
 // Current Version
 const (
 	PROGNAME = "glapi2go"
@@ -307,9 +309,7 @@ func gltypearg2go(gltype, glarg string) (goarg string, gotype string) {
 	return goarg, gotype
 }
 
-//
 // Shows application usage
-//
 func usage() {
 
 	fmt.Fprintf(os.Stderr, "%s v%d.%d\n", PROGNAME, VMAJOR, VMINOR)

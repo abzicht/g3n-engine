@@ -187,6 +187,11 @@ func (gs *GLS) BindBuffer(target int, vbo uint32) {
 	C.glBindBuffer(C.GLenum(target), C.GLuint(vbo))
 }
 
+// BindBufferBase binds a buffer object to an indexed buffer target
+func (gs *GLS) BindBufferBase(target int, index, buffer uint32) {
+	C.glBindBufferBase(C.GLenum(target), C.GLuint(index), C.GLuint(buffer))
+}
+
 // BindTexture lets you create or use a named texture.
 func (gs *GLS) BindTexture(target int, tex uint32) {
 
@@ -197,6 +202,46 @@ func (gs *GLS) BindTexture(target int, tex uint32) {
 func (gs *GLS) BindVertexArray(vao uint32) {
 
 	C.glBindVertexArray(C.GLuint(vao))
+}
+
+// DispatchCompute launches one or more compute work groups.
+func (gs *GLS) DispatchCompute(num_groups_x, num_groups_y, num_groups_z uint32) {
+	C.glDispatchCompute(C.GLuint(num_groups_x), C.GLuint(num_groups_y), C.GLuint(num_groups_z))
+}
+
+// UnmapBuffer releases the mapping of a buffer object's data store into the client's address space.
+// target specifies the target to which the buffer object is bound.
+// Returns false, if an error occurs within glUnmapBuffer
+func (gs *GLS) UnmapBuffer(target int) bool {
+	return C.GLboolean(1) == C.glUnmapBuffer(C.GLenum(target))
+}
+
+// UnmapNamedBuffer releases the mapping of a buffer object's data store into the client's address space.
+// buffer specifies the name of the buffer object.
+// Returns false, if an error occurs within glUnmapNamedBuffer
+func (gs *GLS) UnmapNamedBuffer(buffer uint32) bool {
+	return C.GLboolean(1) == C.glUnmapNamedBuffer(C.GLuint(buffer))
+}
+
+// MapBuffer map all of a buffer object's data store into the client's address space.
+// Returns a pointer to the beginning of the mapped range once all pending
+// operations on that buffer object have completed.
+// If an error is generated, a nil pointer is returned
+func (gs *GLS) MapBuffer(target, access int) uintptr {
+	return uintptr(C.glMapBuffer(C.GLenum(target), C.GLenum(access)))
+}
+
+// MapNamedBuffer map all of a buffer object's data store into the client's address space.
+// Returns a pointer to the beginning of the mapped range once all pending
+// operations on that buffer object have completed.
+// If an error is generated, a nil pointer is returned
+func (gs *GLS) MapNamedBuffer(buffer uint32, access int) uintptr {
+	return uintptr(C.glMapNamedBuffer(C.GLuint(buffer), C.GLenum(access)))
+}
+
+// MemoryBarrier defines a barrier ordering memory transactions
+func (gs *GLS) MemoryBarrier(barriers uint) {
+	C.glMemoryBarrier(C.GLbitfield(barriers))
 }
 
 // BlendEquation sets the blend equations for all draw buffers.
@@ -249,10 +294,19 @@ func (gs *GLS) BlendFuncSeparate(srcRGB uint32, dstRGB uint32, srcAlpha uint32, 
 }
 
 // BufferData creates a new data store for the buffer object currently
-// bound to target, deleting any pre-existing data store.
-func (gs *GLS) BufferData(target uint32, size int, data interface{}, usage uint32) {
+// bound to target, deleting any pre-existing data store. If data is not nil,
+// its contents are copied to the data store for initialization.
+func (gs *GLS) BufferData(target int, size int, data interface{}, usage uint32) {
 
 	C.glBufferData(C.GLenum(target), C.GLsizeiptr(size), ptr(data), C.GLenum(usage))
+}
+
+// NamedBufferData creates a new data store for the provided buffer object,
+// deleting any pre-existing data store. If data is not nil,
+// its contents are copied to the data store for initialization.
+func (gs *GLS) NamedBufferData(buffer uint32, size uint32, data interface{}, usage uint32) {
+
+	C.glNamedBufferData(C.GLuint(buffer), C.GLsizeiptr(size), ptr(data), C.GLenum(usage))
 }
 
 // ClearColor specifies the red, green, blue, and alpha values
@@ -846,9 +900,9 @@ func (gs *GLS) UseProgram(prog *Program) {
 //
 // For example:
 //
-// 	var data []uint8
-// 	...
-// 	gl.TexImage2D(gl.TEXTURE_2D, ..., gl.UNSIGNED_BYTE, gl.Ptr(&data[0]))
+//	var data []uint8
+//	...
+//	gl.TexImage2D(gl.TEXTURE_2D, ..., gl.UNSIGNED_BYTE, gl.Ptr(&data[0]))
 func ptr(data interface{}) unsafe.Pointer {
 	if data == nil {
 		return unsafe.Pointer(nil)

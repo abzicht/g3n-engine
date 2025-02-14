@@ -5,7 +5,7 @@
 package gls
 
 // Generation of API files: glapi.c, glapi.h, consts.go
-//go:generate glapi2go -glversion GL_VERSION_3_3 glcorearb.h
+//go:generate glapi2go -glversion GL_VERSION_4_3 glcorearb.h
 
 // // Platform build flags
 // #cgo freebsd CFLAGS:  -DGL_GLEXT_PROTOTYPES
