@@ -994,7 +994,7 @@ func (g *GLTF) loadAccessorBytes(ac Accessor) ([]byte, error) {
 
 	// Calculate the size in bytes of a complete attribute
 	itemSize := TypeSizes[ac.Type]
-	itemBytes := int(gls.FloatSize) * itemSize
+	itemBytes := int(gls.SizeFloatStd430) * itemSize
 
 	// If the BufferView stride is equal to the item size, the buffer is not interleaved
 	if (bv.ByteStride != nil) && (*bv.ByteStride != itemBytes) {
@@ -1019,7 +1019,7 @@ func (g *GLTF) isInterleaved(accessor Accessor) bool {
 
 	// Calculates the size in bytes of a complete attribute
 	itemSize := TypeSizes[accessor.Type]
-	itemBytes := int(gls.FloatSize) * itemSize
+	itemBytes := int(gls.SizeFloatStd430) * itemSize
 
 	// If the BufferView stride is equal to the item size, the buffer is not interleaved
 	if bv.ByteStride == nil || *bv.ByteStride == itemBytes {

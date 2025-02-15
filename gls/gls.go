@@ -14,7 +14,6 @@ package gls
 
 import (
 	"math"
-	"unsafe"
 
 	"github.com/g3n/engine/util/logger"
 )
@@ -45,8 +44,4 @@ const (
 	uintUndef   = math.MaxUint32
 	intFalse    = 0
 	intTrue     = 1
-)
-
-const (
-	FloatSize = int32(unsafe.Sizeof(float32(0)))
 )
