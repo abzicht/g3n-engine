@@ -46,14 +46,28 @@ type ProgSpecs struct {
 	specs   ShaderSpecs  // associated specs
 }
 
+type ConcurrentManager interface {
+	// Call this function whenever gs.UseProgram is performed within a
+	// GLS environment that is also in use by another shader manager such as
+	// Shaman.
+	// This informs the other manager to re-switch to its own program when
+	// being used (and not to rely on the assumption that its own program is
+	// still in use by GLS)
+	ForceNextProgram()
+}
+
 // Shaman is the shader manager
 type Shaman struct {
-	gs       *gls.GLS                       // Reference to OpenGL state
-	includes map[string]string              // include files sources
-	shadersm map[string]string              // maps shader name to its template
-	proginfo map[string]shaders.ProgramInfo // maps name of the program to ProgramInfo
-	programs []ProgSpecs                    // list of compiled programs with specs
-	specs    ShaderSpecs                    // Current shader specs
+	gs                 *gls.GLS                       // Reference to OpenGL state
+	includes           map[string]string              // include files sources
+	shadersm           map[string]string              // maps shader name to its template
+	proginfo           map[string]shaders.ProgramInfo // maps name of the program to ProgramInfo
+	programs           []ProgSpecs                    // list of compiled programs with specs
+	specs              ShaderSpecs                    // Current shader specs
+	coman              *Coman                         // Shaman's concurrent manager for compute shaders
+	isForcedSetProgram bool                           // True, iff a concurrent manager
+	//changed the program state of gs. False after a call to Shaman's
+	//SetProgram.
 }
 
 // NewShaman creates and returns a pointer to a new shader manager
@@ -71,6 +85,12 @@ func (sm *Shaman) Init(gs *gls.GLS) {
 	sm.includes = make(map[string]string)
 	sm.shadersm = make(map[string]string)
 	sm.proginfo = make(map[string]shaders.ProgramInfo)
+	sm.coman = NewComan(gs, sm)
+	sm.isForcedSetProgram = false
+}
+
+func (sm *Shaman) Coman() *Coman {
+	return sm.coman
 }
 
 // AddDefaultShaders adds to this shader manager all default
@@ -118,6 +138,10 @@ func (sm *Shaman) AddProgram(name, vertexName, fragName string, others ...string
 	}
 }
 
+func (sm *Shaman) ForceNextProgram() {
+	sm.isForcedSetProgram = true
+}
+
 // SetProgram sets the shader program to satisfy the specified specs.
 // Returns an indication if the current shader has changed and a possible error
 // when creating a new shader program.
@@ -142,14 +166,17 @@ func (sm *Shaman) SetProgram(s *ShaderSpecs) (bool, error) {
 	}
 
 	// If current shader specs are the same as the specified specs, nothing to do.
-	if sm.specs.equals(&specs) {
+	if (!sm.isForcedSetProgram) && sm.specs.equals(&specs) {
 		return false, nil
 	}
+
+	sm.isForcedSetProgram = false
 
 	// Search for compiled program with the specified specs
 	for _, pinfo := range sm.programs {
 		if pinfo.specs.equals(&specs) {
 			sm.gs.UseProgram(pinfo.program)
+			sm.Coman().ForceNextProgram()
 			sm.specs = specs
 			return true, nil
 		}
@@ -166,6 +193,7 @@ func (sm *Shaman) SetProgram(s *ShaderSpecs) (bool, error) {
 	sm.specs = specs
 	sm.programs = append(sm.programs, ProgSpecs{prog, specs})
 	sm.gs.UseProgram(prog)
+	sm.Coman().ForceNextProgram()
 	return true, nil
 }
 

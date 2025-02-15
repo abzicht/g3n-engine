@@ -5,6 +5,8 @@
 package gls
 
 import (
+	"unsafe"
+
 	"github.com/g3n/engine/math32"
 )
 
@@ -320,7 +322,7 @@ func (vbo *VBO) Transfer(gs *GLS) {
 
 	// Transfer the VBO data to OpenGL
 	gs.BindBuffer(ARRAY_BUFFER, vbo.handle)
-	gs.BufferData(ARRAY_BUFFER, vbo.buffer.Bytes(), vbo.buffer.ToFloat32(), vbo.usage)
+	gs.BufferData(ARRAY_BUFFER, vbo.buffer.Bytes(), unsafe.Pointer(unsafe.SliceData(vbo.buffer.ToFloat32())), vbo.usage)
 	vbo.update = false
 }
 

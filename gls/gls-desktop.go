@@ -296,17 +296,17 @@ func (gs *GLS) BlendFuncSeparate(srcRGB uint32, dstRGB uint32, srcAlpha uint32, 
 // BufferData creates a new data store for the buffer object currently
 // bound to target, deleting any pre-existing data store. If data is not nil,
 // its contents are copied to the data store for initialization.
-func (gs *GLS) BufferData(target int, size int, data interface{}, usage uint32) {
+func (gs *GLS) BufferData(target int, size int, data unsafe.Pointer, usage uint32) {
 
-	C.glBufferData(C.GLenum(target), C.GLsizeiptr(size), ptr(data), C.GLenum(usage))
+	C.glBufferData(C.GLenum(target), C.GLsizeiptr(size), data, C.GLenum(usage))
 }
 
 // NamedBufferData creates a new data store for the provided buffer object,
 // deleting any pre-existing data store. If data is not nil,
 // its contents are copied to the data store for initialization.
-func (gs *GLS) NamedBufferData(buffer uint32, size uint32, data interface{}, usage uint32) {
+func (gs *GLS) NamedBufferData(buffer uint32, size uint32, data unsafe.Pointer, usage uint32) {
 
-	C.glNamedBufferData(C.GLuint(buffer), C.GLsizeiptr(size), ptr(data), C.GLenum(usage))
+	C.glNamedBufferData(C.GLuint(buffer), C.GLsizeiptr(size), data, C.GLenum(usage))
 }
 
 // ClearColor specifies the red, green, blue, and alpha values

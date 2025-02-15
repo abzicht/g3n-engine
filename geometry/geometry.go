@@ -8,6 +8,7 @@ package geometry
 import (
 	"math"
 	"strconv"
+	"unsafe"
 
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/math32"
@@ -531,7 +532,7 @@ func (g *Geometry) RenderSetup(gs *gls.GLS) {
 	// Update Indices buffer if necessary
 	if g.indices.Size() > 0 && g.updateIndices {
 		gs.BindBuffer(gls.ELEMENT_ARRAY_BUFFER, g.handleIndices)
-		gs.BufferData(gls.ELEMENT_ARRAY_BUFFER, g.indices.Bytes(), g.indices.ToUint32(), gls.STATIC_DRAW)
+		gs.BufferData(gls.ELEMENT_ARRAY_BUFFER, g.indices.Bytes(), unsafe.Pointer(unsafe.SliceData(g.indices.ToUint32())), gls.STATIC_DRAW)
 		g.updateIndices = false
 	}
 }

@@ -22,7 +22,6 @@ type Application struct {
 	window.IWindow                    // Embedded GlfwWindow
 	keyState       *window.KeyState   // Keep track of keyboard state
 	renderer       *renderer.Renderer // Renderer object
-	coman          *renderer.Coman    // Coman object for compute shaders
 	audioDev       *al.Device         // Default audio device
 	startTime      time.Time          // Application start time
 	frameStart     time.Time          // Frame start time
@@ -47,7 +46,6 @@ func App(width, height int, title string) *Application {
 	a.keyState = window.NewKeyState(a) // Create KeyState
 	// Create renderer and add default shaders
 	a.renderer = renderer.NewRenderer(a.Gls())
-	a.coman = renderer.NewComan(a.Gls())
 	err = a.renderer.AddDefaultShaders()
 	if err != nil {
 		panic(fmt.Errorf("AddDefaultShaders:%v", err))
@@ -101,11 +99,6 @@ func (a *Application) Run(update func(rend *renderer.Renderer, deltaTime time.Du
 func (a *Application) Exit() {
 
 	a.IWindow.(*window.GlfwWindow).SetShouldClose(true)
-}
-
-// Coman returns the application's compute manager.
-func (a *Application) Coman() *renderer.Coman {
-	return a.coman
 }
 
 // Renderer returns the application's renderer.

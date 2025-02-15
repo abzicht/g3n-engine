@@ -5,7 +5,11 @@
 // Package renderer implements the scene renderer.
 package renderer
 
-import "github.com/g3n/engine/gls"
+import (
+	"unsafe"
+
+	"github.com/g3n/engine/gls"
+)
 
 type Postprocessor struct {
 	Width    int32
@@ -64,7 +68,7 @@ func (r *Renderer) CreatePostprocessor(width, height int32, vertexShaderSource, 
 	// create the "screen" quad
 	vbo := r.gs.GenBuffer()
 	r.gs.BindBuffer(gls.ARRAY_BUFFER, vbo)
-	r.gs.BufferData(gls.ARRAY_BUFFER, 4*len(pp.screen), pp.screen, gls.STATIC_DRAW)
+	r.gs.BufferData(gls.ARRAY_BUFFER, 4*len(pp.screen), unsafe.Pointer(unsafe.SliceData(pp.screen)), gls.STATIC_DRAW)
 
 	pp.Vao = r.gs.GenVertexArray()
 	r.gs.BindVertexArray(pp.Vao)
