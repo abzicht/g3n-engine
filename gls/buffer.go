@@ -37,8 +37,8 @@ type SSBO struct {
 	 */
 	BindingIndex uint32
 	// Access type with that SSBO.Process reads / writes the buffer
-	Usage        UsageType
-	Access       AccessType
+	Usage        BOUsageType
+	Access       BOAccessType
 	SSBOCallback SSBOCallback
 	// Data type found in the buffer
 	Size        uint32
@@ -48,7 +48,7 @@ type SSBO struct {
 // SSBOCallback is called within SSBO.Process and receives a BufferRAM object.
 // This function must finish reading / writing to the buffer before it returns,
 // otherwise, the shader won't take note of further updates to the buffer
-// Note to end user: make good use of closures and use the correct AccessType!
+// Note to end user: make good use of closures and use the correct BOAccessType!
 type SSBOCallback func(b *BufferRAM, deltaTime time.Duration)
 
 // BufferRAM points to data in user space, reachable by the CPU. It is typically
@@ -58,41 +58,6 @@ type BufferRAM struct {
 	Address unsafe.Pointer
 	Size    uint32
 }
-
-// NumWorkGroups tell GLS how compute shaders should be processed
-type NumWorkGroups struct {
-	X uint32 // number of work groups in x axis
-	Y uint32 // number of work groups in y axis
-	Z uint32 // number of work groups in z axis
-}
-
-// Let's typify some constants so that users can't pass us the wrong ones. (If
-// everything was uint32, who tells us that a GL constant's category fits the
-// use case?)
-type AccessType uint32
-type UsageType uint32
-
-// Usage Type with that glBufferData is called by Buffer Objects
-const (
-	BO_STREAM_DRAW  UsageType = STREAM_DRAW
-	BO_STREAM_READ  UsageType = STREAM_READ
-	BO_STREAM_COPY  UsageType = STREAM_COPY
-	BO_STATIC_DRAW  UsageType = STATIC_DRAW
-	BO_STATIC_READ  UsageType = STATIC_READ
-	BO_STATIC_COPY  UsageType = STATIC_COPY
-	BO_DYNAMIC_DRAW UsageType = DYNAMIC_DRAW
-	BO_DYNAMIC_READ UsageType = DYNAMIC_READ
-	BO_DYNAMIC_COPY UsageType = DYNAMIC_COPY
-)
-
-// Access Type with that glMapBuffer is called by Buffer Objects
-const (
-	// if using read only, changes made to the buffer by CPU are not reflected
-	// to shaders
-	BO_READ_ONLY  AccessType = READ_ONLY
-	BO_WRITE_ONLY AccessType = WRITE_ONLY
-	BO_READ_WRITE AccessType = READ_WRITE
-)
 
 // Create a new BufferRAM that points to address p with a given size
 // Needless to say, using this is 'unsafe'
@@ -200,14 +165,14 @@ func (b *BufferRAM) AsVector4() iter.Seq2[uint32, math32.Vector4] {
 // Use (*SSBO).SetInitialData to prefill the buffer before the first call to
 // Process.
 // Set usage to DYNAMIC_COPY / DYNAMIC_DRAW when expecting to modify this buffer's contents
-func NewSSBO(gs *GLS, bindingIndex uint32, usage UsageType, access AccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
+func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
 	s := new(SSBO)
 	s.Init(gs, bindingIndex, usage, access, ssboCallback, size)
 	return s
 }
 
 // Initialize SSBO and generate a corresponding GLS buffer
-func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage UsageType, access AccessType, ssboCallback SSBOCallback, size uint32) {
+func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) {
 	s.BindingIndex = bindingIndex
 	s.Usage = usage
 	s.Access = access
@@ -287,7 +252,6 @@ func (b *BufferObjects) Set(bo BufferObject) {
 
 // Unset removes the specified buffer object.
 func (b *BufferObjects) Unset(id uint32) {
-
 	delete(*b, id)
 }
 
@@ -310,14 +274,16 @@ func (b *BufferObjects) Equals(other *BufferObjects) bool {
 			return false
 		}
 		for k := range map[uint32]BufferObject(*b) {
-			if (*b)[k].GetBufferID() != (*other)[k].GetBufferID() {
+			v1, ok1 := (*b)[k]
+			v2, ok2 := (*other)[k]
+			if ok1 != ok2 {
 				return false
 			}
-			//v1, ok1 := (*b)[k]
-			//v2, ok2 := (*other)[k]
-			//if v1 != v2 || ok1 != ok2 {
-			//	return false
-			//}
+			// reaching this line implies that both are ok
+			// otherwise, the map would be seriously broken
+			if v1.GetBufferID() != v2.GetBufferID() {
+				return false
+			}
 		}
 		return true
 	}
@@ -351,12 +317,4 @@ func (b *BufferObjects) DeleteBufferObjects(gs *GLS) {
 		bufferObject.Delete(gs)
 		(*b).Unset(id)
 	}
-}
-
-func NewNumWorkGroups(x, y, z uint32) *NumWorkGroups {
-	n := new(NumWorkGroups)
-	n.X = x
-	n.Y = y
-	n.Z = z
-	return n
 }

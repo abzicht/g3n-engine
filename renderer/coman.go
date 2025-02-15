@@ -271,7 +271,7 @@ func (cm *Coman) processIncludes(source string, defines map[string]string) (stri
 // process all corresponding buffer objects
 func (cm *Coman) Compute(nWorkGroups gls.NumWorkGroups, deltaTime time.Duration) error {
 	gs := cm.gs
-	gs.DispatchCompute(nWorkGroups.X, nWorkGroups.Y, nWorkGroups.Z)
+	gs.DispatchCompute(nWorkGroups)
 	gs.MemoryBarrier(gls.SHADER_STORAGE_BARRIER_BIT) // Ensure data is written before reading
 	err := cm.specs.BufferObjects.Process(cm.gs, deltaTime)
 	return err

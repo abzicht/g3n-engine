@@ -15,7 +15,7 @@ import (
 
 // Program represents an OpenGL program.
 // It must have Vertex and Fragment shaders.
-// It can also have a Geometry and compute shader.
+// It can also have a Geometry and Compute shader.
 type Program struct {
 	gs         *GLS             // Reference to OpenGL state
 	ShowSource bool             // Show source code in error messages

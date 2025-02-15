@@ -204,9 +204,9 @@ func (gs *GLS) BindVertexArray(vao uint32) {
 	C.glBindVertexArray(C.GLuint(vao))
 }
 
-// DispatchCompute launches one or more compute work groups.
-func (gs *GLS) DispatchCompute(num_groups_x, num_groups_y, num_groups_z uint32) {
-	C.glDispatchCompute(C.GLuint(num_groups_x), C.GLuint(num_groups_y), C.GLuint(num_groups_z))
+// DispatchCompute launches work groups for compute shaders.
+func (gs *GLS) DispatchCompute(numWorkGroups NumWorkGroups) {
+	C.glDispatchCompute(C.GLuint(numWorkGroups.X), C.GLuint(numWorkGroups.Y), C.GLuint(numWorkGroups.Z))
 }
 
 // UnmapBuffer releases the mapping of a buffer object's data store into the client's address space.
