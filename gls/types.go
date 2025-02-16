@@ -79,26 +79,38 @@ type TypeSize byte
 
 const (
 	// For now, we only support types of GLSL std430
-	SizeBoolStd430   = TypeSize(unsafe.Sizeof(bool(false)))
-	SizeIntStd430    = TypeSize(unsafe.Sizeof(int32(0)))
-	SizeUintStd430   = TypeSize(unsafe.Sizeof(uint32(0)))
-	SizeFloatStd430  = TypeSize(unsafe.Sizeof(float32(0)))
+	// Primitives
+	// Boolean
+	SizeBoolStd430 = TypeSize(unsafe.Sizeof(bool(false)))
+	// Integer
+	SizeIntStd430 = TypeSize(unsafe.Sizeof(int32(0)))
+	// Unsigned integer
+	SizeUintStd430 = TypeSize(unsafe.Sizeof(uint32(0)))
+	// Single Precision
+	SizeFloatStd430 = TypeSize(unsafe.Sizeof(float32(0)))
+	// Double Precision
 	SizeDoubleStd430 = TypeSize(unsafe.Sizeof(float64(0)))
-	SizeBvec2Std430  = TypeSize(2 * SizeBoolStd430)
-	SizeBvec3Std430  = TypeSize(3 * SizeBoolStd430)
-	SizeBvec4Std430  = TypeSize(4 * SizeBoolStd430)
-	SizeIvec2Std430  = TypeSize(2 * SizeIntStd430)
-	SizeIvec3Std430  = TypeSize(3 * SizeIntStd430)
-	SizeIvec4Std430  = TypeSize(4 * SizeIntStd430)
-	SizeUvec2Std430  = TypeSize(2 * SizeUintStd430)
-	SizeUvec3Std430  = TypeSize(3 * SizeUintStd430)
-	SizeUvec4Std430  = TypeSize(4 * SizeUintStd430)
-	SizeVec2Std430   = TypeSize(2 * SizeFloatStd430)
-	SizeVec3Std430   = TypeSize(3 * SizeFloatStd430)
-	SizeVec4Std430   = TypeSize(4 * SizeFloatStd430)
-	SizeDvec2Std430  = TypeSize(2 * SizeDoubleStd430)
-	SizeDvec3Std430  = TypeSize(3 * SizeDoubleStd430)
-	SizeDvec4Std430  = TypeSize(4 * SizeDoubleStd430)
+	// Boolean Vectors
+	SizeBvec2Std430 = TypeSize(2 * SizeBoolStd430)
+	SizeBvec3Std430 = TypeSize(3 * SizeBoolStd430)
+	SizeBvec4Std430 = TypeSize(4 * SizeBoolStd430)
+	// Integer vectors
+	SizeIvec2Std430 = TypeSize(2 * SizeIntStd430)
+	SizeIvec3Std430 = TypeSize(3 * SizeIntStd430)
+	SizeIvec4Std430 = TypeSize(4 * SizeIntStd430)
+	// Unsigned integer vectors
+	SizeUvec2Std430 = TypeSize(2 * SizeUintStd430)
+	SizeUvec3Std430 = TypeSize(3 * SizeUintStd430)
+	SizeUvec4Std430 = TypeSize(4 * SizeUintStd430)
+	// Single precision vectors
+	SizeVec2Std430 = TypeSize(2 * SizeFloatStd430)
+	SizeVec3Std430 = TypeSize(3 * SizeFloatStd430)
+	SizeVec4Std430 = TypeSize(4 * SizeFloatStd430)
+	// Double precision vectors
+	SizeDvec2Std430 = TypeSize(2 * SizeDoubleStd430)
+	SizeDvec3Std430 = TypeSize(3 * SizeDoubleStd430)
+	SizeDvec4Std430 = TypeSize(4 * SizeDoubleStd430)
+	// Matrices
 	SizeMat3Std430   = TypeSize(3 * 3 * SizeFloatStd430)
 	SizeMat2x3Std430 = TypeSize(2 * 3 * SizeFloatStd430)
 	SizeMat3x2Std430 = TypeSize(3 * 2 * SizeFloatStd430)

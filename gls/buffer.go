@@ -6,6 +6,7 @@ import (
 	"unsafe"
 
 	"github.com/g3n/engine/math32"
+	"github.com/g3n/engine/math64"
 )
 
 // BufferRAM points to data in user space, reachable by the CPU. It is typically
@@ -70,7 +71,7 @@ func (b *BufferRAM) get(index uint32, typeSize TypeSize) ([]byte, error) {
 
 // Set the index-th Vector2. This assumes that the buffer is an array of
 // Vector3s.
-func (b *BufferRAM) SetVector2(index uint32, vector *math32.Vector2) error {
+func (b *BufferRAM) SetVec2(index uint32, vector *math32.Vector2) error {
 	if index*uint32(SizeVec2Std430) > b.Size {
 		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector2 to buffer at index %d", index)
 	}
@@ -83,7 +84,7 @@ func (b *BufferRAM) SetVector2(index uint32, vector *math32.Vector2) error {
 
 // Return the index-th Vector2. This assumes that the buffer is an array of
 // Vector2s.
-func (b *BufferRAM) GetVector2(index uint32) (*math32.Vector2, error) {
+func (b *BufferRAM) GetVec2(index uint32) (*math32.Vector2, error) {
 	data, err := b.get(index, SizeVec2Std430)
 	if err != nil {
 		return nil, err
@@ -96,7 +97,7 @@ func (b *BufferRAM) GetVector2(index uint32) (*math32.Vector2, error) {
 
 // Return the buffer as a Vector2 iterator. This assumes that the buffer is an array of
 // Vector2s.
-func (b *BufferRAM) AsVector2() iter.Seq2[uint32, math32.Vector2] {
+func (b *BufferRAM) AsVec2() iter.Seq2[uint32, math32.Vector2] {
 	return func(yield func(uint32, math32.Vector2) bool) {
 		_raw := b.AsBytes()
 		var i, index uint32 = 0, 0
@@ -115,7 +116,7 @@ func (b *BufferRAM) AsVector2() iter.Seq2[uint32, math32.Vector2] {
 
 // Set the index-th Vector3. This assumes that the buffer is an array of
 // Vector3s.
-func (b *BufferRAM) SetVector3(index uint32, vector *math32.Vector3) error {
+func (b *BufferRAM) SetVec3(index uint32, vector *math32.Vector3) error {
 	if index*uint32(SizeVec3Std430) > b.Size {
 		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector3 to buffer at index %d", index)
 	}
@@ -129,7 +130,7 @@ func (b *BufferRAM) SetVector3(index uint32, vector *math32.Vector3) error {
 
 // Return the index-th Vector3. This assumes that the buffer is an array of
 // Vector3s.
-func (b *BufferRAM) GetVector3(index uint32) (*math32.Vector3, error) {
+func (b *BufferRAM) GetVec3(index uint32) (*math32.Vector3, error) {
 	data, err := b.get(index, SizeVec3Std430)
 	if err != nil {
 		return nil, err
@@ -143,7 +144,7 @@ func (b *BufferRAM) GetVector3(index uint32) (*math32.Vector3, error) {
 
 // Return the buffer as a Vector3 iterator. This assumes that the buffer is an array of
 // Vector3s.
-func (b *BufferRAM) AsVector3() iter.Seq2[uint32, math32.Vector3] {
+func (b *BufferRAM) AsVec3() iter.Seq2[uint32, math32.Vector3] {
 	return func(yield func(uint32, math32.Vector3) bool) {
 		_raw := b.AsBytes()
 		var i, index uint32 = 0, 0
@@ -163,7 +164,7 @@ func (b *BufferRAM) AsVector3() iter.Seq2[uint32, math32.Vector3] {
 
 // Set the index-th Vector4. This assumes that the buffer is an array of
 // Vector4s.
-func (b *BufferRAM) SetVector4(index uint32, vector *math32.Vector4) error {
+func (b *BufferRAM) SetVec4(index uint32, vector *math32.Vector4) error {
 	if index*uint32(SizeVec4Std430) > b.Size {
 		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector4 to buffer at index %d", index)
 	}
@@ -178,7 +179,7 @@ func (b *BufferRAM) SetVector4(index uint32, vector *math32.Vector4) error {
 
 // Return the index-th Vector4. This assumes that the buffer is an array of
 // Vector4s.
-func (b *BufferRAM) GetVector4(index uint32) (*math32.Vector4, error) {
+func (b *BufferRAM) GetVec4(index uint32) (*math32.Vector4, error) {
 	data, err := b.get(index, SizeVec4Std430)
 	if err != nil {
 		return nil, err
@@ -193,7 +194,7 @@ func (b *BufferRAM) GetVector4(index uint32) (*math32.Vector4, error) {
 
 // Return the buffer as a Vector4 iterator. This assumes that the buffer is an array of
 // Vector4s.
-func (b *BufferRAM) AsVector4() iter.Seq2[uint32, math32.Vector4] {
+func (b *BufferRAM) AsVec4() iter.Seq2[uint32, math32.Vector4] {
 	return func(yield func(uint32, math32.Vector4) bool) {
 		_raw := b.AsBytes()
 		var i, index uint32 = 0, 0
@@ -208,6 +209,152 @@ func (b *BufferRAM) AsVector4() iter.Seq2[uint32, math32.Vector4] {
 			}
 			index += 1
 			i += uint32(SizeVec4Std430)
+		}
+	}
+}
+
+// math64-
+
+// Set the index-th Vector2. This assumes that the buffer is an array of
+// Vector3s.
+func (b *BufferRAM) SetDvec2(index uint32, vector *math64.Vector2) error {
+	if index*uint32(SizeDvec2Std430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector2 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeDvec2Std430))
+	*(*float64)(p) = vector.X
+	*(*float64)(unsafe.Add(p, 1*SizeDoubleStd430)) = vector.Y
+	return nil
+}
+
+// Return the index-th Vector2. This assumes that the buffer is an array of
+// Vector2s.
+func (b *BufferRAM) GetDvec2(index uint32) (*math64.Vector2, error) {
+	data, err := b.get(index, SizeDvec2Std430)
+	if err != nil {
+		return nil, err
+	}
+	var vector *math64.Vector2 = math64.NewVec2()
+	vector.X = *(*float64)(unsafe.Pointer(&data[0]))
+	vector.Y = *(*float64)(unsafe.Pointer(&data[1*SizeDoubleStd430]))
+	return vector, nil
+}
+
+// Return the buffer as a Vector2 iterator. This assumes that the buffer is an array of
+// Vector2s.
+func (b *BufferRAM) AsDvec2() iter.Seq2[uint32, math64.Vector2] {
+	return func(yield func(uint32, math64.Vector2) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			var v math64.Vector2
+			v.X = *(*float64)(unsafe.Pointer(&_raw[i]))
+			v.Y = *(*float64)(unsafe.Pointer(&_raw[i+1*uint32(SizeDoubleStd430)]))
+			if !yield(index, v) {
+				return
+			}
+			index += 1
+			i += uint32(SizeDvec2Std430)
+		}
+	}
+}
+
+// Set the index-th Vector3. This assumes that the buffer is an array of
+// Vector3s.
+func (b *BufferRAM) SetDvec3(index uint32, vector *math64.Vector3) error {
+	if index*uint32(SizeDvec3Std430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector3 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeDvec3Std430))
+	*(*float64)(p) = vector.X
+	*(*float64)(unsafe.Add(p, 1*SizeDoubleStd430)) = vector.Y
+	*(*float64)(unsafe.Add(p, 2*SizeDoubleStd430)) = vector.Z
+	return nil
+}
+
+// Return the index-th Vector3. This assumes that the buffer is an array of
+// Vector3s.
+func (b *BufferRAM) GetDvec3(index uint32) (*math64.Vector3, error) {
+	data, err := b.get(index, SizeDvec3Std430)
+	if err != nil {
+		return nil, err
+	}
+	var vector *math64.Vector3 = math64.NewVec3()
+	vector.X = *(*float64)(unsafe.Pointer(&data[0]))
+	vector.Y = *(*float64)(unsafe.Pointer(&data[1*SizeDoubleStd430]))
+	vector.Z = *(*float64)(unsafe.Pointer(&data[2*SizeDoubleStd430]))
+	return vector, nil
+}
+
+// Return the buffer as a Vector3 iterator. This assumes that the buffer is an array of
+// Vector3s.
+func (b *BufferRAM) AsDvec3() iter.Seq2[uint32, math64.Vector3] {
+	return func(yield func(uint32, math64.Vector3) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			var v math64.Vector3
+			v.X = *(*float64)(unsafe.Pointer(&_raw[i]))
+			v.Y = *(*float64)(unsafe.Pointer(&_raw[i+1*uint32(SizeDoubleStd430)]))
+			v.Z = *(*float64)(unsafe.Pointer(&_raw[i+2*uint32(SizeDoubleStd430)]))
+			if !yield(index, v) {
+				return
+			}
+			index += 1
+			i += uint32(SizeDvec3Std430)
+		}
+	}
+}
+
+// Set the index-th Vector4. This assumes that the buffer is an array of
+// Vector4s.
+func (b *BufferRAM) SetDvec4(index uint32, vector *math64.Vector4) error {
+	if index*uint32(SizeDvec4Std430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write Vector4 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeDvec4Std430))
+	*(*float64)(p) = vector.X
+	*(*float64)(unsafe.Add(p, 1*SizeDoubleStd430)) = vector.Y
+	*(*float64)(unsafe.Add(p, 2*SizeDoubleStd430)) = vector.Z
+	*(*float64)(unsafe.Add(p, 3*SizeDoubleStd430)) = vector.W
+	return nil
+}
+
+// Return the index-th Vector4. This assumes that the buffer is an array of
+// Vector4s.
+func (b *BufferRAM) GetDvec4(index uint32) (*math64.Vector4, error) {
+	data, err := b.get(index, SizeDvec4Std430)
+	if err != nil {
+		return nil, err
+	}
+	var vector *math64.Vector4 = math64.NewVec4()
+	vector.X = *(*float64)(unsafe.Pointer(&data[0]))
+	vector.Y = *(*float64)(unsafe.Pointer(&data[1*SizeDoubleStd430]))
+	vector.Z = *(*float64)(unsafe.Pointer(&data[2*SizeDoubleStd430]))
+	vector.W = *(*float64)(unsafe.Pointer(&data[3*SizeDoubleStd430]))
+	return vector, nil
+}
+
+// Return the buffer as a Vector4 iterator. This assumes that the buffer is an array of
+// Vector4s.
+func (b *BufferRAM) AsDvec4() iter.Seq2[uint32, math64.Vector4] {
+	return func(yield func(uint32, math64.Vector4) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			var v math64.Vector4
+			v.X = *(*float64)(unsafe.Pointer(&_raw[i]))
+			v.Y = *(*float64)(unsafe.Pointer(&_raw[i+1*uint32(SizeDoubleStd430)]))
+			v.Z = *(*float64)(unsafe.Pointer(&_raw[i+2*uint32(SizeDoubleStd430)]))
+			v.W = *(*float64)(unsafe.Pointer(&_raw[i+3*uint32(SizeDoubleStd430)]))
+			if !yield(index, v) {
+				return
+			}
+			index += 1
+			i += uint32(SizeDvec4Std430)
 		}
 	}
 }
