@@ -664,6 +664,11 @@ func (gs *GLS) GetProgramInfoLog(program uint32) string {
 	return string(gs.gobuf[:length])
 }
 
+// GetProgramResourceIndex query the index of a named resource within a program
+func (gs *GLS) GetProgramResourceIndex(program uint32, programInterface uint32, name string) uint32 {
+	return uint32(C.glGetProgramResourceIndex(C.GLuint(program), C.GLenum(programInterface), gs.gobufStr(name)))
+}
+
 // GetShaderInfoLog returns the information log for the specified shader object.
 func (gs *GLS) GetShaderInfoLog(shader uint32) string {
 

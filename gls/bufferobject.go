@@ -15,7 +15,7 @@ type BufferObject interface {
 	// Returns the id that gls uses to identify this buffer
 	GetBufferID() uint32
 	// Binds this buffer to the provided gls
-	Bind(gs *GLS)
+	Bind(gs *GLS) error
 	// Process the data held in buffer locally
 	Process(gs *GLS, deltaTime time.Duration) error
 	// Deletes this buffer from the provided gls
@@ -27,10 +27,9 @@ type BufferObject interface {
 type SSBO struct {
 	// ID that GLS uses to identify this object
 	BufferID uint32
-	// binding index must match a binding in the shader.
-	/*
+	/* BindingIndex must match a buffer's binding in the shader.
 	 * For index 3, the following format would be used in the shader:
-	 * layout(std430, binding = 3) buffer layoutName
+	 * layout(std430, binding = 3) buffer BufferName
 	 *  { int data_SSBO[]; };
 	 */
 	BindingIndex uint32
@@ -90,16 +89,17 @@ func (s *SSBO) GetBufferID() uint32 {
 
 // Binds this SSBO's GLS buffer to the provided GLS instance and copies the
 // data to this buffer. If data is larger than s.Size, the rest is ignored
-func (s *SSBO) Bind(gs *GLS) {
+func (s *SSBO) Bind(gs *GLS) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.BufferID)
 	gs.NamedBufferData(s.BufferID, s.Size, unsafe.Pointer(unsafe.SliceData(s.initialData)), uint32(s.Usage))
 	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.BufferID) // Bind to binding point found in shader
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                              // value 0 indicates: unbind!
+	//gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                            // value 0 indicates: unbind!
 	s.initialData = nil
+	return nil
 }
 
 // Load the GLS buffer into RAM and call the user-defined callback on that
-// buffer before unbinding it.
+// buffer before unmapping and unbinding it.
 func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.BufferID)
 	ptr := gs.MapNamedBuffer(s.BufferID, int(s.Access))
@@ -186,10 +186,13 @@ func (b *BufferObjects) Equals(other *BufferObjects) bool {
 
 // Binds all buffer objects so that the next used program can access
 // these.
-func (b *BufferObjects) Bind(gs *GLS) {
+func (b *BufferObjects) Bind(gs *GLS) error {
+	var _errors error
 	for _, bufferObject := range map[uint32]BufferObject(*b) {
-		bufferObject.Bind(gs)
+		var err error = bufferObject.Bind(gs)
+		_errors = errors.Join(_errors, err)
 	}
+	return _errors
 }
 
 // Calls Process for all buffer objects

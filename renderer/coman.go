@@ -154,7 +154,10 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 	// Save specs as current specs, adds new program to the list and activates the program
 	cm.specs = specs
 	cm.programs = append(cm.programs, ComputeProgSpecs{prog, specs})
-	specs.BufferObjects.Bind(cm.gs) //prepare buffer objects before using the program
+	err = specs.BufferObjects.Bind(cm.gs, prog) //prepare buffer objects before using the program
+	if err != nil {
+		return false, err
+	}
 	cm.gs.UseProgram(prog)
 	cm.concurrentManager.ForceNextProgram()
 	return true, nil
