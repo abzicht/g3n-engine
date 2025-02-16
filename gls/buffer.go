@@ -69,6 +69,205 @@ func (b *BufferRAM) get(index uint32, typeSize TypeSize) ([]byte, error) {
 	return data, nil
 }
 
+// Set the index-th bool. This assumes that the buffer is an array of
+// bools.
+func (b *BufferRAM) SetBool(index uint32, b_ bool) error {
+	if index*uint32(SizeBoolStd430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write bool to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeBoolStd430))
+	if b_ {
+		*(*int32)(p) = int32(1)
+	} else {
+		*(*int32)(p) = int32(0)
+	}
+	return nil
+}
+
+// Return the index-th bool. This assumes that the buffer is an array of
+// bools.
+func (b *BufferRAM) GetBool(index uint32) (bool, error) {
+	data, err := b.get(index, SizeBoolStd430)
+	if err != nil {
+		return false, err
+	}
+	return *(*int32)(unsafe.Pointer(&data[0])) == 1, nil
+}
+
+// Return the buffer as a bool iterator. This assumes that the buffer is an array of
+// bools.
+func (b *BufferRAM) AsBool() iter.Seq2[uint32, bool] {
+	return func(yield func(uint32, bool) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			b_ := *(*int32)(unsafe.Pointer(&_raw[i])) == 1
+			if !yield(index, b_) {
+				return
+			}
+			index += 1
+			i += uint32(SizeBoolStd430)
+		}
+	}
+}
+
+// Set the index-th int32. This assumes that the buffer is an array of
+// int32s.
+func (b *BufferRAM) SetInt(index uint32, i int32) error {
+	if index*uint32(SizeIntStd430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write int32 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeIntStd430))
+	*(*int32)(p) = i
+	return nil
+}
+
+// Return the index-th int32. This assumes that the buffer is an array of
+// int32s.
+func (b *BufferRAM) GetInt(index uint32) (int32, error) {
+	data, err := b.get(index, SizeIntStd430)
+	if err != nil {
+		return 0, err
+	}
+	return *(*int32)(unsafe.Pointer(&data[0])), nil
+}
+
+// Return the buffer as a int32 iterator. This assumes that the buffer is an array of
+// int32s.
+func (b *BufferRAM) AsInt() iter.Seq2[uint32, int32] {
+	return func(yield func(uint32, int32) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			integerVal := *(*int32)(unsafe.Pointer(&_raw[i]))
+			if !yield(index, integerVal) {
+				return
+			}
+			index += 1
+			i += uint32(SizeIntStd430)
+		}
+	}
+}
+
+// Set the index-th uint32. This assumes that the buffer is an array of
+// uint32s.
+func (b *BufferRAM) SetUint(index uint32, i uint32) error {
+	if index*uint32(SizeUintStd430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write uint32 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeUintStd430))
+	*(*uint32)(p) = i
+	return nil
+}
+
+// Return the index-th uint32. This assumes that the buffer is an array of
+// uint32s.
+func (b *BufferRAM) GetUint(index uint32) (uint32, error) {
+	data, err := b.get(index, SizeUintStd430)
+	if err != nil {
+		return 0, err
+	}
+	return *(*uint32)(unsafe.Pointer(&data[0])), nil
+}
+
+// Return the buffer as a uint32 iterator. This assumes that the buffer is an array of
+// uint32s.
+func (b *BufferRAM) AsUint() iter.Seq2[uint32, uint32] {
+	return func(yield func(uint32, uint32) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			f := *(*uint32)(unsafe.Pointer(&_raw[i]))
+			if !yield(index, f) {
+				return
+			}
+			index += 1
+			i += uint32(SizeUintStd430)
+		}
+	}
+}
+
+// Set the index-th float32. This assumes that the buffer is an array of
+// float32s.
+func (b *BufferRAM) SetFloat(index uint32, f float32) error {
+	if index*uint32(SizeFloatStd430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write float32 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeFloatStd430))
+	*(*float32)(p) = f
+	return nil
+}
+
+// Return the index-th float32. This assumes that the buffer is an array of
+// float32s.
+func (b *BufferRAM) GetFloat(index uint32) (float32, error) {
+	data, err := b.get(index, SizeFloatStd430)
+	if err != nil {
+		return 0, err
+	}
+	return *(*float32)(unsafe.Pointer(&data[0])), nil
+}
+
+// Return the buffer as a float32 iterator. This assumes that the buffer is an array of
+// float32s.
+func (b *BufferRAM) AsFloat() iter.Seq2[uint32, float32] {
+	return func(yield func(uint32, float32) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			f := *(*float32)(unsafe.Pointer(&_raw[i]))
+			if !yield(index, f) {
+				return
+			}
+			index += 1
+			i += uint32(SizeFloatStd430)
+		}
+	}
+}
+
+// Set the index-th float64. This assumes that the buffer is an array of
+// float64s.
+func (b *BufferRAM) SetDouble(index uint32, f float64) error {
+	if index*uint32(SizeDoubleStd430) > b.Size {
+		return fmt.Errorf("Buffer overflow prevented: Attempted to write float64 to buffer at index %d", index)
+	}
+
+	p := unsafe.Add(b.Address, index*uint32(SizeDoubleStd430))
+	*(*float64)(p) = f
+	return nil
+}
+
+// Return the index-th float64. This assumes that the buffer is an array of
+// float64s.
+func (b *BufferRAM) GetDouble(index uint32) (float64, error) {
+	data, err := b.get(index, SizeDoubleStd430)
+	if err != nil {
+		return 0, err
+	}
+	return *(*float64)(unsafe.Pointer(&data[0])), nil
+}
+
+// Return the buffer as a float64 iterator. This assumes that the buffer is an array of
+// float64s.
+func (b *BufferRAM) AsDouble() iter.Seq2[uint32, float64] {
+	return func(yield func(uint32, float64) bool) {
+		_raw := b.AsBytes()
+		var i, index uint32 = 0, 0
+		for i < uint32(len(_raw)) {
+			f := *(*float64)(unsafe.Pointer(&_raw[i]))
+			if !yield(index, f) {
+				return
+			}
+			index += 1
+			i += uint32(SizeDoubleStd430)
+		}
+	}
+}
+
 // Set the index-th Vector2. This assumes that the buffer is an array of
 // Vector3s.
 func (b *BufferRAM) SetVec2(index uint32, vector *math32.Vector2) error {
@@ -212,8 +411,6 @@ func (b *BufferRAM) AsVec4() iter.Seq2[uint32, math32.Vector4] {
 		}
 	}
 }
-
-// math64-
 
 // Set the index-th Vector2. This assumes that the buffer is an array of
 // Vector3s.

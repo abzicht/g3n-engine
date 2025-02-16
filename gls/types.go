@@ -46,13 +46,13 @@ func GetTypeSize[T BufferType]() TypeSize {
 	case bool:
 		return SizeBoolStd430
 	case int32:
-		return SizeBoolStd430
+		return SizeIntStd430
 	case uint32:
-		return SizeBoolStd430
+		return SizeUintStd430
 	case float32:
-		return SizeBoolStd430
+		return SizeFloatStd430
 	case float64:
-		return SizeBoolStd430
+		return SizeDoubleStd430
 	case math32.Vector2:
 		return SizeVec2Std430
 	case math32.Vector3:
@@ -75,13 +75,13 @@ func GetTypeSize[T BufferType]() TypeSize {
 
 // Size, in bytes, of (GLSL specific) data types. This follows the naming of
 // https://www.khronos.org/opengl/wiki/Data_Type_(GLSL), and not of Go/G3N
-type TypeSize byte
+type TypeSize uint32
 
 const (
 	// For now, we only support types of GLSL std430
 	// Primitives
 	// Boolean
-	SizeBoolStd430 = TypeSize(unsafe.Sizeof(bool(false)))
+	SizeBoolStd430 = TypeSize(unsafe.Sizeof(int32(0))) // last time we checked, bools are treated as ints
 	// Integer
 	SizeIntStd430 = TypeSize(unsafe.Sizeof(int32(0)))
 	// Unsigned integer

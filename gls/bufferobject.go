@@ -57,9 +57,9 @@ type SSBOCallback func(b *BufferRAM, deltaTime time.Duration)
 // Use (*SSBO).SetInitialData to prefill the buffer before the first call to
 // Process.
 // Set usage to DYNAMIC_COPY / DYNAMIC_DRAW when expecting to modify this buffer's contents
-func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
+func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size TypeSize) *SSBO {
 	s := new(SSBO)
-	s.Init(gs, bindingIndex, usage, access, ssboCallback, size)
+	s.Init(gs, bindingIndex, usage, access, ssboCallback, uint32(size))
 	return s
 }
 
@@ -78,8 +78,9 @@ func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAc
 // This function is only effective when called before s.Bind() where the data
 // is being applied. If provided data is larger than s.Size, the overshoot is
 // being ignored
-func (s *SSBO) SetInitialData(data []byte) {
+func (s *SSBO) SetInitialData(data []byte) *SSBO {
 	s.initialData = data
+	return s
 }
 
 // Return the buffer id in GLS that this ssbo references
