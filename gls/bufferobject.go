@@ -13,7 +13,7 @@ type BufferObjects map[uint32]BufferObject
 
 type BufferObject interface {
 	// Returns the id that gls uses to identify this buffer
-	GetBufferID() uint32
+	BufferID() uint32
 	// Binds this buffer to the provided gls
 	Bind(gs *GLS) error
 	// Process the data held in buffer locally
@@ -26,7 +26,7 @@ type BufferObject interface {
 // shaders as well as between compute shaders and other types of shaders.
 type SSBO struct {
 	// ID that GLS uses to identify this object
-	BufferID uint32
+	bufferID uint32
 	/* BindingIndex must match a buffer's binding in the shader.
 	 * For index 3, the following format would be used in the shader:
 	 * layout(std430, binding = 3) buffer BufferName
@@ -69,7 +69,7 @@ func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAc
 	s.Access = access
 	s.SSBOCallback = ssboCallback
 	s.Size = size
-	s.BufferID = gs.GenBuffer()
+	s.bufferID = gs.GenBuffer()
 	s.initialData = nil
 }
 
@@ -83,16 +83,16 @@ func (s *SSBO) SetInitialData(data []byte) *SSBO {
 }
 
 // Return the buffer id in GLS that this ssbo references
-func (s *SSBO) GetBufferID() uint32 {
-	return s.BufferID
+func (s *SSBO) BufferID() uint32 {
+	return s.bufferID
 }
 
 // Binds this SSBO's GLS buffer to the provided GLS instance and copies the
 // data to this buffer. If data is larger than s.Size, the rest is ignored
 func (s *SSBO) Bind(gs *GLS) error {
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.BufferID)
-	gs.NamedBufferData(s.BufferID, s.Size, unsafe.Pointer(unsafe.SliceData(s.initialData)), uint32(s.Usage))
-	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.BufferID) // Bind to binding point found in shader
+	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
+	gs.NamedBufferData(s.bufferID, s.Size, unsafe.Pointer(unsafe.SliceData(s.initialData)), uint32(s.Usage))
+	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.bufferID) // Bind to binding point found in shader
 	//gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                            // value 0 indicates: unbind!
 	s.initialData = nil
 	return nil
@@ -101,13 +101,13 @@ func (s *SSBO) Bind(gs *GLS) error {
 // Load the GLS buffer into RAM and call the user-defined callback on that
 // buffer before unmapping and unbinding it.
 func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.BufferID)
-	ptr := gs.MapNamedBuffer(s.BufferID, int(s.Access))
+	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
+	ptr := gs.MapNamedBuffer(s.bufferID, int(s.Access))
 	if ptr != uintptr(0) {
 		s.SSBOCallback(NewBufferRAM(unsafe.Pointer(ptr), s.Size), deltaTime)
-		gs.UnmapNamedBuffer(s.BufferID)
+		gs.UnmapNamedBuffer(s.bufferID)
 	} else {
-		return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.BufferID)
+		return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.bufferID)
 	}
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0) // unbind this buffer, clearing data
 	return nil
@@ -115,7 +115,7 @@ func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 
 // Tell GLS to delete this buffer
 func (s *SSBO) Delete(gs *GLS) {
-	gs.DeleteBuffers(s.BufferID)
+	gs.DeleteBuffers(s.bufferID)
 }
 
 //type PBO struct { // Pixel Buffer Object
@@ -140,7 +140,7 @@ func (b *BufferObjects) Values() iter.Seq[BufferObject] {
 
 // Set sets a buffer object with its given id
 func (b *BufferObjects) Set(bo BufferObject) {
-	(*b)[bo.GetBufferID()] = bo
+	(*b)[bo.BufferID()] = bo
 }
 
 // Unset removes the specified buffer object.
@@ -174,7 +174,7 @@ func (b *BufferObjects) Equals(other *BufferObjects) bool {
 			}
 			// reaching this line implies that both are ok
 			// otherwise, the map would be seriously broken
-			if v1.GetBufferID() != v2.GetBufferID() {
+			if v1.BufferID() != v2.BufferID() {
 				return false
 			}
 		}

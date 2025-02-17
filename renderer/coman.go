@@ -41,16 +41,12 @@ type ShadersOfProgram map[string]string
 
 // Coman is a sibling of Shaman
 type Coman struct { // Command Manager
-	gs                 *gls.GLS
-	includes           map[string]string  // include files sources
-	shadercm           map[string]string  // maps shader name to its template
-	proginfo           ShadersOfProgram   // maps name of the program to name of its shader
-	programs           []ComputeProgSpecs // list of compiled programs with specs
-	specs              ComputeSpecs       // Current shader specs
-	concurrentManager  ConcurrentManager  // a concurrent shader manager that we need to consider when using GLS
-	isForcedSetProgram bool               // True, iff a concurrent manager
-	//changed the program state of gs. False after a call to Shaman's
-	//SetProgram.
+	gs        *gls.GLS
+	includes  map[string]string  // include files sources
+	shadercm  map[string]string  // maps shader name to its template
+	proginfo  ShadersOfProgram   // maps name of the program to name of its shader
+	programs  []ComputeProgSpecs // list of compiled programs with specs
+	progSpecs ComputeProgSpecs   // Current program specs
 	//stats Stats <- maybe something for the future
 }
 
@@ -87,20 +83,18 @@ func (cs *ComputeSpecs) equals(other *ComputeSpecs) bool {
 }
 
 // NewComan creates and returns a pointer to a new Coman.
-func NewComan(gs *gls.GLS, concurrentManager ConcurrentManager) *Coman {
+func NewComan(gs *gls.GLS) *Coman {
 	cm := new(Coman)
-	cm.Init(gs, concurrentManager)
+	cm.Init(gs)
 	return cm
 }
 
 // Init initializes a compute shader
-func (cm *Coman) Init(gs *gls.GLS, concurrentManager ConcurrentManager) {
+func (cm *Coman) Init(gs *gls.GLS) {
 	cm.gs = gs
 	cm.includes = make(map[string]string)
 	cm.shadercm = make(map[string]string)
 	cm.proginfo = make(ShadersOfProgram)
-	cm.concurrentManager = concurrentManager
-	cm.isForcedSetProgram = false
 }
 
 func (cm *Coman) GetGLS() *gls.GLS { return cm.gs }
@@ -116,10 +110,6 @@ func (cm *Coman) AddProgram(programName, computeShaderName string) {
 	cm.proginfo[programName] = computeShaderName
 }
 
-func (cm *Coman) ForceNextProgram() {
-	cm.isForcedSetProgram = true
-}
-
 // SetProgram sets the shader program to satisfy the specified specs.
 // Returns an indication if the current shader has changed and a possible error
 // when creating a new shader program.
@@ -127,19 +117,20 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 
 	var specs ComputeSpecs
 	specs.copy(s)
-	// If current shader specs are the same as the specified specs, nothing to do.
-	if (!cm.isForcedSetProgram) && cm.specs.equals(&specs) {
+	if cm.progSpecs.specs.equals(&specs) {
+		if !cm.progSpecs.program.InUse() {
+			cm.progSpecs.specs = specs
+			cm.gs.UseProgram(cm.progSpecs.program)
+			return true, nil
+		}
 		return false, nil
 	}
-
-	cm.isForcedSetProgram = false
 
 	// Search for compiled program with the specified specs
 	for _, pinfo := range cm.programs {
 		if pinfo.specs.equals(&specs) {
+			cm.progSpecs = pinfo
 			cm.gs.UseProgram(pinfo.program)
-			cm.concurrentManager.ForceNextProgram()
-			cm.specs = specs
 			return true, nil
 		}
 	}
@@ -152,14 +143,13 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 	log.Debug("Created new compute shader:%v", specs.Name)
 
 	// Save specs as current specs, adds new program to the list and activates the program
-	cm.specs = specs
-	cm.programs = append(cm.programs, ComputeProgSpecs{prog, specs})
-	err = specs.BufferObjects.Bind(cm.gs, prog) //prepare buffer objects before using the program
+	cm.progSpecs = ComputeProgSpecs{prog, specs}
+	cm.programs = append(cm.programs, cm.progSpecs)
+	err = specs.BufferObjects.Bind(cm.gs) //prepare buffer objects before using the program
 	if err != nil {
 		return false, err
 	}
 	cm.gs.UseProgram(prog)
-	cm.concurrentManager.ForceNextProgram()
 	return true, nil
 }
 
@@ -276,6 +266,6 @@ func (cm *Coman) Compute(nWorkGroups gls.NumWorkGroups, deltaTime time.Duration)
 	gs := cm.gs
 	gs.DispatchCompute(nWorkGroups)
 	gs.MemoryBarrier(gls.SHADER_STORAGE_BARRIER_BIT) // Ensure data is written before reading
-	err := cm.specs.BufferObjects.Process(cm.gs, deltaTime)
+	err := cm.progSpecs.specs.BufferObjects.Process(cm.gs, deltaTime)
 	return err
 }

@@ -552,6 +552,35 @@ func (gs *GLS) GenRenderbuffer() uint32 {
 	return rb
 }
 
+// GetIntegerv return the value of a selected parameter
+func (gs *GLS) GetIntegerv(param uint32) int32 {
+	var i int32
+	C.glGetIntegerv(C.GLenum(param), (*C.GLint)(&i))
+	return i
+}
+
+// GetBooleanv return the value of a selected parameter
+func (gs *GLS) GetBooleanv(param uint32) bool {
+	var b bool
+	c_bool := bool2c(b)
+	C.glGetBooleanv(C.GLenum(param), &c_bool)
+	return C.GLboolean(1) == c_bool
+}
+
+// GetFloatv return the value of a selected parameter
+func (gs *GLS) GetFloatv(param uint32) float32 {
+	var f float32
+	C.glGetFloatv(C.GLenum(param), (*C.GLfloat)(&f))
+	return f
+}
+
+// GetDoublev return the value of a selected parameter
+func (gs *GLS) GetDoublev(param uint32) float64 {
+	var f float64
+	C.glGetDoublev(C.GLenum(param), (*C.GLdouble)(&f))
+	return f
+}
+
 // BindFramebuffer sets the current framebuffer.
 func (gs *GLS) BindFramebuffer(fb uint32) {
 

@@ -58,6 +58,13 @@ func (prog *Program) Handle() uint32 {
 	return prog.handle
 }
 
+// InUse returns true, iff the program is actively in use by GLS.
+// (Checks, if the CURRENT_PROGRAM variable of this program's gls
+// reference points to this program's handle)
+func (prog *Program) InUse() bool {
+	return uint32(prog.gs.GetIntegerv(CURRENT_PROGRAM)) == prog.Handle()
+}
+
 // AddShader adds a shader to this program.
 // This must be done before the program is built.
 func (prog *Program) AddShader(stype uint32, source string) {
