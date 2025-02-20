@@ -42,11 +42,11 @@ type SSBO struct {
 	initialData []byte
 }
 
-// SSBOCallback is called within SSBO.Process and receives a BufferRAM object.
+// SSBOCallback is called within SSBO.Process and receives a BufferRaw object.
 // This function must finish reading / writing to the buffer before it returns,
 // otherwise, the shader won't take note of further updates to the buffer
 // Note to end user: make good use of closures and use the correct BOAccessType!
-type SSBOCallback func(b *BufferRAM, deltaTime time.Duration)
+type SSBOCallback func(b *BufferRaw, deltaTime time.Duration)
 
 // Create a new SSBO of the given size that binds to a shader variable identified with bindingIndex
 // The ssboCallback is called by (*SSBO).Process and receives the current
@@ -104,7 +104,7 @@ func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
 	ptr := gs.MapNamedBuffer(s.bufferID, int(s.Access))
 	if ptr != uintptr(0) {
-		s.SSBOCallback(NewBufferRAM(unsafe.Pointer(ptr), s.Size), deltaTime)
+		s.SSBOCallback(NewBufferRaw(unsafe.Pointer(ptr), s.Size), deltaTime)
 		gs.UnmapNamedBuffer(s.bufferID)
 	} else {
 		return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.bufferID)

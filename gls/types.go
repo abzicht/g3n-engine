@@ -7,6 +7,14 @@ import (
 	"github.com/g3n/engine/math64"
 )
 
+// Size, in bytes, of (GLSL std430) data types. This follows the naming of
+// https://www.khronos.org/opengl/wiki/Data_Type_(GLSL), and not of Go/G3N.
+type TypeSize uint32
+
+type BufferType interface {
+	bool | int32 | uint32 | float32 | float64 | math32.Vector2 | math32.Vector3 | math32.Vector4 | math32.Matrix3 | math32.Matrix4 | math64.Vector2 | math64.Vector3 | math64.Vector4
+}
+
 // Returns the size, in bytes, of math32 and math64 vectors, matrices, and
 // primitive types of Go.
 func Sizeof(v any) TypeSize {
@@ -31,51 +39,16 @@ func Sizeof(v any) TypeSize {
 	default:
 		// Caution: just because there is a default doesn't mean that it can
 		// handle all types!
-		// What it can handle: (u)int(32/64), bool, float(32/64)
+		// It can handle: (u)int(32/64), bool, float(32/64)
 		return TypeSize(unsafe.Sizeof(v))
 	}
 }
 
-type BufferType interface {
-	bool | int32 | uint32 | float32 | float64 | math32.Vector2 | math32.Vector3 | math32.Vector4 | math32.Matrix3 | math32.Matrix4 | math64.Vector2 | math64.Vector3 | math64.Vector4
-}
-
-func GetTypeSize[T BufferType]() TypeSize {
+// Returns the size of a given uninitialized type T using Sizeof()
+func SizeofT[T BufferType]() TypeSize {
 	var t T
-	switch any(t).(type) {
-	case bool:
-		return SizeBoolStd430
-	case int32:
-		return SizeIntStd430
-	case uint32:
-		return SizeUintStd430
-	case float32:
-		return SizeFloatStd430
-	case float64:
-		return SizeDoubleStd430
-	case math32.Vector2:
-		return SizeVec2Std430
-	case math32.Vector3:
-		return SizeVec3Std430
-	case math32.Vector4:
-		return SizeVec4Std430
-	case math32.Matrix3:
-		return SizeMat3Std430
-	case math32.Matrix4:
-		return SizeMat4Std430
-	case math64.Vector2:
-		return SizeDvec2Std430
-	case math64.Vector3:
-		return SizeDvec3Std430
-	case math64.Vector4:
-		return SizeDvec4Std430
-	}
-	return TypeSize(0)
+	return Sizeof(t)
 }
-
-// Size, in bytes, of (GLSL specific) data types. This follows the naming of
-// https://www.khronos.org/opengl/wiki/Data_Type_(GLSL), and not of Go/G3N
-type TypeSize uint32
 
 const (
 	// For now, we only support types of GLSL std430
