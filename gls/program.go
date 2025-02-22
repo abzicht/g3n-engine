@@ -87,6 +87,12 @@ func (prog *Program) DeleteShaders() {
 	}
 }
 
+// Delete deletes the program and its associated shaders from OpenGL.
+func (prog *Program) Delete() {
+	prog.DeleteShaders()
+	prog.gs.DeleteProgram(prog.handle)
+}
+
 // Build builds the program, compiling and linking the previously supplied shaders.
 func (prog *Program) Build() error {
 

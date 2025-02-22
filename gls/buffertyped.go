@@ -33,7 +33,7 @@ import (
  * We can map this to the following Go struct:
  *     type DataBuffer struct {
  *         i     uint32
- *         _     [3]atomic.Int32
+ *         _     [3]int32
  *         loc   math32.Vector3
  *         speed float32
  *         data  [5]math64.Vector4

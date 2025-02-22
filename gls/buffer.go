@@ -20,6 +20,10 @@ type BufferRaw struct {
 
 // Create a new BufferRaw that points to address p with a given size
 // Needless to say, using this is 'unsafe'
+// This buffer can be used to represent typed data. For example, given a struct
+// S, then the following creates a buffer for the location of object s:
+// var s S
+// NewBufferRaw(unsafe.Pointer(&s), uint32(unsafe.Sizeof(s)))
 func NewBufferRaw(p unsafe.Pointer, size uint32) *BufferRaw {
 	b := new(BufferRaw)
 	b.Init(p, size)

@@ -10,28 +10,10 @@ import (
 	"github.com/g3n/engine/gls"
 )
 
-// According to ChatGPT (yeah, I know), we cannot combine compute shaders with
-// other shader types in a single gls program - that's why we cannot add those
-// to Shaman and, instead, introduce a new shader manager: Coman!
-
+// Regular expression to parse #include <name> [quantity] directive
 func init() {
 
 	rexInclude = regexp.MustCompile(`#include\s+<(.*)>\s*(?:\[(.*)]|)`)
-}
-
-// ComputeSpecs describe the specification of a compiled compute shader program and its associated
-// buffers
-type ComputeSpecs struct {
-	Name          string            // Shader name
-	Version       string            // GLSL Version
-	Defines       gls.ShaderDefines // Additional Shader Defines
-	BufferObjects gls.BufferObjects // Potentially different among shaders of the same type
-}
-
-// ComputeProgSpecs represents a compiled shader program along with its specs
-type ComputeProgSpecs struct {
-	program *gls.Program // program object
-	specs   ComputeSpecs // associated specs
 }
 
 // A simplified version of map[string]shaders.ProgramInfo - instead of listing
@@ -42,44 +24,12 @@ type ShadersOfProgram map[string]string
 // Coman is a sibling of Shaman
 type Coman struct { // Command Manager
 	gs        *gls.GLS
-	includes  map[string]string  // include files sources
-	shadercm  map[string]string  // maps shader name to its template
-	proginfo  ShadersOfProgram   // maps name of the program to name of its shader
-	programs  []ComputeProgSpecs // list of compiled programs with specs
-	progSpecs ComputeProgSpecs   // Current program specs
+	includes  map[string]string      // include files sources
+	shadercm  map[string]string      // maps shader name to its template
+	proginfo  ShadersOfProgram       // maps name of the program to name of its shader
+	programs  []gls.ComputeProgSpecs // list of compiled programs with specs
+	progSpecs gls.ComputeProgSpecs   // Current program specs
 	//stats Stats <- maybe something for the future
-}
-
-func NewComputeSpecs(name string, version string, defines gls.ShaderDefines, bufferObjects gls.BufferObjects) *ComputeSpecs {
-	cs := new(ComputeSpecs)
-	cs.Init(name, version, defines, bufferObjects)
-	return cs
-}
-func (cs *ComputeSpecs) Init(name string, version string, defines gls.ShaderDefines, bufferObjects gls.BufferObjects) {
-	cs.Name = name
-	cs.Version = version
-	cs.Defines = defines
-	cs.BufferObjects = bufferObjects
-}
-
-// copy copies other spec into this
-func (cs *ComputeSpecs) copy(other *ComputeSpecs) {
-
-	*cs = *other
-	if other.Defines != nil {
-		cs.Defines = *gls.NewShaderDefines()
-		cs.Defines.Add(&other.Defines)
-	}
-	if other.BufferObjects != nil {
-		cs.BufferObjects = *gls.NewBufferObjects()
-		cs.BufferObjects.Add(&other.BufferObjects)
-	}
-}
-
-// equals compares two ComputeSpecs and returns true if they are effectively equal.
-func (cs *ComputeSpecs) equals(other *ComputeSpecs) bool {
-
-	return cs.Name == other.Name && cs.Defines.Equals(&other.Defines) && cs.BufferObjects.Equals(&other.BufferObjects)
 }
 
 // NewComan creates and returns a pointer to a new Coman.
@@ -97,7 +47,7 @@ func (cm *Coman) Init(gs *gls.GLS) {
 	cm.proginfo = make(ShadersOfProgram)
 }
 
-func (cm *Coman) GetGLS() *gls.GLS { return cm.gs }
+func (cm *Coman) GLS() *gls.GLS { return cm.gs }
 
 // AddShader adds a shader program with the specified name and source code
 func (cm *Coman) AddShader(name, source string) {
@@ -110,17 +60,28 @@ func (cm *Coman) AddProgram(programName, computeShaderName string) {
 	cm.proginfo[programName] = computeShaderName
 }
 
+// Delete a program from OpenGL. Return true iff program was found and deleted
+func (cm *Coman) DeleteProgram(s *gls.ComputeSpecs) bool {
+	for _, pinfo := range cm.programs {
+		if pinfo.Specs.Equals(s) {
+			pinfo.Program.Delete()
+			return true
+		}
+	}
+	return false
+}
+
 // SetProgram sets the shader program to satisfy the specified specs.
 // Returns an indication if the current shader has changed and a possible error
 // when creating a new shader program.
-func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
+func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 
-	var specs ComputeSpecs
-	specs.copy(s)
-	if cm.progSpecs.specs.equals(&specs) {
-		if !cm.progSpecs.program.InUse() {
-			cm.progSpecs.specs = specs
-			cm.gs.UseProgram(cm.progSpecs.program)
+	var specs gls.ComputeSpecs
+	specs.Copy(s)
+	if cm.progSpecs.Specs.Equals(&specs) {
+		if !cm.progSpecs.Program.InUse() {
+			cm.progSpecs.Specs = specs
+			cm.gs.UseProgram(cm.progSpecs.Program)
 			return true, nil
 		}
 		return false, nil
@@ -128,9 +89,9 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 
 	// Search for compiled program with the specified specs
 	for _, pinfo := range cm.programs {
-		if pinfo.specs.equals(&specs) {
+		if pinfo.Specs.Equals(&specs) {
 			cm.progSpecs = pinfo
-			cm.gs.UseProgram(pinfo.program)
+			cm.gs.UseProgram(pinfo.Program)
 			return true, nil
 		}
 	}
@@ -143,7 +104,7 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 	log.Debug("Created new compute shader:%v", specs.Name)
 
 	// Save specs as current specs, adds new program to the list and activates the program
-	cm.progSpecs = ComputeProgSpecs{prog, specs}
+	cm.progSpecs = gls.ComputeProgSpecs{prog, specs}
 	cm.programs = append(cm.programs, cm.progSpecs)
 	err = specs.BufferObjects.Bind(cm.gs) //prepare buffer objects before using the program
 	if err != nil {
@@ -154,7 +115,7 @@ func (cm *Coman) SetProgram(s *ComputeSpecs) (bool, error) {
 }
 
 // GenProgram generates a shader program from the specified shader
-func (cm *Coman) GenProgram(specs *ComputeSpecs) (*gls.Program, error) {
+func (cm *Coman) GenProgram(specs *gls.ComputeSpecs) (*gls.Program, error) {
 	shaderName, ok := cm.proginfo[specs.Name]
 	if !ok {
 		return nil, fmt.Errorf("Program:%s not found", specs.Name)
@@ -263,9 +224,8 @@ func (cm *Coman) processIncludes(source string, defines map[string]string) (stri
 // Dispatch the compute shader program previously set with SetProgram and
 // process all corresponding buffer objects
 func (cm *Coman) Compute(nWorkGroups gls.NumWorkGroups, deltaTime time.Duration) error {
-	gs := cm.gs
-	gs.DispatchCompute(nWorkGroups)
-	gs.MemoryBarrier(gls.SHADER_STORAGE_BARRIER_BIT) // Ensure data is written before reading
-	err := cm.progSpecs.specs.BufferObjects.Process(cm.gs, deltaTime)
+	cm.gs.DispatchCompute(nWorkGroups)
+	cm.gs.MemoryBarrier(gls.SHADER_STORAGE_BARRIER_BIT) // Ensure data is written before reading
+	err := cm.progSpecs.Specs.BufferObjects.Process(cm.gs, deltaTime)
 	return err
 }

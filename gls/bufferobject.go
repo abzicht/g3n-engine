@@ -33,13 +33,13 @@ type SSBO struct {
 	 *  { int data_SSBO[]; };
 	 */
 	BindingIndex uint32
+	// Usage type with that SSBO.Bind initializes the buffer
+	Usage BOUsageType
 	// Access type with that SSBO.Process reads / writes the buffer
-	Usage        BOUsageType
-	Access       BOAccessType
-	SSBOCallback SSBOCallback
-	// Data type found in the buffer
-	Size        uint32
-	initialData []byte
+	Access BOAccessType
+	// Callback that is called with the buffer data obtained from GLS
+	SSBOCallback  SSBOCallback
+	initialBuffer *BufferRaw
 }
 
 // SSBOCallback is called within SSBO.Process and receives a BufferRaw object.
@@ -56,7 +56,7 @@ type SSBOCallback func(b *BufferRaw, deltaTime time.Duration)
 // Use (*SSBO).SetInitialData to prefill the buffer before the first call to
 // Process.
 // Set usage to DYNAMIC_COPY / DYNAMIC_DRAW when expecting to modify this buffer's contents
-func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size TypeSize) *SSBO {
+func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
 	s := new(SSBO)
 	s.Init(gs, bindingIndex, usage, access, ssboCallback, uint32(size))
 	return s
@@ -68,17 +68,23 @@ func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAc
 	s.Usage = usage
 	s.Access = access
 	s.SSBOCallback = ssboCallback
-	s.Size = size
 	s.bufferID = gs.GenBuffer()
-	s.initialData = nil
+	s.initialBuffer = NewBufferRaw(nil, size)
 }
 
-// Set the initial buffer data to the provided byte slice.
+// Set the initial buffer data to the contents of the provided buffer.
 // This function is only effective when called before s.Bind() where the data
-// is being applied. If provided data is larger than s.Size, the overshoot is
-// being ignored
-func (s *SSBO) SetInitialData(data []byte) *SSBO {
-	s.initialData = data
+// is being applied. This function also overwrites updates the buffer size that
+// will be used in Bind.
+func (s *SSBO) SetInitialBuffer(buffer *BufferRaw) *SSBO {
+	if buffer.Address == nil || buffer.Size == 0 {
+		panic("Trying to initialize SSBO with buffer that points to NIL")
+	}
+	if buffer.Size == 0 {
+		panic("Trying to initialize SSBO with empty buffer")
+	}
+	s.initialBuffer.Address = buffer.Address
+	s.initialBuffer.Size = buffer.Size
 	return s
 }
 
@@ -87,14 +93,16 @@ func (s *SSBO) BufferID() uint32 {
 	return s.bufferID
 }
 
-// Binds this SSBO's GLS buffer to the provided GLS instance and copies the
-// data to this buffer. If data is larger than s.Size, the rest is ignored
+// Binds this SSBO's GLS buffer to the provided GLS instance and optionally copies the
+// data set with SetInitialBuffer to this buffer.
 func (s *SSBO) Bind(gs *GLS) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
-	gs.NamedBufferData(s.bufferID, s.Size, unsafe.Pointer(unsafe.SliceData(s.initialData)), uint32(s.Usage))
+	// Initialize buffer with the given size. If initialBuffer.Address is nil,
+	// no data is copied, otherwise, the buffer's data is sent to GLS.
+	gs.NamedBufferData(s.bufferID, s.initialBuffer.Size, s.initialBuffer.Address, uint32(s.Usage))
 	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.bufferID) // Bind to binding point found in shader
 	//gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                            // value 0 indicates: unbind!
-	s.initialData = nil
+	s.initialBuffer.Address = nil
 	return nil
 }
 
@@ -104,7 +112,7 @@ func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
 	ptr := gs.MapNamedBuffer(s.bufferID, int(s.Access))
 	if ptr != uintptr(0) {
-		s.SSBOCallback(NewBufferRaw(unsafe.Pointer(ptr), s.Size), deltaTime)
+		s.SSBOCallback(NewBufferRaw(unsafe.Pointer(ptr), s.initialBuffer.Size), deltaTime)
 		gs.UnmapNamedBuffer(s.bufferID)
 	} else {
 		return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.bufferID)
