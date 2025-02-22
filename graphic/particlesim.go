@@ -9,7 +9,6 @@ import (
 	"github.com/g3n/engine/geometry"
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/material"
-	"github.com/g3n/engine/math32"
 )
 
 // ParticleSim represents a geometry containing only particles
@@ -17,11 +16,6 @@ type ParticleSim struct {
 	Graphic             // Embedded graphic
 	uniMVPm gls.Uniform // Model view projection matrix uniform location cache
 	uniMVm  gls.Uniform // Model view matrix uniform location cache
-}
-
-type Particle struct {
-	pos      math32.Vector3
-	velocity math32.Vector3
 }
 
 // NewParticleSim creates and returns a graphic particle sim object with the specified

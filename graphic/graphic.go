@@ -307,22 +307,27 @@ func (grmat *GraphicMaterial) Render(gs *gls.GLS, rinfo *core.RenderInfo) {
 	// Setup current graphic (transfer matrices)
 	grmat.igraphic.RenderSetup(gs, rinfo)
 
-	// Get the number of vertices for the current material
-	count := grmat.count
+	switch geom := gr.igeom.(type) {
+	case *geometry.ParticleGeometry:
+		gs.DrawArrays(gr.mode, int32(grmat.start), int32(geom.Items()))
+	case *geometry.Geometry:
 
-	geom := gr.igeom.GetGeometry()
-	indices := geom.Indices()
-	// Indexed geometry
-	if indices.Size() > 0 {
-		if count == 0 {
-			count = indices.Size()
+		// Get the number of vertices for the current material
+		count := grmat.count
+		indices := geom.Indices()
+		// Indexed geometry
+		if indices.Size() > 0 {
+			if count == 0 {
+				count = indices.Size()
+			}
+			gs.DrawElements(gr.mode, int32(count), gls.UNSIGNED_INT, 4*uint32(grmat.start))
+			// Non indexed geometry
+		} else {
+			if count == 0 {
+				count = geom.Items()
+			} else {
+			}
+			gs.DrawArrays(gr.mode, int32(grmat.start), int32(count))
 		}
-		gs.DrawElements(gr.mode, int32(count), gls.UNSIGNED_INT, 4*uint32(grmat.start))
-		// Non indexed geometry
-	} else {
-		if count == 0 {
-			count = geom.Items()
-		}
-		gs.DrawArrays(gr.mode, int32(grmat.start), int32(count))
 	}
 }

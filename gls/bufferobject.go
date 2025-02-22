@@ -101,7 +101,7 @@ func (s *SSBO) Bind(gs *GLS) error {
 	// no data is copied, otherwise, the buffer's data is sent to GLS.
 	gs.NamedBufferData(s.bufferID, s.initialBuffer.Size, s.initialBuffer.Address, uint32(s.Usage))
 	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.bufferID) // Bind to binding point found in shader
-	//gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                            // value 0 indicates: unbind!
+	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                              // value 0 indicates: unbind!
 	s.initialBuffer.Address = nil
 	return nil
 }

@@ -464,7 +464,9 @@ void main() {
 
 const particle_fragment_source = `precision highp float;
 
+#include <lights>
 #include <material>
+#include <phong_model>
 
 in vec3 Color;
 // Final fragment color
@@ -473,12 +475,9 @@ out vec4 FragColor;
 void main() {
 
     // Final fragment color
-    //FragColor = vec4(Color, MatOpacity);
-    FragColor = vec4(1);
-
-    //vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity);
-    //vec4 matAmbient = vec4(MatAmbientColor, MatOpacity);
-    //FragColor = matDiffuse + matAmbient;
+    vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity);
+    vec4 matAmbient = vec4(MatAmbientColor, MatOpacity);
+    FragColor = matDiffuse + matAmbient;
 }
 `
 
@@ -1059,27 +1058,36 @@ void main() {
 
 `
 
-const particle_vertex_source = `#include <attributes>
+const particle_vertex_source = `
 
+layout(location = 0) in vec3 VertexPosition;
 // Model uniforms
 uniform mat4 MVP;
 uniform mat4 MV;
 
 #include <material>
 
+layout(std430, shared, binding = 0) buffer VertexPos {
+    vec3 positions[];
+};
+
 // Output variables for Fragment shader
 out vec3 Color;
+out vec3 Normal;
 
 void main() {
 
     // Transform vertex position to camera coordinates
-    vec4 pos = MVP * vec4(VertexPosition, 1.0);
-    gl_Position = pos;
+    vec4 Position = MVP * vec4(positions[gl_VertexID], 1.0);
+    gl_Position = Position;
 
     // Sets the size of the rasterized point decreasing with distance
-    vec4 posMV = MV * vec4(VertexPosition, 1.0);
-    gl_PointSize = MatPointSize / -posMV.z;
-
+    vec4 posMV = MV * vec4(positions[gl_VertexID], 1.0);
+    if (MatPointSize == -1.0) {
+        gl_PointSize = 1.0;
+    } else {
+        gl_PointSize = MatPointSize / -posMV.z;
+    }
     Color = MatDiffuseColor; //MatEmmissiveColor; //VertexColor;
 }
 `

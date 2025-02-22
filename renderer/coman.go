@@ -60,6 +60,13 @@ func (cm *Coman) AddProgram(programName, computeShaderName string) {
 	cm.proginfo[programName] = computeShaderName
 }
 
+// Delete all programs currently managed by Coman from OpenGL.
+func (cm *Coman) DeletePrograms() {
+	for _, pinfo := range cm.programs {
+		pinfo.Program.Delete()
+	}
+}
+
 // Delete a program from OpenGL. Return true iff program was found and deleted
 func (cm *Coman) DeleteProgram(s *gls.ComputeSpecs) bool {
 	for _, pinfo := range cm.programs {
