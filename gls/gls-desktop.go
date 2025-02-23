@@ -466,11 +466,25 @@ func (gs *GLS) DrawArrays(mode uint32, first int32, count int32) {
 	gs.stats.Drawcalls++
 }
 
+// DrawArraysInstanced renders multiple instances of a range of elements.
+func (gs *GLS) DrawArraysInstanced(mode uint32, first int32, count int32, instanceCount int32) {
+
+	C.glDrawArraysInstanced(C.GLenum(mode), C.GLint(first), C.GLsizei(count), C.GLsizei(instanceCount))
+	gs.stats.Drawcalls++
+}
+
 // DrawElements renders primitives from array data.
 func (gs *GLS) DrawElements(mode uint32, count int32, itype uint32, start uint32) {
 
 	C.glDrawElements(C.GLenum(mode), C.GLsizei(count), C.GLenum(itype), unsafe.Pointer(uintptr(start)))
 	gs.stats.Drawcalls++
+}
+
+// DrawElementsInstanced draws multiple instances of a range of elements
+func (gs *GLS) DrawElementsInstanced(mode uint32, count int32, itype uint32, start uint32, instanceCount uint32) {
+
+	C.glDrawElementsInstanced(C.GLenum(mode), C.GLsizei(count), C.GLenum(itype), unsafe.Pointer(uintptr(start)), C.GLsizei(instanceCount))
+	gs.stats.Drawcalls += uint64(instanceCount)
 }
 
 // DrawBuffer sets which color buffers are to be drawn into.

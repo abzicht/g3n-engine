@@ -1,32 +1,41 @@
-
-
-layout(location = 0) in vec3 VertexPosition;
 // Model uniforms
 uniform mat4 MVP;
 uniform mat4 MV;
 
 #include <material>
 
-layout(std430, shared, binding = 0) buffer VertexPos {
+layout(std430, shared, binding = 0) buffer ParticlePos {
     vec3 positions[];
 };
+layout(std430, shared, binding = 1) buffer ParticleColor {
+    vec4 colors[];
+};
 
-// Output variables for Fragment shader
-out vec3 Color;
-out vec3 Normal;
+
+out VS_OUT {
+    vec4 color;
+    float size;
+} vs_out;
 
 void main() {
+    uint id = gl_VertexID;
+    if (id < colors.length()) {
+        vs_out.color = colors[id];
+    } else {
+        vs_out.color = vec4(-1);
+    }
+
 
     // Transform vertex position to camera coordinates
-    vec4 Position = MVP * vec4(positions[gl_VertexID], 1.0);
+    vec3 pos = positions[id];
+    vec4 Position = MVP * vec4(pos, 1.0);
     gl_Position = Position;
 
     // Sets the size of the rasterized point decreasing with distance
-    vec4 posMV = MV * vec4(positions[gl_VertexID], 1.0);
+    vec4 posMV = MV * vec4(pos, 1.0);
     if (MatPointSize == -1.0) {
-        gl_PointSize = 1.0;
+        vs_out.size = 1.0;
     } else {
-        gl_PointSize = MatPointSize / -posMV.z;
+        vs_out.size = MatPointSize / -posMV.z;
     }
-    Color = MatDiffuseColor; //MatEmmissiveColor; //VertexColor;
 }

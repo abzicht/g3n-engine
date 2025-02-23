@@ -5,14 +5,57 @@
 package geometry
 
 import (
+	"fmt"
+	"unsafe"
+
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/math32"
 )
 
+type shapeDescriptor struct {
+	gs             *gls.GLS
+	shape          *Geometry
+	shapeSSBO      *gls.SSBO
+	vertexCount    uint32
+	uniVertexCount gls.Uniform
+}
+
+func newShapeDescriptor() *shapeDescriptor {
+	s := new(shapeDescriptor)
+	s.shape = nil
+	s.shapeSSBO = nil
+	return s
+}
+
+func (s *shapeDescriptor) RenderSetup(gs *gls.GLS) {
+	if s.gs == nil {
+		s.gs = gs
+		s.uniVertexCount.Init("VertexCount")
+		s.vertexCount = 0
+	}
+	if s.shape != nil { // prepare the buffer, thereafter forget the shape
+		vbo := s.shape.VBO(gls.VertexPosition)
+		if vbo != nil {
+			buffer := vbo.Buffer()
+			fmt.Println(buffer)
+			s.vertexCount = uint32(buffer.Size() / 3)
+			bufferP := unsafe.Pointer(unsafe.SliceData(*buffer))
+			s.shapeSSBO = gls.NewSSBO(gs, 2, gls.DYNAMIC_DRAW, gls.BO_READ_WRITE, nil, uint32(buffer.Bytes())).SetInitialBuffer(gls.NewBufferRaw(bufferP, uint32(buffer.Bytes())))
+			s.shapeSSBO.Bind(gs)
+		}
+		s.shape = nil
+	}
+	if s.shapeSSBO != nil {
+		s.gs.BindBuffer(gls.SHADER_STORAGE_BUFFER, s.shapeSSBO.BufferID())
+	}
+	gs.Uniform1i(s.uniVertexCount.Location(gs), int32(s.vertexCount))
+}
+
 type ParticleGeometry struct {
 	Geometry
-	numParticles uint32
-	dimensions   *math32.Vector3
+	numParticles    uint32
+	dimensions      *math32.Vector3
+	shapeDescriptor *shapeDescriptor
 }
 
 // NewParticles creates a particle geometry with the specified number of
@@ -29,6 +72,12 @@ func (p *ParticleGeometry) Init(numParticles uint32, dimensions *math32.Vector3)
 	p.SetBoundingBox(dimensions)
 	p.numParticles = numParticles
 	p.dimensions = dimensions
+	p.shapeDescriptor = newShapeDescriptor()
+}
+
+// Set the shape of individual particles
+func (m *ParticleGeometry) SetParticleShape(shape *Geometry) {
+	m.shapeDescriptor.shape = shape
 }
 
 func (p *ParticleGeometry) Items() int {
@@ -77,10 +126,11 @@ func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
 		// Save pointer to gs indicating initialization was done
 		p.gs = gs
 	}
-
 	// Update VBOs
-	gs.BindVertexArray(p.handleVAO)
+	p.gs.BindVertexArray(p.handleVAO)
 	for _, vbo := range p.vbos {
 		vbo.Transfer(gs)
 	}
+
+	p.shapeDescriptor.RenderSetup(gs)
 }

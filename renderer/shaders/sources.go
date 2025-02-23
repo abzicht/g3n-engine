@@ -468,11 +468,15 @@ const particle_fragment_source = `precision highp float;
 #include <material>
 #include <phong_model>
 
-in vec3 Color;
+in vec4 Color;
 // Final fragment color
 out vec4 FragColor;
 
 void main() {
+    if (Color != vec4(-1)) {
+        FragColor = Color;
+        return;
+    }
 
     // Final fragment color
     vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity);
@@ -1058,37 +1062,46 @@ void main() {
 
 `
 
-const particle_vertex_source = `
-
-layout(location = 0) in vec3 VertexPosition;
-// Model uniforms
+const particle_vertex_source = `// Model uniforms
 uniform mat4 MVP;
 uniform mat4 MV;
 
 #include <material>
 
-layout(std430, shared, binding = 0) buffer VertexPos {
+layout(std430, shared, binding = 0) buffer ParticlePos {
     vec3 positions[];
 };
+layout(std430, shared, binding = 1) buffer ParticleColor {
+    vec4 colors[];
+};
 
-// Output variables for Fragment shader
-out vec3 Color;
-out vec3 Normal;
+
+out VS_OUT {
+    vec4 color;
+    float size;
+} vs_out;
 
 void main() {
+    uint id = gl_VertexID;
+    if (id < colors.length()) {
+        vs_out.color = colors[id];
+    } else {
+        vs_out.color = vec4(-1);
+    }
+
 
     // Transform vertex position to camera coordinates
-    vec4 Position = MVP * vec4(positions[gl_VertexID], 1.0);
+    vec3 pos = positions[id];
+    vec4 Position = MVP * vec4(pos, 1.0);
     gl_Position = Position;
 
     // Sets the size of the rasterized point decreasing with distance
-    vec4 posMV = MV * vec4(positions[gl_VertexID], 1.0);
+    vec4 posMV = MV * vec4(pos, 1.0);
     if (MatPointSize == -1.0) {
-        gl_PointSize = 1.0;
+        vs_out.size = 1.0;
     } else {
-        gl_PointSize = MatPointSize / -posMV.z;
+        vs_out.size = MatPointSize / -posMV.z;
     }
-    Color = MatDiffuseColor; //MatEmmissiveColor; //VertexColor;
 }
 `
 
@@ -1134,6 +1147,47 @@ void main() {
 
     gl_Position = MVP * finalWorld * vec4(vPosition, 1.0);
 
+}
+`
+
+const particle_geometry_source = `layout(points) in;                     // Receives single points
+layout(triangle_strip, max_vertices = 64) out;
+
+in VS_OUT {
+    vec4 color;
+    float size;
+} gs_in[];
+
+uniform int VertexCount;
+layout(std430, binding = 2) buffer ShapeBuffer {
+    vec3 offsets[];
+};
+
+
+out vec4 Color;
+//out vec2 texCoords; // Pass to fragment shader
+
+
+void emitVertex(vec3 offset, vec4 color) {
+    gl_Position = (gl_in[0].gl_Position + vec4(offset, 0.0));
+    Color = color;
+    EmitVertex();
+}
+
+void main() {
+    vec4 baseColor = gs_in[0].color;
+    float s = gs_in[0].size;
+    if (VertexCount == 0) {
+        emitVertex(vec3(-s, -s, 0.0), baseColor);
+        emitVertex(vec3( s, -s, 0.0), baseColor);
+        emitVertex(vec3( 0.0, s, 0.0), baseColor);
+    } else {
+        for (int i = 0; i < VertexCount; i++) {
+            vec3 offset = offsets[i] * s;
+            emitVertex(offset, baseColor);
+        }
+    }
+    EndPrimitive();
 }
 `
 
@@ -1208,6 +1262,7 @@ var shaderMap = map[string]string{
 	"point_vertex":      point_vertex_source,
 	"particle_vertex":   particle_vertex_source,
 	"physical_vertex":   physical_vertex_source,
+	"particle_geometry": particle_geometry_source,
 	"standard_vertex":   standard_vertex_source,
 }
 
@@ -1216,7 +1271,7 @@ var programMap = map[string]ProgramInfo{
 
 	"basic":    {"basic_vertex", "basic_fragment", ""},
 	"panel":    {"panel_vertex", "panel_fragment", ""},
-	"particle": {"particle_vertex", "particle_fragment", ""},
+	"particle": {"particle_vertex", "particle_fragment", "particle_geometry"},
 	"physical": {"physical_vertex", "physical_fragment", ""},
 	"point":    {"point_vertex", "point_fragment", ""},
 	"standard": {"standard_vertex", "standard_fragment", ""},

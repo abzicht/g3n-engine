@@ -25,6 +25,7 @@ type BufferObject interface {
 // Shader Storage Buffer Object (SSBO) can be shared between CPU and compute
 // shaders as well as between compute shaders and other types of shaders.
 type SSBO struct {
+	gs *GLS
 	// ID that GLS uses to identify this object
 	bufferID uint32
 	/* BindingIndex must match a buffer's binding in the shader.
@@ -38,6 +39,7 @@ type SSBO struct {
 	// Access type with that SSBO.Process reads / writes the buffer
 	Access BOAccessType
 	// Callback that is called with the buffer data obtained from GLS
+	// Set to nil in order to skip the CPU processing step
 	SSBOCallback  SSBOCallback
 	initialBuffer *BufferRaw
 }
@@ -53,7 +55,7 @@ type SSBOCallback func(b *BufferRaw, deltaTime time.Duration)
 // buffer state. ssboCallback can apply changes on the buffer and reflect those
 // to the shader, but only, if access is set to BO_WRITE_ONLY or
 // BO_READ_WRITE.
-// Use (*SSBO).SetInitialData to prefill the buffer before the first call to
+// Use (*SSBO).SetInitialBuffer to prefill the buffer before the first call to
 // Process.
 // Set usage to DYNAMIC_COPY / DYNAMIC_DRAW when expecting to modify this buffer's contents
 func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
@@ -62,14 +64,14 @@ func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessTyp
 	return s
 }
 
-// Initialize SSBO and generate a corresponding GLS buffer
+// Initialize SSBO
 func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) {
 	s.BindingIndex = bindingIndex
 	s.Usage = usage
 	s.Access = access
 	s.SSBOCallback = ssboCallback
-	s.bufferID = gs.GenBuffer()
 	s.initialBuffer = NewBufferRaw(nil, size)
+	s.bufferID = gs.GenBuffer()
 }
 
 // Set the initial buffer data to the contents of the provided buffer.
@@ -93,7 +95,8 @@ func (s *SSBO) BufferID() uint32 {
 	return s.bufferID
 }
 
-// Binds this SSBO's GLS buffer to the provided GLS instance and optionally copies the
+// Binds this SSBO's GLS buffer to the provided GLS instance and, on first
+// call, copies the
 // data set with SetInitialBuffer to this buffer.
 func (s *SSBO) Bind(gs *GLS) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
@@ -106,18 +109,21 @@ func (s *SSBO) Bind(gs *GLS) error {
 	return nil
 }
 
-// Load the GLS buffer into RAM and call the user-defined callback on that
+// Bind to the GLS buffer and call the user-defined callback on that
 // buffer before unmapping and unbinding it.
+// Does nothing if no callback is defined
 func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
-	ptr := gs.MapNamedBuffer(s.bufferID, int(s.Access))
-	if ptr != uintptr(0) {
-		s.SSBOCallback(NewBufferRaw(unsafe.Pointer(ptr), s.initialBuffer.Size), deltaTime)
-		gs.UnmapNamedBuffer(s.bufferID)
-	} else {
-		return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.bufferID)
+	if s.SSBOCallback != nil {
+		gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
+		ptr := gs.MapNamedBuffer(s.bufferID, int(s.Access))
+		if ptr != uintptr(0) {
+			s.SSBOCallback(NewBufferRaw(unsafe.Pointer(ptr), s.initialBuffer.Size), deltaTime)
+			gs.UnmapNamedBuffer(s.bufferID)
+		} else {
+			return fmt.Errorf("Failed to obtain SSBO buffer from GLS using glMapNamedBuffer for buffer with id %d", s.bufferID)
+		}
+		gs.BindBuffer(SHADER_STORAGE_BUFFER, 0) // unbind this buffer, clearing data
 	}
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0) // unbind this buffer, clearing data
 	return nil
 }
 

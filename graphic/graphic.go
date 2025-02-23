@@ -309,6 +309,7 @@ func (grmat *GraphicMaterial) Render(gs *gls.GLS, rinfo *core.RenderInfo) {
 
 	switch geom := gr.igeom.(type) {
 	case *geometry.ParticleGeometry:
+		// Draw individual vertices
 		gs.DrawArrays(gr.mode, int32(grmat.start), int32(geom.Items()))
 	case *geometry.Geometry:
 

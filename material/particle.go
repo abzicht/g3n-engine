@@ -1,13 +1,14 @@
 package material
 
 import (
+	"github.com/g3n/engine/geometry"
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/math32"
 )
 
 type ParticleMaterial struct {
 	Standard // Embedded standard material
-	uniColor gls.Uniform
+	shape    *geometry.Geometry
 }
 
 // Create a new particle material with the given color and the shader program

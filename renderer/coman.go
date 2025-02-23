@@ -49,6 +49,11 @@ func (cm *Coman) Init(gs *gls.GLS) {
 
 func (cm *Coman) GLS() *gls.GLS { return cm.gs }
 
+// AddChunk adds a shader chunk with the specified name and source code
+func (cm *Coman) AddChunk(name, source string) {
+	cm.includes[name] = source
+}
+
 // AddShader adds a shader program with the specified name and source code
 func (cm *Coman) AddShader(name, source string) {
 	cm.shadercm[name] = source

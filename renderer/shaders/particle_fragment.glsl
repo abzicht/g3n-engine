@@ -4,11 +4,15 @@ precision highp float;
 #include <material>
 #include <phong_model>
 
-in vec3 Color;
+in vec4 Color;
 // Final fragment color
 out vec4 FragColor;
 
 void main() {
+    if (Color != vec4(-1)) {
+        FragColor = Color;
+        return;
+    }
 
     // Final fragment color
     vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity);
