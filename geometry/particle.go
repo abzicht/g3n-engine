@@ -5,79 +5,91 @@
 package geometry
 
 import (
-	"fmt"
 	"unsafe"
 
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/math32"
 )
 
+const (
+	ParticlePositionBinding = 0
+	ParticleColorBinding    = 1
+)
+
 type shapeDescriptor struct {
-	gs             *gls.GLS
-	shape          *Geometry
-	shapeSSBO      *gls.SSBO
-	vertexCount    uint32
-	uniVertexCount gls.Uniform
+	gs    *gls.GLS
+	shape *Geometry
 }
 
 func newShapeDescriptor() *shapeDescriptor {
 	s := new(shapeDescriptor)
-	s.shape = nil
-	s.shapeSSBO = nil
 	return s
 }
 
 func (s *shapeDescriptor) RenderSetup(gs *gls.GLS) {
+	if s.shape == nil {
+		return
+	} //nothing tbd
 	if s.gs == nil {
 		s.gs = gs
-		s.uniVertexCount.Init("VertexCount")
-		s.vertexCount = 0
-	}
-	if s.shape != nil { // prepare the buffer, thereafter forget the shape
-		vbo := s.shape.VBO(gls.VertexPosition)
-		if vbo != nil {
-			buffer := vbo.Buffer()
-			fmt.Println(buffer)
-			s.vertexCount = uint32(buffer.Size() / 3)
-			bufferP := unsafe.Pointer(unsafe.SliceData(*buffer))
-			s.shapeSSBO = gls.NewSSBO(gs, 2, gls.DYNAMIC_DRAW, gls.BO_READ_WRITE, nil, uint32(buffer.Bytes())).SetInitialBuffer(gls.NewBufferRaw(bufferP, uint32(buffer.Bytes())))
-			s.shapeSSBO.Bind(gs)
+		if s.shape != nil { // prepare the buffer, thereafter forget the shape
+			s.shape.handleIndices = gs.GenBuffer()
 		}
-		s.shape = nil
+		for _, vbo := range s.shape.vbos {
+			vbo.Transfer(gs)
+		}
 	}
-	if s.shapeSSBO != nil {
-		s.gs.BindBuffer(gls.SHADER_STORAGE_BUFFER, s.shapeSSBO.BufferID())
+	for _, vbo := range s.shape.vbos {
+		s.gs.BindBuffer(gls.ARRAY_BUFFER, vbo.Handle())
 	}
-	gs.Uniform1i(s.uniVertexCount.Location(gs), int32(s.vertexCount))
+	// Update Indices buffer if necessary
+	if s.shape.indices.Size() > 0 && s.shape.updateIndices {
+		gs.BindBuffer(gls.ELEMENT_ARRAY_BUFFER, s.shape.handleIndices)
+		gs.BufferData(gls.ELEMENT_ARRAY_BUFFER, s.shape.indices.Bytes(), unsafe.Pointer(unsafe.SliceData(s.shape.indices.ToUint32())), gls.STATIC_DRAW)
+		s.shape.updateIndices = false
+	}
 }
 
 type ParticleGeometry struct {
 	Geometry
 	numParticles    uint32
 	dimensions      *math32.Vector3
+	positionsBuffer *gls.SSBO
 	shapeDescriptor *shapeDescriptor
+	uniIsInstanced  gls.Uniform
 }
 
 // NewParticles creates a particle geometry with the specified number of
 // particles whose position is controlled by a buffer that is
 // expected to be an array of vec3s with length numParticles and that binds to
 // binding index 0.
-func NewParticles(numParticles uint32, dimensions *math32.Vector3) *ParticleGeometry {
+func NewParticles(numParticles uint32, positionsBuffer *gls.SSBO, dimensions *math32.Vector3) *ParticleGeometry {
 	p := new(ParticleGeometry)
-	p.Init(numParticles, dimensions)
+	p.Init(numParticles, positionsBuffer, dimensions)
 	return p
 }
-func (p *ParticleGeometry) Init(numParticles uint32, dimensions *math32.Vector3) {
+func (p *ParticleGeometry) Init(numParticles uint32, positionsBuffer *gls.SSBO, dimensions *math32.Vector3) {
 	p.Geometry.Init()
 	p.SetBoundingBox(dimensions)
 	p.numParticles = numParticles
 	p.dimensions = dimensions
+	p.positionsBuffer = positionsBuffer
 	p.shapeDescriptor = newShapeDescriptor()
+	p.shapeDescriptor.shape = nil
+	p.uniIsInstanced.Init("IsInstanced")
 }
 
 // Set the shape of individual particles
-func (m *ParticleGeometry) SetParticleShape(shape *Geometry) {
-	m.shapeDescriptor.shape = shape
+func (p *ParticleGeometry) SetParticleShape(shape *Geometry) {
+	p.shapeDescriptor.shape = shape
+}
+
+func (p *ParticleGeometry) IsInstanced() bool {
+	return p.shapeDescriptor.shape != nil
+}
+
+func (p *ParticleGeometry) Instance() *Geometry {
+	return p.shapeDescriptor.shape
 }
 
 func (p *ParticleGeometry) Items() int {
@@ -118,7 +130,7 @@ func (p *ParticleGeometry) SetBoundingBox(dimensions *math32.Vector3) {
 // RenderSetup is called by the renderer before drawing the geometry.
 // It links the particle positions from the compute shader with the vertex
 // buffer object
-func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
+func (p *ParticleGeometry) InactiveRenderSetup(gs *gls.GLS) {
 	// First time initialization
 	if p.gs == nil {
 		// Generate VAO
@@ -133,4 +145,25 @@ func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
 	}
 
 	p.shapeDescriptor.RenderSetup(gs)
+}
+func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
+	// First time initialization
+	if p.gs == nil {
+		p.gs = gs
+		// Generate VAO
+		p.handleVAO = gs.GenVertexArray()
+		// Save pointer to gs indicating initialization was done
+	}
+	// Update VBOs
+	p.gs.BindVertexArray(p.handleVAO)
+	for _, vbo := range p.vbos {
+		vbo.Transfer(gs)
+	}
+	if p.IsInstanced() {
+		p.shapeDescriptor.RenderSetup(gs)
+		if p.positionsBuffer != nil {
+			p.gs.BindBufferBase(gls.SHADER_STORAGE_BUFFER, ParticlePositionBinding, p.positionsBuffer.BufferID())
+		}
+	}
+	gs.Uniform1b(p.uniIsInstanced.Location(p.gs), p.IsInstanced())
 }

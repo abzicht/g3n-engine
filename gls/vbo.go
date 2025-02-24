@@ -204,6 +204,11 @@ func (vbo *VBO) Dispose() {
 	vbo.gs = nil
 }
 
+// Handle return the handle with that the buffer is associated
+func (vbo *VBO) Handle() uint32 {
+	return vbo.handle
+}
+
 // SetBuffer sets the VBO buffer.
 func (vbo *VBO) SetBuffer(buffer math32.ArrayF32) *VBO {
 

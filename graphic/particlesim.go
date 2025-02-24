@@ -9,13 +9,16 @@ import (
 	"github.com/g3n/engine/geometry"
 	"github.com/g3n/engine/gls"
 	"github.com/g3n/engine/material"
+	"github.com/g3n/engine/math32"
 )
 
 // ParticleSim represents a geometry containing only particles
 type ParticleSim struct {
 	Graphic             // Embedded graphic
-	uniMVPm gls.Uniform // Model view projection matrix uniform location cache
+	uniMm   gls.Uniform // Model matrix uniform location cache
 	uniMVm  gls.Uniform // Model view matrix uniform location cache
+	uniMVPm gls.Uniform // Model view projection matrix uniform location cache
+	uniNm   gls.Uniform // Normal matrix uniform cache
 }
 
 // NewParticleSim creates and returns a graphic particle sim object with the specified
@@ -27,21 +30,34 @@ func NewParticleSim(igeom *geometry.ParticleGeometry, imat material.IMaterial) *
 	if imat != nil {
 		p.AddMaterial(p, imat, 0, 0)
 	}
-	p.uniMVPm.Init("MVP")
-	p.uniMVm.Init("MV")
+	p.uniMm.Init("MM")    // ModelMatrix
+	p.uniMVPm.Init("MVP") // ModelProjectionMatrix
+	p.uniMVm.Init("MV")   // ModelViewMatrix
+	p.uniNm.Init("NM")    // NormalMatrix
 	return p
 }
 
 // RenderSetup is called by the engine before rendering this graphic.
 func (p *ParticleSim) RenderSetup(gs *gls.GLS, rinfo *core.RenderInfo) {
 
+	// Transfer uniform for model matrix
+	mm := p.ModelMatrix()
+	location := p.uniMm.Location(gs)
+	gs.UniformMatrix4fv(location, 1, false, &mm[0])
+
 	// Transfer model view projection matrix uniform
 	mvpm := p.ModelViewProjectionMatrix()
-	location := p.uniMVPm.Location(gs)
+	location = p.uniMVPm.Location(gs)
 	gs.UniformMatrix4fv(location, 1, false, &mvpm[0])
 
 	// Transfer model view matrix uniform
 	mvm := p.ModelViewMatrix()
 	location = p.uniMVm.Location(gs)
 	gs.UniformMatrix4fv(location, 1, false, &mvm[0])
+
+	// Calculates normal matrix and transfer uniform
+	var nm math32.Matrix3
+	nm.GetNormalMatrix(mvm)
+	location = p.uniNm.Location(gs)
+	gs.UniformMatrix3fv(location, 1, false, &nm[0])
 }

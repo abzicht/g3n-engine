@@ -834,6 +834,17 @@ func (gs *GLS) PolygonOffset(factor float32, units float32) {
 	gs.polygonOffsetUnits = units
 }
 
+// Uniform1b is a non-OpenGL function for setting boolean uniforms. Under its
+// hood, glUniform1i is called
+func (gs *GLS) Uniform1b(location int32, v0 bool) {
+	v := 0
+	if v0 {
+		v = 1
+	}
+	C.glUniform1i(C.GLint(location), C.GLint(v))
+	gs.stats.Unisets++
+}
+
 // Uniform1i sets the value of an int uniform variable for the current program object.
 func (gs *GLS) Uniform1i(location int32, v0 int32) {
 

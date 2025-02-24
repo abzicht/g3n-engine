@@ -6,6 +6,8 @@
 package graphic
 
 import (
+	"fmt"
+
 	"github.com/g3n/engine/core"
 	"github.com/g3n/engine/geometry"
 	"github.com/g3n/engine/gls"
@@ -310,7 +312,18 @@ func (grmat *GraphicMaterial) Render(gs *gls.GLS, rinfo *core.RenderInfo) {
 	switch geom := gr.igeom.(type) {
 	case *geometry.ParticleGeometry:
 		// Draw individual vertices
-		gs.DrawArrays(gr.mode, int32(grmat.start), int32(geom.Items()))
+		if geom.IsInstanced() {
+			instance := geom.Instance()
+			indices := instance.Indices()
+			if indices.Size() > 0 {
+				gs.DrawElementsInstanced(gls.TRIANGLES, int32(indices.Size()), gls.UNSIGNED_INT, 4*uint32(grmat.start), uint32(geom.Items()))
+			} else {
+				fmt.Println("Not implemented")
+				//gs.DrawArraysInstanced(gls.TRIANGLE_FAN, uint32(grmat.start), instance.Items(), int32(geom.Items()))
+			}
+		} else {
+			gs.DrawArrays(gr.mode, int32(grmat.start), int32(geom.Items()))
+		}
 	case *geometry.Geometry:
 
 		// Get the number of vertices for the current material
