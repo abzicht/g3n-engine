@@ -5,17 +5,29 @@ import (
 	"github.com/g3n/engine/math32"
 )
 
+const (
+	ParticleColorBinding = 1
+)
+
 type ParticleMaterial struct {
-	Standard // Embedded standard material
+	Standard    // Embedded standard material
+	customColor bool
 }
 
 // Create a new particle material with the given color and the shader program
 // "particle". Use SetShader to use a custom particle shader program.
-func NewParticleMaterial(color math32.Color4) *ParticleMaterial {
+// Set useColorSSBO to tell the shader to load custom color data from a SSBO
+// instead of rendering the given material
+func NewParticleMaterial(color math32.Color4, useColorSSBO bool) *ParticleMaterial {
 
 	m := new(ParticleMaterial)
 	c := color.ToColor()
-	m.Standard.Init("particle", &c)
+	m.customColor = useColorSSBO
+	if m.customColor {
+		m.Standard.Init("particlecolored", &c)
+	} else {
+		m.Standard.Init("particle", &c)
+	}
 	m.SetOpacity(color.A)
 	m.SetParticleSize(-1.0) // -1.0: Constant size of 1 pixel, no matter the distance
 

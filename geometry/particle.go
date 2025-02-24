@@ -13,7 +13,6 @@ import (
 
 const (
 	ParticlePositionBinding = 0
-	ParticleColorBinding    = 1
 )
 
 type shapeDescriptor struct {
@@ -165,5 +164,5 @@ func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
 			p.gs.BindBufferBase(gls.SHADER_STORAGE_BUFFER, ParticlePositionBinding, p.positionsBuffer.BufferID())
 		}
 	}
-	gs.Uniform1b(p.uniIsInstanced.Location(p.gs), p.IsInstanced())
+	gs.Uniform1b(p.uniIsInstanced.Location(gs), p.IsInstanced())
 }

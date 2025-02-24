@@ -406,6 +406,19 @@ void main() {
 }
 `
 
+const particlecolored_fragment_source = `precision highp float;
+
+// Inputs from vertex shader
+in vec4 FragParticleColor;
+// Final fragment color
+out vec4 FragColor;
+
+void main() {
+    FragColor = FragParticleColor;
+    return;
+}
+`
+
 const point_fragment_source = `precision highp float;
 
 #include <material>
@@ -468,20 +481,75 @@ const particle_fragment_source = `precision highp float;
 #include <material>
 #include <phong_model>
 
-in vec4 Color;
+// Inputs from vertex shader
+in vec4 Position;     // Fragment position in camera coordinates
+in vec3 Normal;       // Fragment normal in camera coordinates
+in vec2 FragTexcoord; // Fragment texture coordinates
 // Final fragment color
 out vec4 FragColor;
 
 void main() {
-    if (Color != vec4(-1)) {
-        FragColor = Color;
-        return;
+    // Compute final texture color
+    vec4 texMixed = vec4(1);
+    #if MAT_TEXTURES > 0
+        bool firstTex = true;
+        if (MatTexVisible(0)) {
+            vec4 texColor = texture(MatTexture[0], FragTexcoord * MatTexRepeat(0) + MatTexOffset(0));
+            if (firstTex) {
+                texMixed = texColor;
+                firstTex = false;
+            } else {
+                texMixed = Blend(texMixed, texColor);
+            }
+        }
+        #if MAT_TEXTURES > 1
+            if (MatTexVisible(1)) {
+                vec4 texColor = texture(MatTexture[1], FragTexcoord * MatTexRepeat(1) + MatTexOffset(1));
+                if (firstTex) {
+                    texMixed = texColor;
+                    firstTex = false;
+                } else {
+                    texMixed = Blend(texMixed, texColor);
+                }
+            }
+            #if MAT_TEXTURES > 2
+                if (MatTexVisible(2)) {
+                    vec4 texColor = texture(MatTexture[2], FragTexcoord * MatTexRepeat(2) + MatTexOffset(2));
+                    if (firstTex) {
+                        texMixed = texColor;
+                        firstTex = false;
+                    } else {
+                        texMixed = Blend(texMixed, texColor);
+                    }
+                }
+            #endif
+        #endif
+    #endif
+
+    // Combine material with texture colors
+    vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity) * texMixed;
+    vec4 matAmbient = vec4(MatAmbientColor, MatOpacity) * texMixed;
+
+    // Normalize interpolated normal as it may have shrinked
+    vec3 fragNormal = normalize(Normal);
+
+    // Calculate the direction vector from the fragment to the camera (origin)
+    vec3 camDir = normalize(-Position.xyz);
+
+    // Workaround for gl_FrontFacing
+    vec3 fdx = dFdx(Position.xyz);
+    vec3 fdy = dFdy(Position.xyz);
+    vec3 faceNormal = normalize(cross(fdx,fdy));
+    if (dot(fragNormal, faceNormal) < 0.0) { // Back-facing
+        fragNormal = -fragNormal;
     }
 
+    // Calculates the Ambient+Diffuse and Specular colors for this fragment using the Phong model.
+    vec3 Ambdiff, Spec;
+    phongModel(Position, fragNormal, camDir, vec3(matAmbient), vec3(matDiffuse), Ambdiff, Spec);
+
     // Final fragment color
-    vec4 matDiffuse = vec4(MatDiffuseColor, MatOpacity);
-    vec4 matAmbient = vec4(MatAmbientColor, MatOpacity);
-    FragColor = matDiffuse + matAmbient;
+    FragColor = min(vec4(Ambdiff + Spec, matDiffuse.a), vec4(1.0));
 }
 `
 
@@ -1067,7 +1135,8 @@ uniform mat4 MM;
 uniform mat4 MVP;
 uniform mat4 MV;
 uniform mat3 NM;
-uniform bool IsInstanced;
+uniform bool IsInstanced; // Use an instanced shape instead of only drawing
+                          // pixels
 
 #include <attributes>
 #include <material>
@@ -1081,18 +1150,18 @@ layout(std430, shared, binding = 1) buffer ParticleColor {
 
 
 // Output variables for Fragment shader
-//out vec4 Position;
-//out vec3 Normal;
-//out vec2 FragTexcoord;
-out vec4 Color;
+out vec4 Position;
+out vec3 Normal;
+out vec2 FragTexcoord;
+out vec4 FragParticleColor;
 
 void main() {
     // id is set depending on whether we render objects or only pixels
     uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
     if (id < colors.length()) {
-        Color = colors[id];
+        FragParticleColor = colors[id];
     } else {
-        Color = vec4(-1);
+        FragParticleColor = vec4(0);
     }
 
     if (id >= positions.length()) {return;}
@@ -1101,24 +1170,23 @@ void main() {
     if (IsInstanced) {
         pos +=  VertexPosition;
     }
-    gl_Position = MVP * vec4(pos, 1.0);
-    //// Transform vertex position to camera coordinates
-    //Position = MV * vec4(pos, 1.0);
-    //Normal = normalize(NM * VertexNormal);
-    //// Tex coords
-    //vec2 texcoord = VertexTexcoord;
-    //#if MAT_TEXTURES > 0
-    //// Flip texture coordinate Y if requested.
-    //if (MatTexFlipY(0)) {
-    //    texcoord.y = 1.0 - texcoord.y;
-    //}
-    //#endif
-    //FragTexcoord = texcoord;
+    // Transform vertex position to camera coordinates
+    Position = MV * vec4(pos, 1.0);
+    Normal = normalize(NM * VertexNormal);
+    // Tex coords
+    vec2 texcoord = VertexTexcoord;
+    #if MAT_TEXTURES > 0
+    // Flip texture coordinate Y if requested.
+    if (MatTexFlipY(0)) {
+        texcoord.y = 1.0 - texcoord.y;
+    }
+    #endif
+    FragTexcoord = texcoord;
 
-    //mat4 finalWorld = mat4(1.0);
-    //#include <morphtarget_vertex>
-    //#include <bones_vertex>
-    //gl_Position = MVP * vec4(pos, 1.0);
+    mat4 finalWorld = mat4(1.0);
+    #include <morphtarget_vertex>
+    #include <bones_vertex>
+    gl_Position = MVP * finalWorld * vec4(pos, 1.0);
 
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes
@@ -1175,6 +1243,77 @@ void main() {
 
     gl_Position = MVP * finalWorld * vec4(vPosition, 1.0);
 
+}
+`
+
+const particlecolored_vertex_source = `// Model uniforms
+uniform mat4 MM;
+uniform mat4 MVP;
+uniform mat4 MV;
+uniform mat3 NM;
+uniform bool IsInstanced; // Use an instanced shape instead of only drawing
+                          // pixels
+
+#include <attributes>
+#include <material>
+
+layout(std430, shared, binding = 0) buffer ParticlePos {
+    vec3 positions[];
+};
+layout(std430, shared, binding = 1) buffer ParticleColor {
+    vec4 colors[];
+};
+
+
+// Output variables for Fragment shader
+out vec4 Position;
+out vec3 Normal;
+out vec2 FragTexcoord;
+out vec4 FragParticleColor;
+
+void main() {
+    // id is set depending on whether we render objects or only pixels
+    uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
+    if (id < colors.length()) {
+        FragParticleColor = colors[id];
+    } else {
+        FragParticleColor = vec4(0);
+    }
+
+    if (id >= positions.length()) {return;}
+
+    vec3 pos = positions[id];
+    if (IsInstanced) {
+        pos +=  VertexPosition;
+    }
+    // Transform vertex position to camera coordinates
+    Position = MV * vec4(pos, 1.0);
+    Normal = normalize(NM * VertexNormal);
+    // Tex coords
+    vec2 texcoord = VertexTexcoord;
+    #if MAT_TEXTURES > 0
+    // Flip texture coordinate Y if requested.
+    if (MatTexFlipY(0)) {
+        texcoord.y = 1.0 - texcoord.y;
+    }
+    #endif
+    FragTexcoord = texcoord;
+
+    mat4 finalWorld = mat4(1.0);
+    #include <morphtarget_vertex>
+    #include <bones_vertex>
+    gl_Position = MVP * finalWorld * vec4(pos, 1.0);
+
+    if (!IsInstanced) {
+        // If we don't have shapes but only points, we set their sizes
+        // Sets the size of the rasterized point decreasing with distance
+        vec4 posMV = MV * vec4(pos, 1.0);
+        if (MatPointSize == -1.0) {
+            gl_PointSize = 1.0;
+        } else {
+            gl_PointSize = MatPointSize / -posMV.z;
+        }
+    }
 }
 `
 
@@ -1238,27 +1377,30 @@ var includeMap = map[string]string{
 // Maps shader name with its source code
 var shaderMap = map[string]string{
 
-	"panel_fragment":    panel_fragment_source,
-	"point_fragment":    point_fragment_source,
-	"particle_fragment": particle_fragment_source,
-	"physical_fragment": physical_fragment_source,
-	"panel_vertex":      panel_vertex_source,
-	"basic_fragment":    basic_fragment_source,
-	"basic_vertex":      basic_vertex_source,
-	"standard_fragment": standard_fragment_source,
-	"point_vertex":      point_vertex_source,
-	"particle_vertex":   particle_vertex_source,
-	"physical_vertex":   physical_vertex_source,
-	"standard_vertex":   standard_vertex_source,
+	"panel_fragment":           panel_fragment_source,
+	"particlecolored_fragment": particlecolored_fragment_source,
+	"point_fragment":           point_fragment_source,
+	"particle_fragment":        particle_fragment_source,
+	"physical_fragment":        physical_fragment_source,
+	"panel_vertex":             panel_vertex_source,
+	"basic_fragment":           basic_fragment_source,
+	"basic_vertex":             basic_vertex_source,
+	"standard_fragment":        standard_fragment_source,
+	"point_vertex":             point_vertex_source,
+	"particle_vertex":          particle_vertex_source,
+	"physical_vertex":          physical_vertex_source,
+	"particlecolored_vertex":   particlecolored_vertex_source,
+	"standard_vertex":          standard_vertex_source,
 }
 
 // Maps program name with Proginfo struct with shaders names
 var programMap = map[string]ProgramInfo{
 
-	"basic":    {"basic_vertex", "basic_fragment", ""},
-	"panel":    {"panel_vertex", "panel_fragment", ""},
-	"particle": {"particle_vertex", "particle_fragment", ""},
-	"physical": {"physical_vertex", "physical_fragment", ""},
-	"point":    {"point_vertex", "point_fragment", ""},
-	"standard": {"standard_vertex", "standard_fragment", ""},
+	"basic":           {"basic_vertex", "basic_fragment", ""},
+	"panel":           {"panel_vertex", "panel_fragment", ""},
+	"particle":        {"particle_vertex", "particle_fragment", ""},
+	"particlecolored": {"particlecolored_vertex", "particlecolored_fragment", ""},
+	"physical":        {"physical_vertex", "physical_fragment", ""},
+	"point":           {"point_vertex", "point_fragment", ""},
+	"standard":        {"standard_vertex", "standard_fragment", ""},
 }

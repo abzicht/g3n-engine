@@ -3,7 +3,8 @@ uniform mat4 MM;
 uniform mat4 MVP;
 uniform mat4 MV;
 uniform mat3 NM;
-uniform bool IsInstanced;
+uniform bool IsInstanced; // Use an instanced shape instead of only drawing
+                          // pixels
 
 #include <attributes>
 #include <material>
@@ -17,18 +18,18 @@ layout(std430, shared, binding = 1) buffer ParticleColor {
 
 
 // Output variables for Fragment shader
-//out vec4 Position;
-//out vec3 Normal;
-//out vec2 FragTexcoord;
-out vec4 Color;
+out vec4 Position;
+out vec3 Normal;
+out vec2 FragTexcoord;
+out vec4 FragParticleColor;
 
 void main() {
     // id is set depending on whether we render objects or only pixels
     uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
     if (id < colors.length()) {
-        Color = colors[id];
+        FragParticleColor = colors[id];
     } else {
-        Color = vec4(-1);
+        FragParticleColor = vec4(0);
     }
 
     if (id >= positions.length()) {return;}
@@ -37,24 +38,23 @@ void main() {
     if (IsInstanced) {
         pos +=  VertexPosition;
     }
-    gl_Position = MVP * vec4(pos, 1.0);
-    //// Transform vertex position to camera coordinates
-    //Position = MV * vec4(pos, 1.0);
-    //Normal = normalize(NM * VertexNormal);
-    //// Tex coords
-    //vec2 texcoord = VertexTexcoord;
-    //#if MAT_TEXTURES > 0
-    //// Flip texture coordinate Y if requested.
-    //if (MatTexFlipY(0)) {
-    //    texcoord.y = 1.0 - texcoord.y;
-    //}
-    //#endif
-    //FragTexcoord = texcoord;
+    // Transform vertex position to camera coordinates
+    Position = MV * vec4(pos, 1.0);
+    Normal = normalize(NM * VertexNormal);
+    // Tex coords
+    vec2 texcoord = VertexTexcoord;
+    #if MAT_TEXTURES > 0
+    // Flip texture coordinate Y if requested.
+    if (MatTexFlipY(0)) {
+        texcoord.y = 1.0 - texcoord.y;
+    }
+    #endif
+    FragTexcoord = texcoord;
 
-    //mat4 finalWorld = mat4(1.0);
-    //#include <morphtarget_vertex>
-    //#include <bones_vertex>
-    //gl_Position = MVP * vec4(pos, 1.0);
+    mat4 finalWorld = mat4(1.0);
+    #include <morphtarget_vertex>
+    #include <bones_vertex>
+    gl_Position = MVP * finalWorld * vec4(pos, 1.0);
 
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes
