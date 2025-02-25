@@ -409,6 +409,9 @@ void main() {
 const particlecolored_fragment_source = `precision highp float;
 
 // Inputs from vertex shader
+in vec4 Position;
+in vec3 Normal;
+in vec2 FragTexcoord;
 in vec4 FragParticleColor;
 // Final fragment color
 out vec4 FragColor;
@@ -1141,10 +1144,10 @@ uniform bool IsInstanced; // Use an instanced shape instead of only drawing
 #include <attributes>
 #include <material>
 
-layout(std430, shared, binding = 0) buffer ParticlePos {
+layout(std430, binding = 0) buffer ParticlePos {
     vec3 positions[];
 };
-layout(std430, shared, binding = 1) buffer ParticleColor {
+layout(std430, binding = 1) buffer ParticleColor {
     vec4 colors[];
 };
 
@@ -1164,7 +1167,7 @@ void main() {
         FragParticleColor = vec4(0);
     }
 
-    if (id >= positions.length()) {return;}
+    //if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {
@@ -1173,13 +1176,12 @@ void main() {
     // Transform vertex position to camera coordinates
     Position = MV * vec4(pos, 1.0);
     Normal = normalize(NM * VertexNormal);
-    // Tex coords
     vec2 texcoord = VertexTexcoord;
     #if MAT_TEXTURES > 0
-    // Flip texture coordinate Y if requested.
-    if (MatTexFlipY(0)) {
-        texcoord.y = 1.0 - texcoord.y;
-    }
+        // Flip texture coordinate Y if requested.
+        if (MatTexFlipY(0)) {
+            texcoord.y = 1.0 - texcoord.y;
+        }
     #endif
     FragTexcoord = texcoord;
 
@@ -1191,7 +1193,7 @@ void main() {
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes
         // Sets the size of the rasterized point decreasing with distance
-        vec4 posMV = MV * vec4(pos, 1.0);
+        vec4 posMV = MV * vec4(positions[id], 1.0);
         if (MatPointSize == -1.0) {
             gl_PointSize = 1.0;
         } else {
@@ -1257,10 +1259,10 @@ uniform bool IsInstanced; // Use an instanced shape instead of only drawing
 #include <attributes>
 #include <material>
 
-layout(std430, shared, binding = 0) buffer ParticlePos {
+layout(std430, binding = 0) buffer ParticlePos {
     vec3 positions[];
 };
-layout(std430, shared, binding = 1) buffer ParticleColor {
+layout(std430, binding = 1) buffer ParticleColor {
     vec4 colors[];
 };
 
@@ -1280,7 +1282,7 @@ void main() {
         FragParticleColor = vec4(0);
     }
 
-    if (id >= positions.length()) {return;}
+    //if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {
@@ -1289,13 +1291,12 @@ void main() {
     // Transform vertex position to camera coordinates
     Position = MV * vec4(pos, 1.0);
     Normal = normalize(NM * VertexNormal);
-    // Tex coords
     vec2 texcoord = VertexTexcoord;
     #if MAT_TEXTURES > 0
-    // Flip texture coordinate Y if requested.
-    if (MatTexFlipY(0)) {
-        texcoord.y = 1.0 - texcoord.y;
-    }
+        // Flip texture coordinate Y if requested.
+        if (MatTexFlipY(0)) {
+            texcoord.y = 1.0 - texcoord.y;
+        }
     #endif
     FragTexcoord = texcoord;
 
@@ -1307,7 +1308,7 @@ void main() {
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes
         // Sets the size of the rasterized point decreasing with distance
-        vec4 posMV = MV * vec4(pos, 1.0);
+        vec4 posMV = MV * vec4(positions[id], 1.0);
         if (MatPointSize == -1.0) {
             gl_PointSize = 1.0;
         } else {

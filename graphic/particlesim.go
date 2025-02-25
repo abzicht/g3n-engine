@@ -60,4 +60,5 @@ func (p *ParticleSim) RenderSetup(gs *gls.GLS, rinfo *core.RenderInfo) {
 	nm.GetNormalMatrix(mvm)
 	location = p.uniNm.Location(gs)
 	gs.UniformMatrix3fv(location, 1, false, &nm[0])
+	gs.MemoryBarrier(gls.VERTEX_ATTRIB_ARRAY_BARRIER_BIT) // Ensure data is written before reading
 }

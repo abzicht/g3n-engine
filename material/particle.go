@@ -11,19 +11,19 @@ const (
 
 type ParticleMaterial struct {
 	Standard    // Embedded standard material
-	customColor bool
+	colorBuffer *gls.SSBO
 }
 
 // Create a new particle material with the given color and the shader program
-// "particle". Use SetShader to use a custom particle shader program.
-// Set useColorSSBO to tell the shader to load custom color data from a SSBO
+// "particle" or "particlecolored" if a color buffer is provided. Use SetShader to use a custom particle shader program.
+// Set colorBuffer to tell the shader to load custom color data from the SSBO
 // instead of rendering the given material
-func NewParticleMaterial(color math32.Color4, useColorSSBO bool) *ParticleMaterial {
+func NewParticleMaterial(color math32.Color4, colorBuffer *gls.SSBO) *ParticleMaterial {
 
 	m := new(ParticleMaterial)
 	c := color.ToColor()
-	m.customColor = useColorSSBO
-	if m.customColor {
+	m.colorBuffer = colorBuffer
+	if m.colorBuffer != nil {
 		m.Standard.Init("particlecolored", &c)
 	} else {
 		m.Standard.Init("particle", &c)
@@ -42,4 +42,7 @@ func (m *ParticleMaterial) SetParticleSize(size float32) {
 
 func (m *ParticleMaterial) RenderSetup(gl *gls.GLS) {
 	m.Standard.RenderSetup(gl)
+	if m.colorBuffer != nil {
+		gl.BindBufferBase(gls.SHADER_STORAGE_BUFFER, ParticleColorBinding, m.colorBuffer.BufferID())
+	}
 }
