@@ -11,6 +11,9 @@ import (
 // https://www.khronos.org/opengl/wiki/Data_Type_(GLSL), and not of Go/G3N.
 type TypeSize uint32
 
+// Stride, in bytes, for arrays of GLSL std430 data types
+type StrideSize uint32
+
 type BufferType interface {
 	bool | int32 | uint32 | float32 | float64 | math32.Vector2 | math32.Vector3 | math32.Vector4 | math32.Matrix3 | math32.Matrix4 | math64.Vector2 | math64.Vector3 | math64.Vector4
 }
@@ -48,6 +51,25 @@ func Sizeof(v any) TypeSize {
 func SizeofT[T BufferType]() TypeSize {
 	var t T
 	return Sizeof(t)
+}
+
+// Returns the array stride, in bytes, of math32 and math64 vectors, matrices, and
+// primitive types of Go. Handles a special case for vec3 that acts as a vec4
+// in arrays.
+func Strideof(v any) StrideSize {
+	switch v.(type) {
+	case math32.Vector3:
+		//intentional: rounding vec3 array stride up to vec4, as introdued in std140, is kept in std430
+		return StrideSize(SizeVec4Std430)
+	default:
+		return StrideSize(Sizeof(v))
+	}
+}
+
+// Returns the stride of a given uninitialized type T using Strideof()
+func StrideofT[T BufferType]() StrideSize {
+	var t T
+	return Strideof(t)
 }
 
 const (
