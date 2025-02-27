@@ -1167,7 +1167,7 @@ void main() {
         FragParticleColor = vec4(0);
     }
 
-    //if (id >= positions.length()) {return;}
+    if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {
@@ -1189,6 +1189,7 @@ void main() {
     #include <morphtarget_vertex>
     #include <bones_vertex>
     gl_Position = MVP * finalWorld * vec4(pos, 1.0);
+
 
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes
@@ -1282,7 +1283,7 @@ void main() {
         FragParticleColor = vec4(0);
     }
 
-    //if (id >= positions.length()) {return;}
+    if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {
@@ -1304,6 +1305,7 @@ void main() {
     #include <morphtarget_vertex>
     #include <bones_vertex>
     gl_Position = MVP * finalWorld * vec4(pos, 1.0);
+
 
     if (!IsInstanced) {
         // If we don't have shapes but only points, we set their sizes

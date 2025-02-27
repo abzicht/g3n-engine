@@ -85,14 +85,15 @@ go install ./...
 * Real-time lighting: ambient, directional, point, and spot lights
 * Physically-based rendering: fresnel reflectance, geometric occlusion, microfacet distribution
 * Model loaders: glTF (.gltf, .glb), Wavefront OBJ (.obj), and COLLADA (.dae)
-* Geometry generators: box, sphere, cylinder, torus, etc...
+* Geometry generators: box, sphere, cylinder, torus, particles, etc...
 * Geometries support morph targets and multimaterials
 * Support for animated sprites based on sprite sheets
 * Perspective and orthographic cameras
 * Text image generation and support for TrueType fonts
 * Image textures can be loaded from GIF, PNG or JPEG files
 * Animation framework for position, rotation, and scale of objects
-* Support for user-created GLSL shaders: vertex, fragment, and geometry shaders
+* Support for user-created GLSL shaders: vertex, fragment, geometry, and
+  compute shaders
 * Integrated basic physics engine (experimental/incomplete)
 * Support for HiDPI displays
 

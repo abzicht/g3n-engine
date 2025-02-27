@@ -5,8 +5,8 @@ import (
 	"unsafe"
 )
 
-// BufferRaw points to raw data in user space, reachable by the CPU. It is typically
-// created inside of buffer object callbacks
+// BufferRaw points to raw data in memory. It is typically
+// created while setting up SSBOs or inside of their callbacks
 // and serves as the interface for communicating with
 // compute shaders (or any other shader with access to shared buffers).
 // BufferRaw makes no assumption on the buffer's data structure. If a user is
@@ -64,7 +64,8 @@ func (b *BufferRaw) Child(offset uint32, size uint32) (*BufferRaw, error) {
 }
 
 // Return a slice of bytes with the specified length that starts at the
-// index-th byte of the buffer.
+// index-th byte of the buffer. If the address range would be exceeded, a nil
+// pointer is returned.
 func (b *BufferRaw) GetBytes(index uint32, length uint32) []byte {
 	if index+length > b.Size {
 		// Trying to read beyond the buffer? Come on!
