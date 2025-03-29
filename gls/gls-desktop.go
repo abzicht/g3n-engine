@@ -712,6 +712,15 @@ func (gs *GLS) GetProgramResourceIndex(program uint32, programInterface uint32, 
 	return uint32(C.glGetProgramResourceIndex(C.GLuint(program), C.GLenum(programInterface), gs.gobufStr(name)))
 }
 
+// GetProgramResourceiv retrieve values for multiple properties of a single active resource within a program object
+func (gs *GLS) GetProgramResourceiv(program uint32, programInterface uint32,
+	index uint32, propCount int32, props *uint32, bufSize int32, length *int32,
+	params *int32) {
+	C.glGetProgramResourceiv(C.GLuint(program), C.GLenum(programInterface),
+		C.GLuint(index), C.GLsizei(propCount), (*C.GLenum)(props),
+		C.GLsizei(bufSize), (*C.GLsizei)(length), (*C.GLint)(params))
+}
+
 // GetShaderInfoLog returns the information log for the specified shader object.
 func (gs *GLS) GetShaderInfoLog(shader uint32) string {
 

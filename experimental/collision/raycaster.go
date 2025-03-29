@@ -119,6 +119,7 @@ func (rc *Raycaster) intersectObject(inode core.INode, intersects *[]Intersect, 
 		rc.RaycastLines(in, intersects)
 	case *graphic.LineStrip:
 		rc.RaycastLineStrip(in, intersects)
+		// TODO: add particle
 	}
 
 	if recursive {

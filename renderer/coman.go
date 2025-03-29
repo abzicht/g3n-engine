@@ -116,9 +116,9 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 	log.Debug("Created new compute shader:%v", specs.Name)
 
 	// Save specs as current specs, adds new program to the list and activates the program
-	cm.progSpecs = gls.ComputeProgSpecs{prog, specs}
+	cm.progSpecs = gls.ComputeProgSpecs{Program: prog, Specs: specs}
 	cm.programs = append(cm.programs, cm.progSpecs)
-	err = specs.BufferObjects.Bind(cm.gs) //prepare buffer objects before using the program
+	err = specs.BufferObjects.Bind(cm.gs, prog.Handle()) //prepare buffer objects before using the program
 	if err != nil {
 		return false, err
 	}

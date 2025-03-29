@@ -15,7 +15,7 @@ type BufferObject interface {
 	// Returns the id that gls uses to identify this buffer
 	BufferID() uint32
 	// Binds this buffer to the provided gls
-	Bind(gs *GLS) error
+	Bind(gs *GLS, programHandle uint32) error
 	// Process the data held in buffer locally
 	Process(gs *GLS, deltaTime time.Duration) error
 	// Deletes this buffer from the provided gls
@@ -28,12 +28,9 @@ type SSBO struct {
 	gs *GLS
 	// ID that GLS uses to identify this object
 	bufferID uint32
-	/* BindingIndex must match a buffer's binding in the shader.
-	 * For index 3, the following format would be used in the shader:
-	 * layout(std430, binding = 3) buffer BufferName
-	 *  { int data_SSBO[]; };
-	 */
-	BindingIndex uint32
+	/* SSBO Name, as defined in the shader source. Required for binding to the
+	* correct object */
+	Name string
 	// Usage type with that SSBO.Bind initializes the buffer
 	Usage BOUsageType
 	// Access type with that SSBO.Process reads / writes the buffer
@@ -50,7 +47,8 @@ type SSBO struct {
 // Note to end user: make good use of closures and use the correct BOAccessType!
 type SSBOCallback func(b *BufferRaw, deltaTime time.Duration)
 
-// Create a new SSBO of the given size that binds to a shader variable identified with bindingIndex
+// Create a new SSBO of the given size that binds to a shader storage block
+// identified with its name.
 // The ssboCallback is called by (*SSBO).Process and receives the current
 // buffer state. ssboCallback can apply changes on the buffer and reflect those
 // to the shader, but only, if access is set to BO_WRITE_ONLY or
@@ -58,15 +56,15 @@ type SSBOCallback func(b *BufferRaw, deltaTime time.Duration)
 // Use (*SSBO).SetInitialBuffer to prefill the buffer before the first call to
 // Process.
 // Set usage to DYNAMIC_COPY / DYNAMIC_DRAW when expecting to modify this buffer's contents
-func NewSSBO(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
+func NewSSBO(gs *GLS, name string, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) *SSBO {
 	s := new(SSBO)
-	s.Init(gs, bindingIndex, usage, access, ssboCallback, uint32(size))
+	s.Init(gs, name, usage, access, ssboCallback, uint32(size))
 	return s
 }
 
 // Initialize SSBO
-func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) {
-	s.BindingIndex = bindingIndex
+func (s *SSBO) Init(gs *GLS, name string, usage BOUsageType, access BOAccessType, ssboCallback SSBOCallback, size uint32) {
+	s.Name = name
 	s.Usage = usage
 	s.Access = access
 	s.SSBOCallback = ssboCallback
@@ -98,13 +96,15 @@ func (s *SSBO) BufferID() uint32 {
 // Binds this SSBO's GLS buffer to the provided GLS instance and, on first
 // call, copies the
 // data set with SetInitialBuffer to this buffer.
-func (s *SSBO) Bind(gs *GLS) error {
+func (s *SSBO) Bind(gs *GLS, programHandle uint32) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
+	// Get the binding index
+	bI := s.bindingIndexFromProgram(gs, programHandle)
 	// Initialize buffer with the given size. If initialBuffer.Address is nil,
 	// no data is copied, otherwise, the buffer's data is sent to GLS.
 	gs.NamedBufferData(s.bufferID, s.initialBuffer.Size, s.initialBuffer.Address, uint32(s.Usage))
-	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.bufferID) // Bind to binding point found in shader
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                              // value 0 indicates: unbind!
+	gs.BindBufferBase(SHADER_STORAGE_BUFFER, bI, s.bufferID) // Bind to binding point found in shader
+	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                  // value 0 indicates: unbind!
 	s.initialBuffer.Address = nil
 	return nil
 }
@@ -125,6 +125,15 @@ func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 		gs.BindBuffer(SHADER_STORAGE_BUFFER, 0) // unbind this buffer, clearing data
 	}
 	return nil
+}
+
+// Find out this ssbo's binding index for a given program and return it
+func (s *SSBO) bindingIndexFromProgram(gs *GLS, programHandle uint32) uint32 {
+	ssboIndex := gs.GetProgramResourceIndex(programHandle, SHADER_STORAGE_BLOCK, s.Name)
+	property := uint32(BUFFER_BINDING)
+	var bI int32
+	gs.GetProgramResourceiv(programHandle, SHADER_STORAGE_BLOCK, ssboIndex, 1, &property, 1, nil, &bI)
+	return uint32(bI)
 }
 
 // Tell GLS to delete this buffer
@@ -200,10 +209,10 @@ func (b *BufferObjects) Equals(other *BufferObjects) bool {
 
 // Binds all buffer objects so that the next used program can access
 // these.
-func (b *BufferObjects) Bind(gs *GLS) error {
+func (b *BufferObjects) Bind(gs *GLS, programHandle uint32) error {
 	var _errors error
 	for _, bufferObject := range map[uint32]BufferObject(*b) {
-		var err error = bufferObject.Bind(gs)
+		var err error = bufferObject.Bind(gs, programHandle)
 		_errors = errors.Join(_errors, err)
 	}
 	return _errors
