@@ -19,11 +19,11 @@ import (
 type Raycaster struct {
 	// The distance from the ray origin to the intersected points
 	// must be greater than the value of this field to be considered.
-	// The defaul value is 0.0
+	// The default value is 0.0
 	Near float32
 	// The distance from the ray origin to the intersected points
 	// must be less than the value of this field to be considered.
-	// The defaul value is +Infinity.
+	// The default value is +Infinity.
 	Far float32
 	// Minimum distance in world coordinates between the ray and
 	// a line segment when checking intersects with lines.
@@ -119,7 +119,8 @@ func (rc *Raycaster) intersectObject(inode core.INode, intersects *[]Intersect, 
 		rc.RaycastLines(in, intersects)
 	case *graphic.LineStrip:
 		rc.RaycastLineStrip(in, intersects)
-		// TODO: add particle
+	case *graphic.ParticleSim:
+		rc.RaycastParticleSim(in, intersects)
 	}
 
 	if recursive {
@@ -356,6 +357,27 @@ func (rc *Raycaster) RaycastMesh(m *graphic.Mesh, intersects *[]Intersect) {
 		i += 3
 		return false
 	})
+}
+
+// RaycastParticleSim (based on pre-defined bounding box)
+func (rc *Raycaster) RaycastParticleSim(p *graphic.ParticleSim, intersects *[]Intersect) {
+	// Checks intersection with the bounding sphere transformed to world coordinates
+	geom := p.GetGeometry()
+	box := geom.BoundingBox()
+	matrixWorld := p.MatrixWorld()
+	box.ApplyMatrix4(&matrixWorld)
+	if !rc.IsIntersectionBox(&box) {
+		return
+	}
+	origin := rc.Ray.Origin()
+	distance := origin.DistanceTo(box.Center(nil))
+	*intersects = append(*intersects, Intersect{
+		Distance: distance,
+		Point:    *box.Center(nil),
+		Index:    uint32(0),
+		Object:   p,
+	})
+	return
 }
 
 // RaycastLines
