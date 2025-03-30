@@ -42,6 +42,8 @@ type SSBO struct {
 	// Set to nil in order to skip the CPU processing step
 	SSBOCallback  SSBOCallback
 	initialBuffer *BufferRaw
+	// Commands the initialBuffer's data to be written on the first call
+	setInitialBuffer bool
 }
 
 // SSBOCallback is called within SSBO.Process and receives a BufferRaw object.
@@ -72,6 +74,7 @@ func (s *SSBO) Init(gs *GLS, bindingIndex uint32, usage BOUsageType, access BOAc
 	s.Access = access
 	s.SSBOCallback = ssboCallback
 	s.initialBuffer = NewBufferRaw(nil, size)
+	s.setInitialBuffer = true // true, even if user didn't define one (so that at least the buffer size is being set)
 	s.bufferID = gs.GenBuffer()
 }
 
@@ -86,6 +89,7 @@ func (s *SSBO) SetInitialBuffer(buffer *BufferRaw) *SSBO {
 	if buffer.Size == 0 {
 		panic("Trying to initialize SSBO with empty buffer")
 	}
+	s.setInitialBuffer = true
 	s.initialBuffer.Address = buffer.Address
 	s.initialBuffer.Size = buffer.Size
 	return s
@@ -101,12 +105,14 @@ func (s *SSBO) BufferID() uint32 {
 // data set with SetInitialBuffer to this buffer.
 func (s *SSBO) Bind(gs *GLS) error {
 	gs.BindBuffer(SHADER_STORAGE_BUFFER, s.bufferID)
-	// Initialize buffer with the given size. If initialBuffer.Address is nil,
-	// no data is copied, otherwise, the buffer's data is sent to GLS.
-	gs.NamedBufferData(s.bufferID, s.initialBuffer.Size, s.initialBuffer.Address, uint32(s.Usage))
+	if s.setInitialBuffer {
+		// Initialize buffer with the given size. If initialBuffer.Address is nil,
+		// no data is copied. Otherwise, the buffer's data is sent to GLS.
+		gs.NamedBufferData(s.bufferID, s.initialBuffer.Size, s.initialBuffer.Address, uint32(s.Usage))
+		s.setInitialBuffer = false // Reset use of initial buffer
+	}
 	gs.BindBufferBase(SHADER_STORAGE_BUFFER, s.BindingIndex, s.bufferID) // Bind to binding point found in shader
-	gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                              // value 0 indicates: unbind!
-	s.initialBuffer.Address = nil
+	//gs.BindBuffer(SHADER_STORAGE_BUFFER, 0)                              // value 0 indicates: unbind!
 	return nil
 }
 
@@ -129,7 +135,7 @@ func (s *SSBO) Process(gs *GLS, deltaTime time.Duration) error {
 }
 
 // Find out this ssbo's binding index for a given program and return it
-func (s *SSBO) bindingIndexFromProgram(gs *GLS, bufferName string, programHandle uint32) uint32 {
+func (s *SSBO) BindingIndexFromProgram(gs *GLS, bufferName string, programHandle uint32) uint32 {
 	ssboIndex := gs.GetProgramResourceIndex(programHandle, SHADER_STORAGE_BLOCK, bufferName)
 	property := uint32(BUFFER_BINDING)
 	var bI int32

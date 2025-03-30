@@ -42,7 +42,7 @@ func (m *ParticleMaterial) SetParticleSize(size float32) {
 
 func (m *ParticleMaterial) RenderSetup(gl *gls.GLS) {
 	m.Standard.RenderSetup(gl)
-	//if m.colorBuffer != nil {
-	//	gl.BindBufferBase(gls.SHADER_STORAGE_BUFFER, ParticleColorBinding, m.colorBuffer.BufferID())
-	//}
+	if m.colorBuffer != nil {
+		m.colorBuffer.Bind(gl)
+	}
 }

@@ -160,10 +160,9 @@ func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
 	}
 	if p.IsInstanced() {
 		p.shapeDescriptor.RenderSetup(gs)
-		//if p.positionsBuffer != nil {
-		// Doesn't seem to be required
-		//	p.gs.BindBufferBase(gls.SHADER_STORAGE_BUFFER, p.positionsBuffer.BindingIndex, p.positionsBuffer.BufferID())
-		//}
+	}
+	if p.positionsBuffer != nil {
+		p.positionsBuffer.Bind(gs)
 	}
 	gs.Uniform1b(p.uniIsInstanced.Location(gs), p.IsInstanced())
 }

@@ -94,6 +94,7 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 		if !cm.progSpecs.Program.InUse() {
 			cm.progSpecs.Specs = specs
 			cm.gs.UseProgram(cm.progSpecs.Program)
+			cm.progSpecs.Specs.BufferObjects.Bind(cm.GLS())
 			return true, nil
 		}
 		return false, nil
@@ -104,6 +105,7 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 		if pinfo.Specs.Equals(&specs) {
 			cm.progSpecs = pinfo
 			cm.gs.UseProgram(pinfo.Program)
+			cm.progSpecs.Specs.BufferObjects.Bind(cm.GLS())
 			return true, nil
 		}
 	}
