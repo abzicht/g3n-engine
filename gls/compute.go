@@ -1,67 +1,5 @@
 package gls
 
-// NumWorkGroups tell GLS how compute shaders should be processed
-type NumWorkGroups struct {
-	X uint32 // number of work groups in x axis
-	Y uint32 // number of work groups in y axis
-	Z uint32 // number of work groups in z axis
-}
-
-func NewNumWorkGroups(x, y, z uint32) *NumWorkGroups {
-	n := new(NumWorkGroups)
-	n.X = x
-	n.Y = y
-	n.Z = z
-	return n
-}
-
-// ComputeSpecs describe the specification of a compiled compute shader program and its associated
-// buffers
-type ComputeSpecs struct {
-	Name          string         // Shader name
-	Version       string         // GLSL Version
-	Defines       ShaderDefines  // Additional Shader Defines
-	BufferObjects *BufferObjects // Potentially different among shaders of the same type
-}
-
-// ComputeProgSpecs represents a compiled shader program along with its specs
-type ComputeProgSpecs struct {
-	Program *Program     // program object
-	Specs   ComputeSpecs // associated specs
-}
-
-func NewComputeSpecs(name string, version string, defines ShaderDefines, bufferObjects *BufferObjects) *ComputeSpecs {
-	cs := new(ComputeSpecs)
-	cs.Init(name, version, defines, bufferObjects)
-	return cs
-}
-func (cs *ComputeSpecs) Init(name string, version string, defines ShaderDefines, bufferObjects *BufferObjects) {
-	cs.Name = name
-	cs.Version = version
-	cs.Defines = defines
-	cs.BufferObjects = bufferObjects
-}
-
-// copy copies other spec into this
-func (cs *ComputeSpecs) Copy(other *ComputeSpecs) {
-
-	*cs = *other
-	if other.Defines != nil {
-		cs.Defines = *NewShaderDefines()
-		cs.Defines.Add(&other.Defines)
-	}
-	if other.BufferObjects != nil {
-		cs.BufferObjects = NewBufferObjects()
-		cs.BufferObjects.Add(other.BufferObjects)
-	}
-}
-
-// equals compares two ComputeSpecs and returns true if they are effectively equal.
-func (cs *ComputeSpecs) Equals(other *ComputeSpecs) bool {
-
-	return cs.Name == other.Name && cs.Defines.Equals(&other.Defines) && cs.BufferObjects.Equals(other.BufferObjects)
-}
-
 // Let's typify some constants regarding buffer objects so that users can't pass the wrong ones. (If
 // everything was uint32, who tells us that a GL constant's category fits the
 // use case?)
@@ -90,3 +28,77 @@ const (
 	BO_WRITE_ONLY BOAccessType = WRITE_ONLY
 	BO_READ_WRITE BOAccessType = READ_WRITE
 )
+
+// NumWorkGroups tell GLS how compute shaders should be processed
+type NumWorkGroups struct {
+	X uint32 // number of work groups in x axis
+	Y uint32 // number of work groups in y axis
+	Z uint32 // number of work groups in z axis
+}
+
+func NewNumWorkGroups(x, y, z uint32) *NumWorkGroups {
+	n := new(NumWorkGroups)
+	n.X = x
+	n.Y = y
+	n.Z = z
+	return n
+}
+
+// ComputeSpecs describe the specification of a compiled compute shader program and its associated
+// buffers
+type ComputeSpecs struct {
+	ProgramName   string         // Shader program name
+	Version       string         // GLSL Version
+	Defines       ShaderDefines  // Additional Shader Defines
+	BufferObjects *BufferObjects // Potentially different among shaders of the same type
+	kernel        string         // Name of the active kernel
+}
+
+// ComputeProgSpecs represents a compiled shader program along with its specs
+type ComputeProgSpecs struct {
+	Program *Program     // program object
+	Specs   ComputeSpecs // associated specs
+}
+
+func NewComputeSpecs(name string, version string, defines ShaderDefines, bufferObjects *BufferObjects) *ComputeSpecs {
+	cs := new(ComputeSpecs)
+	cs.Init(name, version, defines, bufferObjects)
+	return cs
+}
+
+func (cs *ComputeSpecs) Init(programName string, version string, defines ShaderDefines, bufferObjects *BufferObjects) {
+	cs.ProgramName = programName
+	cs.Version = version
+	cs.Defines = defines
+	cs.BufferObjects = bufferObjects
+}
+
+// Set the active kernel
+func (cs *ComputeSpecs) SetKernel(name string) {
+	cs.kernel = name
+}
+
+// Return the active kernel
+func (cs *ComputeSpecs) Kernel() string {
+	return cs.kernel
+}
+
+// copy copies other spec into this
+func (cs *ComputeSpecs) Copy(other *ComputeSpecs) {
+
+	*cs = *other
+	if other.Defines != nil {
+		cs.Defines = *NewShaderDefines()
+		cs.Defines.Add(&other.Defines)
+	}
+	if other.BufferObjects != nil {
+		cs.BufferObjects = NewBufferObjects()
+		cs.BufferObjects.Add(other.BufferObjects)
+	}
+}
+
+// equals compares two ComputeSpecs and returns true if they are effectively equal.
+func (cs *ComputeSpecs) Equals(other *ComputeSpecs) bool {
+
+	return cs.ProgramName == other.ProgramName && cs.Defines.Equals(&other.Defines) && cs.BufferObjects.Equals(other.BufferObjects) && cs.Kernel() == other.Kernel()
+}

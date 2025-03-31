@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -115,7 +116,7 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	log.Debug("Created new compute shader:%v", specs.Name)
+	log.Debug("Created new compute shader:%v", specs.ProgramName)
 
 	// Save specs as current specs, adds new program to the list and activates the program
 	cm.progSpecs = gls.ComputeProgSpecs{Program: prog, Specs: specs}
@@ -130,9 +131,9 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 
 // GenProgram generates a shader program from the specified shader
 func (cm *Coman) GenProgram(specs *gls.ComputeSpecs) (*gls.Program, error) {
-	shaderName, ok := cm.proginfo[specs.Name]
+	shaderName, ok := cm.proginfo[specs.ProgramName]
 	if !ok {
-		return nil, fmt.Errorf("Program:%s not found", specs.Name)
+		return nil, fmt.Errorf("Program:%s not found", specs.ProgramName)
 	}
 	defines := map[string]string{}
 	for name, value := range specs.Defines {
@@ -142,8 +143,8 @@ func (cm *Coman) GenProgram(specs *gls.ComputeSpecs) (*gls.Program, error) {
 	if !ok {
 		return nil, fmt.Errorf("Compute shader:%s not found", shaderName)
 	}
-	// Pre-process vertex shader source
-	computeSource, err := cm.preprocess(computeSource, defines)
+	// Pre-process compute shader source
+	computeSource, err := cm.preprocess(computeSource, specs.Kernel(), defines)
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +159,11 @@ func (cm *Coman) GenProgram(specs *gls.ComputeSpecs) (*gls.Program, error) {
 	return prog, nil
 }
 
-func (cm *Coman) preprocess(source string, defines map[string]string) (string, error) {
+// preprocess preprocesses the specified source prefixing it with optional defines directives
+// contained in "defines" parameter and replaces '#include <name>' directives
+// by the respective source code of include chunk of the specified name.
+// The included "files" are also processed recursively.
+func (cm *Coman) preprocess(source string, kernel string, defines map[string]string) (string, error) {
 
 	// If defines map supplied, generate prefix with glsl version directive first,
 	// followed by "#define" directives
@@ -169,14 +174,45 @@ func (cm *Coman) preprocess(source string, defines map[string]string) (string, e
 			prefix = prefix + fmt.Sprintf("#define %s %s\n", name, value)
 		}
 	}
+	source = prefix + source
 
-	return cm.processIncludes(prefix+source, defines)
+	if len(kernel) != 0 { // Only apply the kernel if there is one
+		var err error
+		source, err = cm.preprocessApplyKernel(source, kernel)
+		if err != nil {
+			return source, err
+		}
+	}
+
+	return cm.processIncludes(source, defines)
 }
 
-// preprocess preprocesses the specified source prefixing it with optional defines directives
-// contained in "defines" parameter and replaces '#include <name>' directives
-// by the respective source code of include chunk of the specified name.
-// The included "files" are also processed recursively.
+func (cm *Coman) preprocessApplyKernel(source, kernel string) (string, error) {
+	matchedMain, err := regexp.Match(`\s*void main`, []byte(source))
+	if matchedMain {
+		return source, errors.New("Cannot apply kernel on shader: Source already defines main function. Remove that function and try again")
+	}
+	re, err := regexp.Compile(`void\s+(` + kernel + `)\W*\(`)
+	if err != nil {
+		return source, err
+	}
+	var appliedKernel bool = false
+	modifiedSource := re.ReplaceAllStringFunc(source, func(match string) string {
+		// Extract the match groups
+		submatches := re.FindStringSubmatch(match)
+		// Replace the function name (group 1)
+		if len(submatches) > 1 {
+			appliedKernel = true
+			return strings.Replace(match, submatches[1], "main", 1)
+		}
+		return match
+	})
+	if !appliedKernel {
+		err = fmt.Errorf("Failed to find (and apply) kernel \"%s\" in source", kernel)
+	}
+	return modifiedSource, err
+}
+
 func (cm *Coman) processIncludes(source string, defines map[string]string) (string, error) {
 
 	// Find all string submatches for the "#include <name>" directive
