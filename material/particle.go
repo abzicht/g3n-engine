@@ -34,10 +34,14 @@ func NewParticleMaterial(color math32.Color4, colorBuffer *gls.SSBO) *ParticleMa
 	return m
 }
 
-// SetSize sets the relative particle size depending on distance on to camera.
-// If size==-1, a constant size of one pixel is applied
+// SetSize sets the relative particle size depending on distance to camera.
+// If size==-1, a constant size of one pixel is applied.
+// This function only applies to pixel-particles that do not have own geometries!
 func (m *ParticleMaterial) SetParticleSize(size float32) {
 	m.udata.psize = size
+}
+func (m *ParticleMaterial) ParticleSize() float32 {
+	return m.udata.psize
 }
 
 func (m *ParticleMaterial) RenderSetup(gl *gls.GLS) {
