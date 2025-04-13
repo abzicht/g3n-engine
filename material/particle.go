@@ -34,6 +34,16 @@ func NewParticleMaterial(color math32.Color4, colorBuffer *gls.SSBO) *ParticleMa
 	return m
 }
 
+// Replace the color buffer or remove it by passing a nil value
+func (m *ParticleMaterial) SetColorBuffer(colorBuffer *gls.SSBO) {
+	if colorBuffer == nil {
+		m.Standard.SetShader("particle")
+		return
+	}
+	m.colorBuffer = colorBuffer
+	m.Standard.SetShader("particlecolored")
+}
+
 // SetSize sets the relative particle size depending on distance to camera.
 // If size==-1, a constant size of one pixel is applied.
 // This function only applies to pixel-particles that do not have own geometries!

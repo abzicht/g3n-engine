@@ -78,6 +78,12 @@ func (p *ParticleGeometry) Init(numParticles uint32, positionsBuffer *gls.SSBO, 
 	p.uniIsInstanced.Init("IsInstanced")
 }
 
+// Update the numParticles and positionsBuffer values of this geometry
+func (p *ParticleGeometry) SetPositionsBuffer(numParticles uint32, positionsBuffer *gls.SSBO) {
+	p.numParticles = numParticles
+	p.positionsBuffer = positionsBuffer
+}
+
 // Set the shape of individual particles
 func (p *ParticleGeometry) SetParticleShape(shape *Geometry) {
 	p.shapeDescriptor.shape = shape
@@ -129,22 +135,6 @@ func (p *ParticleGeometry) SetBoundingBox(dimensions *math32.Vector3) {
 // RenderSetup is called by the renderer before drawing the geometry.
 // It links the particle positions from the compute shader with the vertex
 // buffer object
-func (p *ParticleGeometry) InactiveRenderSetup(gs *gls.GLS) {
-	// First time initialization
-	if p.gs == nil {
-		// Generate VAO
-		p.handleVAO = gs.GenVertexArray()
-		// Save pointer to gs indicating initialization was done
-		p.gs = gs
-	}
-	// Update VBOs
-	p.gs.BindVertexArray(p.handleVAO)
-	for _, vbo := range p.vbos {
-		vbo.Transfer(gs)
-	}
-
-	p.shapeDescriptor.RenderSetup(gs)
-}
 func (p *ParticleGeometry) RenderSetup(gs *gls.GLS) {
 	// First time initialization
 	if p.gs == nil {
