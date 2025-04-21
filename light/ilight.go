@@ -12,6 +12,7 @@ import (
 
 // ILight is the interface that must be implemented for all light types.
 type ILight interface {
+	GetNode() *core.Node
 	RenderSetup(gs *gls.GLS, rinfo *core.RenderInfo, idx int)
 	SetIntensity(intensity float32)
 	Intensity() float32
