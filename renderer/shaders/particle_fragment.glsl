@@ -4,14 +4,21 @@ precision highp float;
 #include <material>
 #include <phong_model>
 
+uniform bool UseColorBuffer;
+
 // Inputs from vertex shader
 in vec4 Position;     // Fragment position in camera coordinates
 in vec3 Normal;       // Fragment normal in camera coordinates
 in vec2 FragTexcoord; // Fragment texture coordinates
+in vec4 FragParticleColor;
 // Final fragment color
 out vec4 FragColor;
 
 void main() {
+    if (UseColorBuffer && FragParticleColor != vec4(-1)) {
+        FragColor = FragParticleColor;
+        return;
+    }
     // Compute final texture color
     vec4 texMixed = vec4(1);
     #if MAT_TEXTURES > 0

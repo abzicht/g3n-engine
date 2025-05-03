@@ -16,7 +16,6 @@ layout(std430, binding = 1) buffer ParticleColor {
     vec4 colors[];
 };
 
-
 // Output variables for Fragment shader
 out vec4 Position;
 out vec3 Normal;
@@ -26,13 +25,14 @@ out vec4 FragParticleColor;
 void main() {
     // id is set depending on whether we render objects or only pixels
     uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
+
+    if (id >= positions.length()) {return;}
+
     if (id < colors.length()) {
         FragParticleColor = colors[id];
     } else {
-        FragParticleColor = vec4(0);
+        FragParticleColor = vec4(-1);
     }
-
-    if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {

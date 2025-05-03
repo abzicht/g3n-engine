@@ -406,22 +406,6 @@ void main() {
 }
 `
 
-const particlecolored_fragment_source = `precision highp float;
-
-// Inputs from vertex shader
-in vec4 Position;
-in vec3 Normal;
-in vec2 FragTexcoord;
-in vec4 FragParticleColor;
-// Final fragment color
-out vec4 FragColor;
-
-void main() {
-    FragColor = FragParticleColor;
-    return;
-}
-`
-
 const point_fragment_source = `precision highp float;
 
 #include <material>
@@ -484,14 +468,21 @@ const particle_fragment_source = `precision highp float;
 #include <material>
 #include <phong_model>
 
+uniform bool UseColorBuffer;
+
 // Inputs from vertex shader
 in vec4 Position;     // Fragment position in camera coordinates
 in vec3 Normal;       // Fragment normal in camera coordinates
 in vec2 FragTexcoord; // Fragment texture coordinates
+in vec4 FragParticleColor;
 // Final fragment color
 out vec4 FragColor;
 
 void main() {
+    if (UseColorBuffer && FragParticleColor != vec4(-1)) {
+        FragColor = FragParticleColor;
+        return;
+    }
     // Compute final texture color
     vec4 texMixed = vec4(1);
     #if MAT_TEXTURES > 0
@@ -1151,7 +1142,6 @@ layout(std430, binding = 1) buffer ParticleColor {
     vec4 colors[];
 };
 
-
 // Output variables for Fragment shader
 out vec4 Position;
 out vec3 Normal;
@@ -1161,13 +1151,14 @@ out vec4 FragParticleColor;
 void main() {
     // id is set depending on whether we render objects or only pixels
     uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
+
+    if (id >= positions.length()) {return;}
+
     if (id < colors.length()) {
         FragParticleColor = colors[id];
     } else {
-        FragParticleColor = vec4(0);
+        FragParticleColor = vec4(-1);
     }
-
-    if (id >= positions.length()) {return;}
 
     vec3 pos = positions[id];
     if (IsInstanced) {
@@ -1249,77 +1240,6 @@ void main() {
 }
 `
 
-const particlecolored_vertex_source = `// Model uniforms
-uniform mat4 MM;
-uniform mat4 MVP;
-uniform mat4 MV;
-uniform mat3 NM;
-uniform bool IsInstanced; // Use an instanced shape instead of only drawing
-                          // pixels
-
-#include <attributes>
-#include <material>
-
-layout(std430, binding = 0) buffer ParticlePos {
-    vec3 positions[];
-};
-layout(std430, binding = 1) buffer ParticleColor {
-    vec4 colors[];
-};
-
-
-// Output variables for Fragment shader
-out vec4 Position;
-out vec3 Normal;
-out vec2 FragTexcoord;
-out vec4 FragParticleColor;
-
-void main() {
-    // id is set depending on whether we render objects or only pixels
-    uint id = IsInstanced ? gl_InstanceID : gl_VertexID;
-    if (id < colors.length()) {
-        FragParticleColor = colors[id];
-    } else {
-        FragParticleColor = vec4(0);
-    }
-
-    if (id >= positions.length()) {return;}
-
-    vec3 pos = positions[id];
-    if (IsInstanced) {
-        pos +=  VertexPosition;
-    }
-    // Transform vertex position to camera coordinates
-    Position = MV * vec4(pos, 1.0);
-    Normal = normalize(NM * VertexNormal);
-    vec2 texcoord = VertexTexcoord;
-    #if MAT_TEXTURES > 0
-        // Flip texture coordinate Y if requested.
-        if (MatTexFlipY(0)) {
-            texcoord.y = 1.0 - texcoord.y;
-        }
-    #endif
-    FragTexcoord = texcoord;
-
-    mat4 finalWorld = mat4(1.0);
-    #include <morphtarget_vertex>
-    #include <bones_vertex>
-    gl_Position = MVP * finalWorld * vec4(pos, 1.0);
-
-
-    if (!IsInstanced) {
-        // If we don't have shapes but only points, we set their sizes
-        // Sets the size of the rasterized point decreasing with distance
-        vec4 posMV = MV * vec4(positions[id], 1.0);
-        if (MatPointSize == -1.0) {
-            gl_PointSize = 1.0;
-        } else {
-            gl_PointSize = MatPointSize / -posMV.z;
-        }
-    }
-}
-`
-
 const standard_vertex_source = `#include <attributes>
 
 // Model uniforms
@@ -1380,30 +1300,27 @@ var includeMap = map[string]string{
 // Maps shader name with its source code
 var shaderMap = map[string]string{
 
-	"panel_fragment":           panel_fragment_source,
-	"particlecolored_fragment": particlecolored_fragment_source,
-	"point_fragment":           point_fragment_source,
-	"particle_fragment":        particle_fragment_source,
-	"physical_fragment":        physical_fragment_source,
-	"panel_vertex":             panel_vertex_source,
-	"basic_fragment":           basic_fragment_source,
-	"basic_vertex":             basic_vertex_source,
-	"standard_fragment":        standard_fragment_source,
-	"point_vertex":             point_vertex_source,
-	"particle_vertex":          particle_vertex_source,
-	"physical_vertex":          physical_vertex_source,
-	"particlecolored_vertex":   particlecolored_vertex_source,
-	"standard_vertex":          standard_vertex_source,
+	"panel_fragment":    panel_fragment_source,
+	"point_fragment":    point_fragment_source,
+	"particle_fragment": particle_fragment_source,
+	"physical_fragment": physical_fragment_source,
+	"panel_vertex":      panel_vertex_source,
+	"basic_fragment":    basic_fragment_source,
+	"basic_vertex":      basic_vertex_source,
+	"standard_fragment": standard_fragment_source,
+	"point_vertex":      point_vertex_source,
+	"particle_vertex":   particle_vertex_source,
+	"physical_vertex":   physical_vertex_source,
+	"standard_vertex":   standard_vertex_source,
 }
 
 // Maps program name with Proginfo struct with shaders names
 var programMap = map[string]ProgramInfo{
 
-	"basic":           {"basic_vertex", "basic_fragment", ""},
-	"panel":           {"panel_vertex", "panel_fragment", ""},
-	"particle":        {"particle_vertex", "particle_fragment", ""},
-	"particlecolored": {"particlecolored_vertex", "particlecolored_fragment", ""},
-	"physical":        {"physical_vertex", "physical_fragment", ""},
-	"point":           {"point_vertex", "point_fragment", ""},
-	"standard":        {"standard_vertex", "standard_fragment", ""},
+	"basic":    {"basic_vertex", "basic_fragment", ""},
+	"panel":    {"panel_vertex", "panel_fragment", ""},
+	"particle": {"particle_vertex", "particle_fragment", ""},
+	"physical": {"physical_vertex", "physical_fragment", ""},
+	"point":    {"point_vertex", "point_fragment", ""},
+	"standard": {"standard_vertex", "standard_fragment", ""},
 }
