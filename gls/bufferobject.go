@@ -95,6 +95,11 @@ func (s *SSBO) SetInitialBuffer(buffer *BufferRaw) *SSBO {
 	return s
 }
 
+func (s *SSBO) SetCallback(ssboCallback SSBOCallback) *SSBO {
+	s.SSBOCallback = ssboCallback
+	return s
+}
+
 // Return the buffer id in GLS that this ssbo references
 func (s *SSBO) BufferID() uint32 {
 	return s.bufferID

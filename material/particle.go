@@ -10,12 +10,13 @@ const (
 )
 
 type ParticleMaterial struct {
-	Standard    // Embedded standard material
-	colorBuffer *gls.SSBO
+	Standard          // Embedded standard material
+	colorBuffer       *gls.SSBO
+	uniUseColorBuffer gls.Uniform
 }
 
 // Create a new particle material with the given color and the shader program
-// "particle" or "particlecolored" if a color buffer is provided. Use SetShader to use a custom particle shader program.
+// "particle". Use SetShader to use a custom particle shader program.
 // Set colorBuffer to tell the shader to load custom color data from the SSBO
 // instead of rendering the given material
 func NewParticleMaterial(color math32.Color4, colorBuffer *gls.SSBO) *ParticleMaterial {
@@ -23,25 +24,17 @@ func NewParticleMaterial(color math32.Color4, colorBuffer *gls.SSBO) *ParticleMa
 	m := new(ParticleMaterial)
 	c := color.ToColor()
 	m.colorBuffer = colorBuffer
-	if m.colorBuffer != nil {
-		m.Standard.Init("particlecolored", &c)
-	} else {
-		m.Standard.Init("particle", &c)
-	}
+	m.Standard.Init("particle", &c)
 	m.SetOpacity(color.A)
 	m.SetParticleSize(-1.0) // -1.0: Constant size of 1 pixel, no matter the distance
+	m.uniUseColorBuffer.Init("UseColorBuffer")
 
 	return m
 }
 
 // Replace the color buffer or remove it by passing a nil value
 func (m *ParticleMaterial) SetColorBuffer(colorBuffer *gls.SSBO) {
-	if colorBuffer == nil {
-		m.Standard.SetShader("particle")
-		return
-	}
 	m.colorBuffer = colorBuffer
-	m.Standard.SetShader("particlecolored")
 }
 
 // SetSize sets the relative particle size depending on distance to camera.
@@ -59,4 +52,5 @@ func (m *ParticleMaterial) RenderSetup(gl *gls.GLS) {
 	if m.colorBuffer != nil {
 		m.colorBuffer.Bind(gl)
 	}
+	gl.Uniform1b(m.uniUseColorBuffer.Location(gl), m.colorBuffer != nil)
 }

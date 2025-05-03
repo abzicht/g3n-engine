@@ -25,11 +25,11 @@ type ShadersOfProgram map[string]string
 // Coman is a sibling of Shaman
 type Coman struct { // Command Manager
 	gs        *gls.GLS
-	includes  map[string]string      // include files sources
-	shadercm  map[string]string      // maps shader name to its template
-	proginfo  ShadersOfProgram       // maps name of the program to name of its shader
-	programs  []gls.ComputeProgSpecs // list of compiled programs with specs
-	progSpecs gls.ComputeProgSpecs   // Current program specs
+	includes  map[string]string       // include files sources
+	shadercm  map[string]string       // maps shader name to its template
+	proginfo  ShadersOfProgram        // maps name of the program to name of its shader
+	programs  []*gls.ComputeProgSpecs // list of compiled programs with specs
+	progSpecs *gls.ComputeProgSpecs   // Current program specs
 	//stats Stats <- maybe something for the future
 }
 
@@ -66,18 +66,25 @@ func (cm *Coman) AddProgram(programName, computeShaderName string) {
 	cm.proginfo[programName] = computeShaderName
 }
 
-// Delete all programs currently managed by Coman from OpenGL.
+// Delete all programs currently managed by Coman from OpenGL and from Coman itself.
 func (cm *Coman) DeletePrograms() {
 	for _, pinfo := range cm.programs {
 		pinfo.Program.Delete()
 	}
+	cm.programs = []*gls.ComputeProgSpecs{}
+	cm.progSpecs = nil
 }
 
-// Delete a program from OpenGL. Return true iff program was found and deleted
+// Delete a program from OpenGL and Coman's program list.
+// Return true iff program was found and deleted.
 func (cm *Coman) DeleteProgram(s *gls.ComputeSpecs) bool {
-	for _, pinfo := range cm.programs {
+	for index, pinfo := range cm.programs {
 		if pinfo.Specs.Equals(s) {
 			pinfo.Program.Delete()
+			cm.programs = append(cm.programs[:index], cm.programs[index+1:]...)
+			if cm.progSpecs != nil && cm.progSpecs.Specs.Equals(s) {
+				cm.progSpecs = nil
+			}
 			return true
 		}
 	}
@@ -91,7 +98,7 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 
 	var specs gls.ComputeSpecs
 	specs.Copy(s)
-	if cm.progSpecs.Specs.Equals(&specs) {
+	if cm.progSpecs != nil && cm.progSpecs.Specs.Equals(&specs) {
 		if !cm.progSpecs.Program.InUse() {
 			cm.progSpecs.Specs = specs
 			cm.gs.UseProgram(cm.progSpecs.Program)
@@ -119,7 +126,7 @@ func (cm *Coman) SetProgram(s *gls.ComputeSpecs) (bool, error) {
 	log.Debug("Created new compute shader:%v", specs.ProgramName)
 
 	// Save specs as current specs, adds new program to the list and activates the program
-	cm.progSpecs = gls.ComputeProgSpecs{Program: prog, Specs: specs}
+	cm.progSpecs = &gls.ComputeProgSpecs{Program: prog, Specs: specs}
 	cm.programs = append(cm.programs, cm.progSpecs)
 	err = specs.BufferObjects.Bind(cm.gs) //prepare buffer objects before using the program
 	if err != nil {

@@ -861,6 +861,13 @@ func (gs *GLS) Uniform1i(location int32, v0 int32) {
 	gs.stats.Unisets++
 }
 
+// Uniform1ui sets the value of an uint uniform variable for the current program object.
+func (gs *GLS) Uniform1ui(location int32, v0 uint32) {
+
+	C.glUniform1ui(C.GLint(location), C.GLuint(v0))
+	gs.stats.Unisets++
+}
+
 // Uniform1f sets the value of a float uniform variable for the current program object.
 func (gs *GLS) Uniform1f(location int32, v0 float32) {
 
