@@ -23,10 +23,15 @@ type ParticleSim struct {
 
 // NewParticleSim creates and returns a graphic particle sim object with the specified
 // geometry and material.
-func NewParticleSim(igeom *geometry.ParticleGeometry, imat material.IMaterial) *ParticleSim {
+func NewParticleSim(igeom geometry.IGeometry, imat material.IMaterial) *ParticleSim {
 
 	p := new(ParticleSim)
-	p.Graphic.Init(p, igeom, gls.POINTS)
+	var mode uint32 = gls.TRIANGLES
+	switch igeom.(type) {
+	case *geometry.ParticleGeometry:
+		mode = gls.POINTS
+	}
+	p.Graphic.Init(p, igeom, mode)
 	if imat != nil {
 		p.AddMaterial(p, imat, 0, 0)
 	}

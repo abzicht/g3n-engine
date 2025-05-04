@@ -194,8 +194,20 @@ func (gs *GLS) BindBufferBase(target int, index, buffer uint32) {
 
 // BindTexture lets you create or use a named texture.
 func (gs *GLS) BindTexture(target int, tex uint32) {
-
 	C.glBindTexture(C.GLenum(target), C.GLuint(tex))
+}
+
+// BindTextureUnit bind an existing texture object to the specified texture
+// unit.
+func (gs *GLS) BindTextureUnit(unit uint32, tex uint32) {
+	C.glBindTextureUnit(C.GLuint(unit), C.GLuint(tex))
+}
+
+// BindImageTexture bind a level of a texture to an image unit
+func (gs *GLS) BindImageTexture(unit, texture uint32, level int, layered bool, layer, access, format int) {
+
+	C.glBindImageTexture(C.GLuint(unit), C.GLuint(texture), C.GLint(level),
+		bool2c(layered), C.GLint(layer), C.GLenum(access), C.GLenum(format))
 }
 
 // BindVertexArray binds the vertex array object.
@@ -800,6 +812,19 @@ func (gs *GLS) TexImage2D(target uint32, level int32, iformat int32, width int32
 		C.GLenum(format),
 		C.GLenum(itype),
 		ptr(data))
+}
+
+// TexStorage3D specify storage for all levesl of a three-dimensional,
+// two-dimensional array or cube-map array texture
+func (gs *GLS) TexStorage3D(target uint32, levels int32, iformat int32, width int32, height int32, depth int32) {
+
+	C.glTexStorage3D(C.GLenum(target),
+		C.GLsizei(levels),
+		C.GLenum(iformat),
+		C.GLsizei(width),
+		C.GLsizei(height),
+		C.GLsizei(depth),
+	)
 }
 
 // CompressedTexImage2D specifies a two-dimensional compressed texture image.

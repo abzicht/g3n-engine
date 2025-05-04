@@ -82,6 +82,21 @@ func (gr *Graphic) GetGraphic() *Graphic {
 	return gr
 }
 
+// SetMode: Set the rendering mode
+func (gr *Graphic) SetMode(mode uint32) {
+	gr.mode = mode
+}
+
+// Mode: Return the rendering mode
+func (gr *Graphic) Mode() uint32 {
+	return gr.mode
+}
+
+// SetGeometry: replace the graphic's geometry with the provided one.
+func (gr *Graphic) SetGeometry(igeom geometry.IGeometry) {
+	gr.igeom = igeom
+}
+
 // GetGeometry satisfies the IGraphic interface and returns
 // a pointer to the geometry associated with this graphic.
 func (gr *Graphic) GetGeometry() *geometry.Geometry {
@@ -318,9 +333,10 @@ func (grmat *GraphicMaterial) Render(gs *gls.GLS, rinfo *core.RenderInfo) {
 			if indices.Size() > 0 {
 				gs.DrawElementsInstanced(gls.TRIANGLES, int32(indices.Size()), gls.UNSIGNED_INT, 4*uint32(grmat.start), uint32(geom.Items()))
 			} else {
-				fmt.Println("Not implemented")
+				fmt.Println("Rendering particle instances with TRIANGLE_FAN is not implemented")
 				//gs.DrawArraysInstanced(gls.TRIANGLE_FAN, uint32(grmat.start), instance.Items(), int32(geom.Items()))
 			}
+			//} else if geom.Raymarching(){
 		} else {
 			gs.DrawArrays(gr.mode, int32(grmat.start), int32(geom.Items()))
 		}

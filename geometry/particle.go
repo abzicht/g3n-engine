@@ -16,8 +16,9 @@ const (
 )
 
 type shapeDescriptor struct {
-	gs    *gls.GLS
-	shape *Geometry
+	gs       *gls.GLS
+	shape    *Geometry
+	useShape bool
 }
 
 func newShapeDescriptor() *shapeDescriptor {
@@ -26,7 +27,7 @@ func newShapeDescriptor() *shapeDescriptor {
 }
 
 func (s *shapeDescriptor) RenderSetup(gs *gls.GLS) {
-	if s.shape == nil {
+	if !s.useShape || s.shape == nil {
 		return
 	} //nothing tbd
 	if s.gs == nil {
@@ -75,6 +76,7 @@ func (p *ParticleGeometry) Init(numParticles uint32, positionsBuffer *gls.SSBO, 
 	p.positionsBuffer = positionsBuffer
 	p.shapeDescriptor = newShapeDescriptor()
 	p.shapeDescriptor.shape = nil
+	p.shapeDescriptor.useShape = false
 	p.uniIsInstanced.Init("IsInstanced")
 }
 
@@ -87,10 +89,15 @@ func (p *ParticleGeometry) SetPositionsBuffer(numParticles uint32, positionsBuff
 // Set the shape of individual particles
 func (p *ParticleGeometry) SetParticleShape(shape *Geometry) {
 	p.shapeDescriptor.shape = shape
+	p.shapeDescriptor.useShape = shape != nil
+}
+
+func (p *ParticleGeometry) SetInstanced(val bool) {
+	p.shapeDescriptor.useShape = val
 }
 
 func (p *ParticleGeometry) IsInstanced() bool {
-	return p.shapeDescriptor.shape != nil
+	return p.shapeDescriptor.useShape
 }
 
 func (p *ParticleGeometry) Instance() *Geometry {
